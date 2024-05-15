@@ -13,19 +13,11 @@ class PromoSerializer (serializers.ModelSerializer) :
     class Meta :
         model = Promo
         fields = ['id', 'annee', 'filiere']
-
-class LoginSerializer(serializers.ModelSerializer) :
-    email = serializers.CharField()
-    password = serializers.CharField()
-
-    class Meta : 
-        model = CustomUser
-        fields = ['email', 'password']
     
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id', 'email', 'first_name', 'last_name']
+        fields = ['id', 'email', 'first_name', 'last_name', 'first_connection']
 
 class EtudiantSerializer(UserSerializer):
     num_etudiant = serializers.CharField()
@@ -45,10 +37,20 @@ class EnseignantSerializer (serializers.ModelSerializer) :
         model = Enseignant
         fields = ['id', 'email', 'first_name', 'last_name']
 
+class ProfessionnelSerializer (serializers.ModelSerializer) :
+    class Meta : 
+        model = Professionnel
+        fields = ['id', 'email', 'first_name', 'last_name']
+
 class EntrepriseSerializer (serializers.ModelSerializer) : 
     class Meta : 
         model = Entreprise
         fields = []
+
+class AdminSerializer (serializers.ModelSerializer) :
+    class Meta : 
+        model = Admin
+        fields = ['id', 'email', 'first_name', 'last_name']
 
 class StageSerializer (serializers.ModelSerializer) : 
     class Meta : 

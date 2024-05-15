@@ -27,7 +27,17 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractUser):
     username = None 
     email = models.EmailField(unique=True)
-    
+
+    first_connection = models.BooleanField(default= True)
+    PROFILE_CHOICES = [
+        ('ENS', 'Enseignant'),
+        ('ETU', 'Etudiant'),
+        ('ADM', 'Admin'),
+        ('PRO', 'Professionnel'),
+        ('TUT', 'Tuteur'),
+    ]
+    profile = models.CharField(max_length=20, choices=PROFILE_CHOICES, default='Etudiant')
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
