@@ -15,42 +15,59 @@ class PromoSerializer (serializers.ModelSerializer) :
         fields = ['id', 'annee', 'filiere']
     
 class UserSerializer(serializers.ModelSerializer):
+    PROFILE_CHOICES = [
+        ('ENS', 'Enseignant'),
+        ('ETU', 'Etudiant'),
+        ('ADM', 'Admin'),
+        ('PRO', 'Professionnel'),
+        ('TUT', 'Tuteur'),
+    ]
+
     class Meta:
         model = CustomUser
-        fields = ['id', 'email', 'first_name', 'last_name', 'first_connection']
+        fields = ['id', 'email', 'first_name', 'last_name', 'first_connection', 'profile']
 
 class EtudiantSerializer(UserSerializer):
     num_etudiant = serializers.CharField()
     date_naissance = serializers.DateField()
+    profile = serializers.ChoiceField(choices=UserSerializer.PROFILE_CHOICES, default='ETU')
 
     class Meta:
         model = Etudiant
-        fields = ['id', 'email', 'first_name', 'last_name', 'num_etudiant', 'date_naissance']
+        fields = UserSerializer.Meta.fields + ['num_etudiant', 'date_naissance']
 
-class TuteurSerializer (serializers.ModelSerializer) :
+class TuteurSerializer (UserSerializer) :
+    profile = serializers.ChoiceField(choices=UserSerializer.PROFILE_CHOICES, default='TUT')
+
     class Meta : 
         model = Tuteur
-        fields = ['id', 'email', 'first_name', 'last_name']
+        fields = UserSerializer.Meta.fields
 
-class EnseignantSerializer (serializers.ModelSerializer) :
+class EnseignantSerializer (UserSerializer) :
+    profile = serializers.ChoiceField(choices=UserSerializer.PROFILE_CHOICES, default='ENS')
+
     class Meta : 
         model = Enseignant
-        fields = ['id', 'email', 'first_name', 'last_name']
+        fields = UserSerializer.Meta.fields
 
-class ProfessionnelSerializer (serializers.ModelSerializer) :
+class ProfessionnelSerializer (UserSerializer) :
+    profile = serializers.ChoiceField(choices=UserSerializer.PROFILE_CHOICES, default='PRO')
+
     class Meta : 
         model = Professionnel
-        fields = ['id', 'email', 'first_name', 'last_name']
+        fields = UserSerializer.Meta.fields
+
+class AdminSerializer (UserSerializer) :
+    profile = serializers.ChoiceField(choices=UserSerializer.PROFILE_CHOICES, default='ADM')
+
+    class Meta : 
+        model = Admin
+        fields = UserSerializer.Meta.fields
 
 class EntrepriseSerializer (serializers.ModelSerializer) : 
     class Meta : 
         model = Entreprise
         fields = []
-
-class AdminSerializer (serializers.ModelSerializer) :
-    class Meta : 
-        model = Admin
-        fields = ['id', 'email', 'first_name', 'last_name']
 
 class StageSerializer (serializers.ModelSerializer) : 
     class Meta : 

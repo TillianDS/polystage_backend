@@ -36,7 +36,7 @@ class CustomUser(AbstractUser):
         ('PRO', 'Professionnel'),
         ('TUT', 'Tuteur'),
     ]
-    profile = models.CharField(max_length=20, choices=PROFILE_CHOICES, default='Etudiant')
+    profile = models.CharField(max_length=3, choices=PROFILE_CHOICES)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -48,12 +48,9 @@ class CustomUser(AbstractUser):
 
 
 class Admin(CustomUser):
+    
     class Meta : 
         verbose_name = 'Admin'
-
-class Entreprise(models.Model):
-    nom = models.CharField(max_length = 200)
-
 
 class Tuteur(CustomUser):
     class Meta : 
@@ -67,14 +64,13 @@ class Professionnel(CustomUser):
     class Meta : 
         verbose_name = 'Professionnel'
 
-class Stage(models.Model):
-    CONDIFENTIALITE = {
-        "CONFIDENTIEL" : "Confidentiel",
-        "NON_CONFIDENTIEL" : "Non confidentiel",
-    }
+class Entreprise(models.Model):
+    nom = models.CharField(max_length = 200)
 
+class Stage(models.Model):
+    
     sujet = models.TextField()
-    confidentiel = models.CharField(max_length= 20, choices = CONDIFENTIALITE)
+    confidentiel = models.BooleanField(default= False)
     date_debut = models.DateField()
     date_fin = models.DateField()
     entreprise =  models.ForeignKey(Entreprise, on_delete=models.CASCADE )

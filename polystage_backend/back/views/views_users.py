@@ -39,7 +39,9 @@ def enregistrement (request, serializer) :
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class EnseignantList(APIView):
-    
+    """
+    définie les fonction sur l'enseignant
+    """
     def get(self, request, format=None):
         enseignant = Enseignant.objects.all()
         serializer = EnseignantSerializer(enseignant, many=True)
@@ -104,7 +106,7 @@ class User_details(APIView):
     def get (self, request, pk, format = None) : 
         user = self.get_User(pk)
         serializer = UserSerializer(user)
-        data = serializer.data
+        data = user.profile
         return Response(data)
     
     def put(self, request, pk, format = None):

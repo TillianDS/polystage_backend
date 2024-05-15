@@ -21,7 +21,7 @@ class CostumLogin(APIView):
     si les identifiants :
         - "id" : identifiants utilisateurs 
         - "token" : token d'authentification
-        - "type utilisateur" : 
+        - "type utilisateur" : type de l'utilisateur qui se connecte
 
     """
 
@@ -30,15 +30,14 @@ class CostumLogin(APIView):
         password = request.data['password']
         user = authenticate (request, email= email, password = password)
         if user :
-
-            if user.get : 
+            user.first
+            if True : 
                 login(request, user) 
 
                 serializer = UserSerializer(user)
                 token, create = Token.objects.get_or_create(user = user)
-                model_name = user._meta.model.__name__
-                return Response({'token' : token.key, 'user_id' : serializer.data["id"], 'type utilisateur' : model_name}, status=status.HTTP_202_ACCEPTED) 
-            return Response({"first connection" : True})
+                return Response({'token' : token.key, 'user_id' : serializer.data["id"], 'type utilisateur' : serializer.data['profile']}, status=status.HTTP_202_ACCEPTED) 
+            return Response({"first_connection" : True})
         return Response({'error' : "password or email are not correct"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
