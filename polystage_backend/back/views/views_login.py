@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from ..models import *
+from ..models import CustomUser
 from ..serializers import *
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
@@ -30,13 +30,13 @@ class CostumLogin(APIView):
         password = request.data['password']
         user = authenticate (request, email= email, password = password)
         if user :
-            user.first
-            if True : 
-                login(request, user) 
+            user2 = CustomUser.objects.get(email = email)
+            if not user2.first_connection: 
+                login(request, user2) 
 
                 serializer = UserSerializer(user)
                 token, create = Token.objects.get_or_create(user = user)
-                return Response({'token' : token.key, 'user_id' : serializer.data["id"], 'type utilisateur' : serializer.data['profile']}, status=status.HTTP_202_ACCEPTED) 
+                return Response({'token' : token.key, 'user_id' : serializer.data["id"], 'profile' : serializer.data['profile']}, status=status.HTTP_202_ACCEPTED) 
             return Response({"first_connection" : True})
         return Response({'error' : "password or email are not correct"}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -82,5 +82,5 @@ class Change_password (APIView) :
             user.save()
 
             return Response(UserSerializer(user).data, status= status.HTTP_202_ACCEPTED)
-        return Response({"errors" : "les mots de passe ne sont aps identiques"}, status= status.HTTP_400_BAD_REQUEST)
+        return Response({"errors" : "les mots de passe ne sont pas identiques"}, status= status.HTTP_400_BAD_REQUEST)
     

@@ -7,49 +7,77 @@ from ..serializers import UserSerializer, EnseignantSerializer, TuteurSerializer
 from rest_framework.authentication import TokenAuthentication
 
 
-"""
-    méthode d'enregistrement pour chaque utilisateur
-    verifie la correspondance des deux mots de passe et si les informations renvoyées sont les bonnes
-    le mot de passe doit contenir une majusucle, une minuscule et un caractère spécial
-    le mot de passe doit avoir une longueur minimum
+class UserList(APIView):
 
-    Response :
-    information lié à l'utilisateur crée
-"""
-def enregistrement (request, serializer) :
-    password_length = 7
-    if serializer.is_valid(): 
-        password1 = request.data["password1"]
-        password2 = request.data["password2"]
-        if password1 == password2 :
-            if len(password1)>= password_length : 
-                if re.findall('[a-z]', password1):
-                    if re.findall('[A-Z]', password1):
-                        if re.findall('[()[\]{}|\\`~!@#$%^&*_\-+=;:\'",<>./?]', password1):
-                            user = serializer.save()
+    """
+        méthode d'enregistrement pour chaque utilisateur
+        verifie la correspondance des deux mots de passe et si les informations renvoyées sont les bonnes
+        le mot de passe doit contenir une majusucle, une minuscule et un caractère spécial
+        le mot de passe doit avoir une longueur minimum
 
-                            user.set_password(request.data["password1"])
-                            user.save()
-                            return Response(serializer.data, status=status.HTTP_201_CREATED)
-                        return Response({"error": """le mot de passe doit cotenir un caractère spécial ()[\]{}|\\`~!@#$%^&*_\-+=;:\'",<>./?"""})
-                    return Response({"error": "le mot de passe doit contentir une majuscule"}, status=status.HTTP_400_BAD_REQUEST)
-                return Response({"error" : "le mot de passe doit contenir une minuscule"}, status=status.HTTP_400_BAD_REQUEST)
-            return Response ({"error" : "le mot de passe doit faire plus de {} caractères".format(password_length)} , status=status.HTTP_400_BAD_REQUEST)
-        return Response({"error" : "les mots de passes ne correspondent pas"}, status=status.HTTP_400_BAD_REQUEST)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        Response :
+        information lié à l'utilisateur crée
+    """
+    def enregistrement (request, serializer) :
+        password_length = 7
+        if serializer.is_valid(): 
+            password1 = request.data["password1"]
+            password2 = request.data["password2"]
+            if password1 == password2 :
+                if len(password1)>= password_length : 
+                    if re.findall('[a-z]', password1):
+                        if re.findall('[A-Z]', password1):
+                            if re.findall('[()[\]{}|\\`~!@#$%^&*_\-+=;:\'",<>./?]', password1):
+                                user = serializer.save()
 
-class EnseignantList(APIView):
+                                user.set_password(request.data["password1"])
+                                user.save()
+                                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                            return Response({"error": """le mot de passe doit cotenir un caractère spécial ()[\]{}|\\`~!@#$%^&*_\-+=;:\'",<>./?"""})
+                        return Response({"error": "le mot de passe doit contentir une majuscule"}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({"error" : "le mot de passe doit contenir une minuscule"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response ({"error" : "le mot de passe doit faire plus de {} caractères".format(password_length)} , status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error" : "les mots de passes ne correspondent pas"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def choice_serializer (self, profile, user, many) :
+        if profile == 'ENS' : 
+            return EnseignantSerializer(user, many = many)
+        elif profile == 'ETU':
+            return EtudiantSerializer(user, many = many)
+        elif profile == 'ADM':
+            return AdminSerializer(user, many = many)
+        elif profile == 'PRO':
+            return ProfessionnelSerializer(user, many= many)
+        elif profile == 'TUT':
+            return TuteurSerializer(user, many = many)
+        
+    def choice_user (self, data, profile):
+        if profile == 'ENS' : 
+            return Enseignant.objects.all()
+        elif profile == 'ETU':
+            return Etudiant.objects.all()
+        elif profile == 'ADM':
+            return Admin.objects.all()
+        elif profile == 'PRO':
+            return Professionnel.objects.all()
+        elif profile == 'TUT':
+            return Tuteur.objects.all()
+
     """
     définie les fonction sur l'enseignant
     """
-    def get(self, request, format=None):
-        enseignant = Enseignant.objects.all()
-        serializer = EnseignantSerializer(enseignant, many=True)
-        return Response(serializer.data) 
+    def get(self, request, profile, format=None):
+        user = self.choice_user(request.data, profile)
+        serializer = self.choice_serializer(profile, user, True)
+        
+        if serializer :
+            return Response(serializer.data) 
+        return Response({"error" : "le profile n'est pas valide"}, status=status.HTTP_400_BAD_REQUEST)
 
-    def post(self, request, format=None):
-        serializer = EnseignantSerializer(data = request.data)
-        return enregistrement(request, serializer)
+    def post(self, request, profile, format=None):
+        serializer = self.choice_serializer(request.data, False)
+        return self.enregistrement(request, serializer)
 
 class EtudiantList(APIView):
     

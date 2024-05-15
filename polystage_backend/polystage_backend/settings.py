@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'rest_auth.registration',
     'back',
+    'corsheaders',
     
 ]
 
@@ -56,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 #CSRF_COOKIE_SECURE = False
@@ -160,3 +162,9 @@ REST_FRAMEWORK = {
         #'rest_framework.authentication.TokenAuthentication', 
     ],
 }
+
+CORS_ALLOW_ALL_ORIGINS = True  # Autoriser tous les domaines
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5050",  # Autoriser les requêtes depuis ce domaine
+]

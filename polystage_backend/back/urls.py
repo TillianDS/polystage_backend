@@ -10,12 +10,7 @@ urlpatterns = [
 
     #views_Users
     path('user/<int:pk>/', views_users.User_details.as_view()),
-    path('enseignant/', views_users.EnseignantList.as_view()),
-    path('adminlist/', views_users.AdminList.as_view()),
-    path('professionnel/', views_users.ProfessionnelList.as_view()),
-    path('tuteur/', views_users.TuteurList.as_view()),
-    path('etudiant/', views_users.EtudiantList.as_view()),
-
+    path('userList/<str:profile>/', views_users.UserList.as_view()),
 
     #views_login
     path('password/<int:pk>/', views_login.Change_password.as_view()),
