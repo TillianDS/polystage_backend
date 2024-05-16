@@ -64,18 +64,14 @@ class Professionnel(CustomUser):
     class Meta : 
         verbose_name = 'Professionnel'
 
-class Entreprise(models.Model):
-    nom = models.CharField(max_length = 200)
-
 class Stage(models.Model):
     
     sujet = models.TextField()
     confidentiel = models.BooleanField(default= False)
     date_debut = models.DateField()
     date_fin = models.DateField()
-    entreprise =  models.ForeignKey(Entreprise, on_delete=models.CASCADE )
     tuteur =  models.ForeignKey(Tuteur, on_delete=models.CASCADE )
-
+    nom_entreprise = models.CharField(max_length= 200)
 
 class Jury(models.Model):
     professionnel = models.ManyToManyField(Professionnel)
@@ -96,7 +92,7 @@ class Promo(models.Model):
     filiere =  models.ForeignKey(Filiere, on_delete= models.CASCADE)
 
     def __str__(self):
-        return self.filiere.nom
+        return self.filiere.nom + " " + str(self.annee)
 
 
 class Etudiant (CustomUser):
@@ -109,7 +105,7 @@ class Etudiant (CustomUser):
 
 class Soutenance(models.Model):
     date_soutenance = models.DateTimeField()
-
+    heure_soutenance = models.TimeField(default = None)
     etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE )
     jury =  models.ForeignKey(Jury, on_delete=models.CASCADE )
     stage = models.ForeignKey(Stage, on_delete=models.CASCADE )

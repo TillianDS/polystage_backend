@@ -61,7 +61,7 @@ MIDDLEWARE = [
 ]
 
 #CSRF_COOKIE_SECURE = False
-
+ 
 ROOT_URLCONF = 'polystage_backend.urls'
 
 TEMPLATES = [
@@ -168,3 +168,6 @@ CORS_ALLOW_ALL_ORIGINS = True  # Autoriser tous les domaines
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5050",  # Autoriser les requêtes depuis ce domaine
 ]
+
+DATE_FORMAT = 'd/m/Y'
+DATETIME_FORMAT = 'd/m/Y H:i:s'

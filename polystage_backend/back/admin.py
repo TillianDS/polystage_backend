@@ -8,7 +8,6 @@ from .models import *
 admin.site.register(CustomUser)
 admin.site.register(Stage)
 admin.site.register(Admin)
-admin.site.register(Entreprise)
 admin.site.register(Tuteur)
 admin.site.register(Enseignant)
 admin.site.register(Professionnel)

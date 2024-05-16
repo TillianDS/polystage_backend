@@ -64,11 +64,6 @@ class AdminSerializer (UserSerializer) :
         model = Admin
         fields = UserSerializer.Meta.fields
 
-class EntrepriseSerializer (serializers.ModelSerializer) : 
-    class Meta : 
-        model = Entreprise
-        fields = []
-
 class StageSerializer (serializers.ModelSerializer) : 
     class Meta : 
         model = Stage

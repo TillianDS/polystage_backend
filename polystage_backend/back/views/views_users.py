@@ -18,27 +18,7 @@ class UserList(APIView):
         Response :
         information lié à l'utilisateur crée
     """
-    def enregistrement (request, serializer) :
-        password_length = 7
-        if serializer.is_valid(): 
-            password1 = request.data["password1"]
-            password2 = request.data["password2"]
-            if password1 == password2 :
-                if len(password1)>= password_length : 
-                    if re.findall('[a-z]', password1):
-                        if re.findall('[A-Z]', password1):
-                            if re.findall('[()[\]{}|\\`~!@#$%^&*_\-+=;:\'",<>./?]', password1):
-                                user = serializer.save()
-
-                                user.set_password(request.data["password1"])
-                                user.save()
-                                return Response(serializer.data, status=status.HTTP_201_CREATED)
-                            return Response({"error": """le mot de passe doit cotenir un caractère spécial ()[\]{}|\\`~!@#$%^&*_\-+=;:\'",<>./?"""})
-                        return Response({"error": "le mot de passe doit contentir une majuscule"}, status=status.HTTP_400_BAD_REQUEST)
-                    return Response({"error" : "le mot de passe doit contenir une minuscule"}, status=status.HTTP_400_BAD_REQUEST)
-                return Response ({"error" : "le mot de passe doit faire plus de {} caractères".format(password_length)} , status=status.HTTP_400_BAD_REQUEST)
-            return Response({"error" : "les mots de passes ne correspondent pas"}, status=status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
 
     def choice_serializer (self, profile, user, many) :
         if profile == 'ENS' : 
@@ -46,13 +26,13 @@ class UserList(APIView):
         elif profile == 'ETU':
             return EtudiantSerializer(user, many = many)
         elif profile == 'ADM':
-            return AdminSerializer(user, many = many)
+            return AdminSerializer(data = user, many = many)
         elif profile == 'PRO':
-            return ProfessionnelSerializer(user, many= many)
+            return ProfessionnelSerializer(data = user, many= many)
         elif profile == 'TUT':
-            return TuteurSerializer(user, many = many)
+            return TuteurSerializer(data = user, many = many)
         
-    def choice_user (self, data, profile):
+    def choice_user (self, profile):
         if profile == 'ENS' : 
             return Enseignant.objects.all()
         elif profile == 'ETU':
@@ -68,17 +48,40 @@ class UserList(APIView):
     définie les fonction sur l'enseignant
     """
     def get(self, request, profile, format=None):
-        user = self.choice_user(request.data, profile)
+        user = self.choice_user(profile)
         serializer = self.choice_serializer(profile, user, True)
         
-        if serializer :
+        if serializer:
             return Response(serializer.data) 
         return Response({"error" : "le profile n'est pas valide"}, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, profile, format=None):
-        serializer = self.choice_serializer(request.data, False)
-        return self.enregistrement(request, serializer)
+        serializer = self.choice_serializer(profile, request.data, False)
+        
+        password_length = 7
+        if serializer.is_valid(): 
+            password1 = request.data["password1"]
+            password2 = request.data["password2"]
 
+            if password1 != password2:
+                return Response({"error": "Les mots de passe ne correspondent pas"}, status=status.HTTP_400_BAD_REQUEST)
+            if len(password1) < password_length:
+                return Response({"error": f"Le mot de passe doit contenir au moins {password_length} caractères"}, status=status.HTTP_400_BAD_REQUEST)
+            if not any(char.islower() for char in password1):
+                return Response({"error": "Le mot de passe doit contenir au moins une lettre minuscule"}, status=status.HTTP_400_BAD_REQUEST)
+            if not any(char.isupper() for char in password1):
+                return Response({"error": "Le mot de passe doit contenir au moins une lettre majuscule"}, status=status.HTTP_400_BAD_REQUEST)
+            if not any(char in r'[()[\]{}|\\`~!@#$%^&*_\-+=;:\'",<>./?]' for char in password1):
+                return Response({"error": "Le mot de passe doit contenir au moins un caractère spécial"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            user = serializer.save()
+
+            user.set_password(password1)
+            user.save()
+            return Response(user, status=status.HTTP_201_CREATED)
+                            
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 class EtudiantList(APIView):
     
     def get(self, request, format=None):

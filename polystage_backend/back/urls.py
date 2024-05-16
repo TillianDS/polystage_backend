@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import views_login, views_test, views_etudiant, views_users
+from .views import views_login, views_test, views_etudiant, views_users, views_admin, views_promo_filiere
 
 urlpatterns = [
     path('test/', views_test.FiliereList.as_view()),
@@ -16,6 +16,15 @@ urlpatterns = [
     path('password/<int:pk>/', views_login.Change_password.as_view()),
     path('login/', views_login.CostumLogin.as_view()),
 
+    #views_admin
+    path('userDetails/', views_admin.GetUser.as_view()),
+
+    #views_promo_filiere
+    path('promoDetails/<int:pk>/', views_promo_filiere.PromoDetails.as_view()),
+    path('promoList/', views_promo_filiere.PromoList.as_view()),
+
+    path('filiereList/', views_promo_filiere.FiliereList.as_view()),
+    path('filiereDetails/<int:pk>/', views_promo_filiere.FiliereDetails.as_view()),
 
     ]
 
