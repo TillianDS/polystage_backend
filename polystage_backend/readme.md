@@ -136,7 +136,8 @@ http://127.0.0.1/filiereDetails/<int:pk>'
 
 ##### arguments requete
 
-- les informations que l'on veut modifier uniquement
+- les informations que l'on veut modifier
+- mais aussi celles qui ne changent pas
 
 ##### response
 
@@ -192,7 +193,8 @@ http://127.0.0.1/promoDetails/<int:pk>/
 
 ##### arguments requete
 
-- les informations que l'on veut modifier uniquement 
+- les informations que l'on veut modifier
+- mais aussi celles qui ne changent pas
 
 ##### response
 
