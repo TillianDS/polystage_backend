@@ -269,7 +269,10 @@ champ sur lesquelels on souhaite faire la recherche
 
 à part pour la date et le profile qui deoivent être entier, les autres champ peuvent être incomplet et la base cherchera les utilisateurs contenant cette chaine dans l'attribut
 
-la recher des champ peut être cumulative
+la recherche des champs peuvent être cumulative
+
+les chaine de caractères ne respectent pas la casse
+
 ##### response
 
 informations de ou des utilisateurs trouvés
