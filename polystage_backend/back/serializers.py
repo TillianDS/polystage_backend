@@ -13,7 +13,13 @@ class PromoSerializer (serializers.ModelSerializer) :
     class Meta :
         model = Promo
         fields = ['id', 'annee', 'filiere']
-    
+
+class PromoFiliereSerializer (serializers.ModelSerializer) :
+    filiere = FiliereSerializer()
+    class Meta :
+        model = Promo
+        fields = ['id', 'annee', 'filiere']
+        
 class UserSerializer(serializers.ModelSerializer):
     PROFILE_CHOICES = [
         ('ENS', 'Enseignant'),

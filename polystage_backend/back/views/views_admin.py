@@ -44,6 +44,7 @@ class GetUser (APIView):
         prenom = self.get_string_data(request, 'first_name')
         nom = self.get_string_data(request, 'last_name')
         email = self.get_string_data(request, 'email')
+        profile = self.get_string_data(request, 'profile')
 
         # seul l'etudiant possède une date de naissance ou un numéro etudiant
         if 'date_naissance' in request.data  or 'num_etudiant' in request.data:
@@ -55,7 +56,7 @@ class GetUser (APIView):
                 user = Etudiant.objects.filter(last_name__icontains = nom, first_name__icontains = prenom, date_naissance = date_naissance, num_etudiant__icontains = num_etudiant, email__icontains = email)
 
             else :
-                user = Etudiant.objects.filter(last_name__icontains = nom, first_name__icontains = prenom, num_etudiant = num_etudiant, email__icontains = email)
+                user = Etudiant.objects.filter(last_name__icontains = nom, first_name__icontains = prenom, num_etudiant = num_etudiant, email__icontains = email, profile = profile )
 
         else :
             user = CustomUser.objects.filter(last_name__icontains = nom, first_name__icontains = prenom, email__icontains = email)

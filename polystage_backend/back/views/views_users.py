@@ -126,7 +126,7 @@ class AdminList(APIView):
         serializer = AdminSerializer(data = request.data)
         return enregistrement(request, serializer)
 
-class User_details(APIView):
+class UserDetails(APIView):
     """
     Retrieve, update or delete a User.
     """
@@ -137,12 +137,14 @@ class User_details(APIView):
     def get (self, request, pk, format = None) : 
         user = self.get_User(pk)
         serializer = UserSerializer(user)
-        data = user.profile
-        return Response(data)
+        return Response(serializer.data)
     
     def put(self, request, pk, format = None):
         user = self.get_User(pk)
-        serializer = UserSerializer(user,data = request.data)
+        data = request.data.copy()
+
+        data['profile'] =  user.profile
+        serializer = UserSerializer(user,data = data)
         if serializer.is_valid() :
             serializer.save()
             return Response(serializer.data)

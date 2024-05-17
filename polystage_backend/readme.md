@@ -18,9 +18,10 @@ python3 manage.py migrate
 
 ### Utilisateur
 
-les informations de l'utilisateur :
+##### les informations de l'utilisateur :
 
 - id (int) : identfifiant de l'utilisateur
+- email (email) : email de l'utilisateur
 - first_name (string) : prenom
 - last_name (string) : prenom
 - first_connection (boolean): est ce la première connection de l'utilisateur
@@ -30,6 +31,14 @@ pour les etudiants on trouve en plus :
 
 - num_etudiant (int) : numéro de l'etudiant
 - date_naissance (date) : date de naissance de l'etudiant
+
+##### les profiles possibles pour un utilisateur :
+
+- ENS : enseignant
+- ADM : admin
+- ETU : etudiant
+- TUT : tuteur
+- PRO : professionnel
 
 ### login
 
@@ -54,6 +63,14 @@ si les identifiants :
 - "token" : token d'authentification
 - "type utilisateur" : type de l'utilisateur qui se connecte
 
+```bash
+{
+    "token": "a5d8e22e748f34af4205d2b2714b22a4a7bcdcbe",
+    "user_id": 14,
+    "profile": "ADM"
+}
+```
+
 ### change password
 
 permet de changer modifier le mot de passe d'un utilisateur
@@ -75,7 +92,219 @@ http://127.0.0.1/password/<int:pk>/
 
 ##### response
 
-- informations de l'utilisateur
+informations de l'utilisateur
+
+```bash
+    {
+        "id": 21,
+        "email": "enseignant14@po.fr",
+        "first_name": "Benoit",
+        "last_name": "Favre",
+        "first_connection": true,
+        "profile": "ENS"
+    }
+```
+### UserList
+
+afficher ou créer des utilisateurs
+
+```url
+http://127.0.0.1/userList/<str:profile>/'
+```
+
+#### GET
+
+accès aux informations de toutes les utilisateurs du profile spécifié
+
+##### response 
+
+les informations de toutes le profile
+
+```bash
+http://127.0.0.1/userList/ENS/
+
+[
+     {
+        "id": 12,
+        "email": "enseignant5@po.fr",
+        "first_name": "Benoit",
+        "last_name": "Favre",
+        "first_connection": false,
+        "profile": "ENS"
+    },
+    {
+        "id": 15,
+        "email": "enseignant6@po.fr",
+        "first_name": "Benoit",
+        "last_name": "Favre",
+        "first_connection": true,
+        "profile": "ENS"
+    },
+]
+```
+
+#### POST
+creation d'un user selon le profile spécifié
+
+##### requete
+
+- email (email) : email du user
+- first_name (string) : prenom
+- last_name (string) : prenom
+
+pour les etudiants on trouve en plus :
+
+- num_etudiant (int) : numéro de l'etudiant
+- date_naissance (date) : date de naissance de l'etudiant
+
+##### response
+
+informations de l'utilisateur crée
+
+```bash
+http://127.0.0.1/userList/ENS/
+{
+        "id": 12,
+        "email": "enseignant5@po.fr",
+        "first_name": "Benoit",
+        "last_name": "Favre",
+        "first_connection": True,
+        "profile": "ENS"
+    }
+```
+
+### userDetails
+
+permet d'accèder à un user spécifique, de le modifier ou de le supprimer
+
+```url
+http://127.0.0.1/userDetails/<int:pk>/'
+```
+
+##### argument url
+
+- pk (int) : id du user que l'on voudra modifier
+
+#### GET
+
+##### response
+
+informations de l'utilisateur
+
+```bash
+http://127.0.0.1/userDetails/1/
+{
+    "id": 12,
+    "email": "enseignant5@po.fr",
+    "first_name": "Benoit",
+    "last_name": "Favre",
+    "first_connection": false,
+    "profile": "profile"
+}
+```
+
+#### PUT
+
+##### arguments requete
+
+les informations que l'on veut modifier mais aussi celles qui ne changent pas
+
+- email (email): email user
+- first_name : prenom
+- last_name : nom
+
+si etudiant :
+
+- date_naissance (string : Day-Month-Year) : date naissance
+- num_etudiant (string) : numéro etudiant
+
+##### response
+
+```bash
+http://127.0.0.1/userDetails/1/
+{
+    "id": 25,
+    "email": "BenoiFavre@po.fr",
+    "first_name": "Benoit",
+    "last_name": "Favre",
+    "first_connection": false,
+    "profile": "ENS"
+}
+```
+
+#### DELETE
+
+suprime la filiere
+
+```bash
+{
+    "success": "utilisateur supprimé avec succès"
+}
+```
+
+##### response
+
+- success : message de succès
+
+## Admin
+
+méthode de l'admin pour la gestion des utilisateur
+
+```url
+http://127.0.0.1/userSearch/'
+```
+
+#### POST
+
+##### requete
+
+champ sur lesquelels on souhaite faire la recherche
+
+- first_name (string)
+- last_name (string)
+- email (string) 
+- num_etudiant (string)
+- date_naissance (string : Day-Month-Year)
+- profile (string)
+
+à part pour la date et le profile qui deoivent être entier, les autres champ peuvent être incomplet et la base cherchera les utilisateurs contenant cette chaine dans l'attribut
+
+la recher des champ peut être cumulative
+##### response
+
+informations de ou des utilisateurs trouvés
+
+```bash
+http://127.0.0.1/userSearch/
+
+pour une requete : 
+{
+    "first_name" : "ben"
+    "last_name" : "vre"
+    "email" : "6"
+    "profile" : "ENS"
+}
+
+on aura : 
+[
+    {
+        "id": 15,
+        "email": "enseignant6@po.fr",
+        "first_name": "Benoit",
+        "last_name": "Favre",
+        "first_connection": true,
+        "profile": "profile"
+    },
+    {
+        "id": 23,
+        "email": "enseignant16@po.fr",
+        "first_name": "Benoit",
+        "last_name": "Favre",
+        "first_connection": true,
+        "profile": ""
+    }
+]
+```
 
 ## Filiere
 
@@ -101,6 +330,22 @@ accès aux informations de toutes les filières
 
 les informations de toutes les filires
 
+```bash
+[
+    {
+        "id": 2,
+        "nom": "Genie Biologique",
+        "nom_directeur": "Parsiegla",
+        "prenom_directeur": "Goetz"
+    },
+    {
+        "id": 3,
+        "nom": "Materiaux",
+        "nom_directeur": "jean",
+        "prenom_directeur": "jean"
+    }
+]
+```
 
 #### POST
 creation d'une filière
@@ -114,12 +359,21 @@ creation d'une filière
 
 informations de la filiere créée
 
+```bash
+{
+        "id": 2,
+        "nom": "Genie Biologique",
+        "nom_directeur": "Parsiegla",
+        "prenom_directeur": "Goetz"
+    },
+```
+
 ### filiereDetails
 
 permet d'accèder à une filiere spécifique, de la modifier ou de la supprimer
 
 ```url
-http://127.0.0.1/filiereDetails/<int:pk>'
+http://127.0.0.1/filiereDetails/<int:pk>/'
 ```
 
 ##### argument url
@@ -130,7 +384,16 @@ http://127.0.0.1/filiereDetails/<int:pk>'
 
 ##### response
 
-- informations de la filiere
+informations de la filiere
+
+```bash
+{
+    "id": 5,
+    "nom": "Informatique",
+    "nom_directeur": "Ayache",
+    "prenom_directeur": "Stephane"
+}
+```
 
 #### PUT
 
@@ -141,7 +404,14 @@ http://127.0.0.1/filiereDetails/<int:pk>'
 
 ##### response
 
-- informations de la filiere
+```bash
+{
+    "id": 5,
+    "nom": "Informatique",
+    "nom_directeur": "Ayache",
+    "prenom_directeur": "Stephane"
+}
+```
 
 #### DELETE
 
@@ -149,11 +419,15 @@ suprime la filiere
 
 ##### response
 
-- success : message de succès
+```bash
+{
+    "success": "filiere supprimée avec succès"
+}
+```
 
 ## Promo
 
-les informations d'une promo
+les informations et la création d'une promo
 
 - id (int): id de la promo
 - annee (int) : annee de la promo
@@ -164,6 +438,47 @@ les informations d'une promo
 ```url
 http://127.0.0.1/promoList/'
 ```
+#### GET
+
+##### response
+
+les informations de toutes les promos
+
+```bash
+[
+    {
+        "id": 4,
+        "annee": 2027,
+        "filiere": 2
+    },
+    {
+        "id": 5,
+        "annee": 2028,
+        "filiere": 2
+    }
+]
+```
+
+#### POST
+
+permet de créer une promo
+
+#### requete
+
+- annee (int) : annee de la promo
+- filiere (int) : id de la filiere à laquelle appartient la promo
+
+##### response
+
+les données de la promo créée
+
+```bash
+{
+    "id": 6,
+    "annee": 2029,
+    "filiere": 2
+}
+```
 
 ### PromosDetails
 
@@ -173,12 +488,6 @@ permet d'accèder à un promo spécifique, de la modifier ou de la supprimer
 http://127.0.0.1/promoDetails/<int:pk>/
 ```
 
-#### GET
-
-##### response
-
-- les informations de toutes les promos
-
 ##### argument url
 
 - pk (int) : id de la promo que l'on voudra mofifier
@@ -187,7 +496,13 @@ http://127.0.0.1/promoDetails/<int:pk>/
 
 ##### response
 
-- informations de la promo
+```bash
+{
+    "id": 2,
+    "annee": 2026,
+    "filiere": 2
+}
+```
 
 #### PUT
 
@@ -198,12 +513,64 @@ http://127.0.0.1/promoDetails/<int:pk>/
 
 ##### response
 
-- informations de la promo
+information de la promo avec les modifications
+
+```bash
+{
+    "id": 2,
+    "annee": 2026,
+    "filiere": 2
+}
+```
 
 #### DELETE
 
 suprime la promo
 
+
 ##### response
 
-- success : message de succès
+```bash
+{
+    "success": "promo supprimée avec succès"
+}
+```
+
+### PromoFiliere
+
+permet d'afficher une promo associé à sa filière
+
+```url
+http://127.0.0.1/promoDetails/
+```
+
+#### GET
+
+affiche toutes les promos avec la filiere associé
+
+##### response
+
+```bash
+[
+    {
+        "id": 2,
+        "annee": 2026,
+        "filiere": {
+            "id": 2,
+            "nom": "Genie Biologique",
+            "nom_directeur": "Parsiegla",
+            "prenom_directeur": "Goetz"
+        }
+    },
+    {
+        "id": 4,
+        "annee": 2027,
+        "filiere": {
+            "id": 2,
+            "nom": "Genie Biologique",
+            "nom_directeur": "Parsiegla",
+            "prenom_directeur": "Goetz"
+        }
+    }
+]
+```
