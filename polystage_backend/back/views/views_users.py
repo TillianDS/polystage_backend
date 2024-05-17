@@ -26,12 +26,24 @@ class UserList(APIView):
         elif profile == 'ETU':
             return EtudiantSerializer(user, many = many)
         elif profile == 'ADM':
-            return AdminSerializer(data = user, many = many)
+            return AdminSerializer(user, many = many)
+        elif profile == 'PRO':
+            return ProfessionnelSerializer(user, many= many)
+        elif profile == 'TUT':
+            return TuteurSerializer(user, many = many)
+
+    def choice_deserializer (self, profile, user, many) :
+        if profile == 'ENS' : 
+            return EnseignantSerializer(data =user, many = many)
+        elif profile == 'ETU':
+            return EtudiantSerializer(data = user, many = many)
+        elif profile == 'ADM':
+            return AdminSerializer(data =user, many = many)
         elif profile == 'PRO':
             return ProfessionnelSerializer(data = user, many= many)
         elif profile == 'TUT':
             return TuteurSerializer(data = user, many = many)
-        
+          
     def choice_user (self, profile):
         if profile == 'ENS' : 
             return Enseignant.objects.all()
@@ -49,14 +61,14 @@ class UserList(APIView):
     """
     def get(self, request, profile, format=None):
         user = self.choice_user(profile)
-        serializer = self.choice_serializer(profile, user, True)
         
-        if serializer:
+        if user:
+            serializer = self.choice_serializer(profile, user, True)
             return Response(serializer.data) 
         return Response({"error" : "le profile n'est pas valide"}, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, profile, format=None):
-        serializer = self.choice_serializer(profile, request.data, False)
+        serializer = self.choice_deserializer(profile, request.data, False)
         
         password_length = 7
         if serializer.is_valid(): 
@@ -78,53 +90,9 @@ class UserList(APIView):
 
             user.set_password(password1)
             user.save()
-            return Response(user, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
                             
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-class EtudiantList(APIView):
-    
-    def get(self, request, format=None):
-        etudiant = Etudiant.objects.all()
-        serializer = EtudiantSerializer(etudiant, many=True)
-        return Response(serializer.data) 
-
-    def post(self, request, format=None):
-        serializer = EtudiantSerializer(data = request.data)
-        return enregistrement(request, serializer)
-    
-class TuteurList(APIView):
-    
-    def get(self, request, format=None):
-        tuteur = Tuteur.objects.all()
-        serializer = TuteurSerializer(tuteur, many=True)
-        return Response(serializer.data) 
-
-    def post(self, request, format=None):
-        serializer = TuteurSerializer(data = request.data)
-        return enregistrement(request, serializer)
-  
-class ProfessionnelList(APIView):
-    
-    def get(self, request, format=None):
-        professionnel = Professionnel.objects.all()
-        serializer = ProfessionnelSerializer(professionnel, many=True)
-        return Response(serializer.data) 
-
-    def post(self, request, format=None):
-        serializer = ProfessionnelSerializer(data = request.data)
-        return enregistrement(request, serializer)
-
-class AdminList(APIView):
-    
-    def get(self, request, format=None):
-        admin = Admin.objects.all()
-        serializer = AdminSerializer(admin, many=True)
-        return Response(serializer.data) 
-
-    def post(self, request, format=None):
-        serializer = AdminSerializer(data = request.data)
-        return enregistrement(request, serializer)
 
 class UserDetails(APIView):
     """

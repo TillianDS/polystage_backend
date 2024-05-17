@@ -49,13 +49,24 @@ class Checkemail (APIView) :
 
 
 class Change_password (APIView) :
+    def get_user (self, pk):
+        return CustomUser.objects.get(pk = pk)
     
-    def verify_set_passsword (request, user) :
-        password1 = request.data["password1"]
-        password2 = request.data["password2"]
-        if password1 == password2 :
-            user.set_password(password1)
-            return True
+    def verify_passsword (self, password1, password2, request) :
+        
+        password_length = 7
+
+        if password1 != password2:
+            return {"error": "Les mots de passe ne correspondent pas"}
+        if len(password1) < password_length:
+            return {"error": f"Le mot de passe doit contenir au moins {password_length} caractères"}
+        if not any(char.islower() for char in password1):
+            return {"error": "Le mot de passe doit contenir au moins une lettre minuscule"}
+        if not any(char.isupper() for char in password1):
+            return {"error": "Le mot de passe doit contenir au moins une lettre majuscule"}
+        if not any(char in r'[()[\]{}|\\`~!@#$%^&*_\-+=;:\'",<>./?]' for char in password1):
+            return {"error": "Le mot de passe doit contenir au moins un caractère spécial"}
+        
         return False
     """
     permet de changer le mot de passe dans le cadre d'un mot de passe oublié ou définition d'un nouveau mot de passe 
@@ -72,15 +83,19 @@ class Change_password (APIView) :
 
     """
     def post (self, request, pk, format = None) :
-        user = CustomUser.objects.get(pk = pk)
-        
+        user = self.get_user(pk)
+        password1 = request.data["password1"]
+        password2 = request.data["password2"]
+        error = self.verify_passsword(password1, password2, request)
 
-        if self.verify_set_passsword(request, user):
-            if user.first_connection :
-                user.first_connection = False
+        if not (error == False) :
+            return Response(error, status=status.HTTP_400_BAD_REQUEST)
+
+        user.set_password(request.data['password1'])
+        if user.first_connection :
+            user.first_connection = False
             
-            user.save()
+        user.save()
 
-            return Response(UserSerializer(user).data, status= status.HTTP_202_ACCEPTED)
-        return Response({"errors" : "les mots de passe ne sont pas identiques"}, status= status.HTTP_400_BAD_REQUEST)
+        return Response(UserSerializer(user).data, status= status.HTTP_202_ACCEPTED)
     
