@@ -46,6 +46,9 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.email
 
+class CodePassword(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    code = models.IntegerField()
 
 class Admin(CustomUser):
     

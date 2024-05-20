@@ -13,8 +13,10 @@ urlpatterns = [
     path('userList/<str:profile>/', views_users.UserList.as_view()),
 
     #views_login
-    path('changePassword/<int:pk>/', views_login.Change_password.as_view()),
+    path('changePassword/<int:pk>/', views_login.ChangePassword.as_view()),
     path('login/', views_login.CostumLogin.as_view()),
+    path('codeReset/', views_login.SendCodeEmail.as_view()),
+    path('code/', views_login.gestionCode.as_view()),
 
     #views_admin
     path('userSearch/', views_admin.GetUser.as_view()),

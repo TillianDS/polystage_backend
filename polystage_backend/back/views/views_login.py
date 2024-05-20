@@ -1,11 +1,15 @@
+import random
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from ..models import CustomUser
+from ..models import CustomUser, CodePassword
 from ..serializers import *
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from django.contrib.auth import login, authenticate
+from django.core.mail import send_mail
+from django.conf import settings
 
 class CostumLogin(APIView):
     """
@@ -40,18 +44,12 @@ class CostumLogin(APIView):
             return Response({"first_connection" : True})
         return Response({'error' : "password or email are not correct"}, status=status.HTTP_401_UNAUTHORIZED)
 
-
-class Checkemail (APIView) :
-    def post (self, request, format = None) :
-        return Response({"send" : True})
-
-
-
-
-class Change_password (APIView) :
+class ChangePassword (APIView) :
     def get_user (self, pk):
         return CustomUser.objects.get(pk = pk)
-    
+    """
+    vérifie la validité du mdp
+    """
     def verify_passsword (self, password1, password2, request) :
         
         password_length = 7
@@ -98,4 +96,65 @@ class Change_password (APIView) :
         user.save()
 
         return Response(UserSerializer(user).data, status= status.HTTP_202_ACCEPTED)
+
+class gestionCode(APIView):
+    def generate_code(self, user: CustomUser): 
+        codePassword = CodePassword.objects.filter(user=user)
+        code = random.randint(100000, 999999)
+
+        if codePassword :
+            codePassword = CodePassword.objects.get(user=user)
+            codePassword.code = code
+        else :
+            codePassword = CodePassword.objects.create(user = user, code = code)
+        codePassword.save()
+        return code
+ 
     
+    def get(self, request) :
+        user = CustomUser.objects.get(email = 'tdhume@laposte.net')
+        return Response({'code': self.generate_code(user)})
+    
+class SendCodeEmail (APIView) :
+    """
+    créer un nombre de manière aléatoire à 6 chiffre, permet de généré la code reset du mdp
+    """
+    def generate_code(self): 
+        return random.randint(100000, 999999)
+    
+    """
+    envoie un mail à l'utilisateur avec son code de réinitilisation, s'il existe
+    si l'utilisateur n'existe pas, on a le même message de succès mais aucun mail n'est envoyé
+
+    type de requete : POST
+    
+    arguments requete :
+    "email" : email de l'utilisateur à réiniatiliser
+
+    Response : 'success': 'email envoyé avec succès'
+
+    """
+    def post (self, request, format = None) :
+        data = request.data
+        if 'email' in data :
+            to_email = data['email']
+
+            user = CustomUser.objects.filter(email = to_email)
+            
+            if user :
+                code = gestionCode.generate_code(user=user)
+                subject = 'Réinitialiser votre mot de passe'
+                message = 'Votre code de réinitialisation est le suivant %d'%(code)
+                from_email = settings.EMAIL_HOST_USER
+                send_mail(subject, message, from_email, [to_email])
+
+            return Response({'success': 'email envoyé avec succès'}, status=status.HTTP_200_OK)
+        return Response({'error': 'error'}, status=status.HTTP_400_BAD_REQUEST)
+    
+class CheckCode (APIView) :
+    def post (self, request, format = None) :
+        email = request.data['email']
+        code = request.data['code']
+
+
+        return Response({"success" : True})

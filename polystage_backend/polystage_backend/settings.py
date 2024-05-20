@@ -169,5 +169,10 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5050",  # Autoriser les requêtes depuis ce domaine
 ]
 
-DATE_FORMAT = 'd/m/Y'
-DATETIME_FORMAT = 'd/m/Y H:i:s'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'polystage.mars@gmail.com'
+EMAIL_HOST_PASSWORD = 'cpwg mnuh pkoe pgfx'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'default from email'

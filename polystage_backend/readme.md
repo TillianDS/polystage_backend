@@ -71,6 +71,29 @@ si les identifiants :
 }
 ```
 
+### codeReset
+
+envoie un mail à l'utilisateur avec son code de réinitilisation, s'il existe
+si l'utilisateur n'existe pas, on a le même message de succès mais aucun mail n'est envoyé
+
+```url
+http://127.0.0.1/codeReset/
+```
+
+#### POST
+
+##### arguments requete
+
+- "email" : email de l'utilisateur
+
+##### response
+
+```bash
+{
+    "success": "email envoyé avec succès"
+}
+```
+
 ### change password
 
 permet de changer modifier le mot de passe d'un utilisateur
