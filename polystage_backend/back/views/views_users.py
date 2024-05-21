@@ -121,5 +121,5 @@ class UserDetails(APIView):
     def delete(self, request, pk, format = None) :
         user = self.get_User(pk)
         user.delete()
-        return Response ({"success" : "utilisateur supprimé avec succès"}, status= status.HTTP_204_NO_CONTENT)
+        return Response ({"success" : "utilisateur supprimé avec succès"}, status= status.HTTP_200_OK)
     
