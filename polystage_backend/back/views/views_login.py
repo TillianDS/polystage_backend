@@ -156,5 +156,9 @@ class CheckCode (APIView) :
         email = request.data['email']
         code = request.data['code']
 
+        codePassword : CodePassword = CodePassword.objects.get(email = email)
+        codeBase = codePassword.code
 
+        if (code != codePassword) :
+            return Response({"success" : True})
         return Response({"success" : True})

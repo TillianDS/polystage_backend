@@ -2,18 +2,15 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import views_login, views_test, views_etudiant, views_users, views_admin, views_promo_filiere
+from .views import views_login, views_etudiant, views_users, views_admin, views_promo_filiere
 
 urlpatterns = [
-    path('test/', views_test.FiliereList.as_view()),
-    path('test/<int:pk>/', views_test.filiere_details),
-
-    #views_Users
+     #views_Users
     path('userDetails/<int:pk>/', views_users.UserDetails.as_view()),
-    path('userList/<str:profile>/', views_users.UserList.as_view()),
+    path('userList/', views_users.UserList.as_view()),
 
     #views_login
-    path('changePassword/<int:pk>/', views_login.ChangePassword.as_view()),
+    path('changePassword/', views_login.ChangePassword.as_view()),
     path('login/', views_login.CostumLogin.as_view()),
     path('codeReset/', views_login.SendCodeEmail.as_view()),
     path('code/', views_login.gestionCode.as_view()),
