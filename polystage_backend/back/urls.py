@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import views_login, views_etudiant, views_users, views_admin, views_promo_filiere
+from .views import views_login, views_etudiant, views_users, views_admin, views_promo_filiere, views_stage
 
 urlpatterns = [
      #views_Users
@@ -26,6 +26,12 @@ urlpatterns = [
     path('filiereDetails/<int:pk>/', views_promo_filiere.FiliereDetails.as_view()),
 
     path('promoFiliere/', views_promo_filiere.PromoFiliere.as_view()),
+
+    #views_promo_filiere
+    path('stageList/', views_stage.StageList.as_view()),
+    path('stageDetails/<int:pk>/', views_stage.StageDetails.as_view()),
+    
     ]
+
 
 urlpatterns = format_suffix_patterns(urlpatterns)

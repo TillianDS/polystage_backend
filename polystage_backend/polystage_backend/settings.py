@@ -163,6 +163,8 @@ REST_FRAMEWORK = {
     ],
 }
 
+SITE_ID = 1
+
 CORS_ALLOW_ALL_ORIGINS = True  # Autoriser tous les domaines
 
 CORS_ALLOWED_ORIGINS = [

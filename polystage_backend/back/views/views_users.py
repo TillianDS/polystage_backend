@@ -59,7 +59,8 @@ class UserList(APIView):
     """
     définie les fonction sur l'enseignant
     """
-    def get(self, request, profile, format=None):
+    def get(self, request, format=None):
+        profile = request.data['profile']
         user = self.choice_user(profile)
         
         if user:
@@ -67,7 +68,8 @@ class UserList(APIView):
             return Response(serializer.data) 
         return Response({"error" : "le profile n'est pas valide"}, status=status.HTTP_400_BAD_REQUEST)
 
-    def post(self, request, profile, format=None):
+    def post(self, request, format=None):
+        profile = request.data['profile']
         serializer = self.choice_deserializer(profile, request.data, False)
         
         password_length = 7

@@ -73,7 +73,7 @@ class AdminSerializer (UserSerializer) :
 class StageSerializer (serializers.ModelSerializer) : 
     class Meta : 
         model = Stage
-        fields = ['id', 'confidentiel', 'sujet', 'date_debut', 'date_fin', 'entreprise', 'tuteur']
+        fields = ['id', 'confidentiel', 'sujet', 'date_debut', 'date_fin', 'nom_entreprise', 'tuteur']
 
 class JurySerializer (serializers.ModelSerializer) : 
     class Meta : 

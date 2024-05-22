@@ -76,6 +76,9 @@ class Stage(models.Model):
     tuteur =  models.ForeignKey(Tuteur, on_delete=models.CASCADE )
     nom_entreprise = models.CharField(max_length= 200)
 
+    def __str__(self):
+        return self.pk
+
 class Jury(models.Model):
     professionnel = models.ManyToManyField(Professionnel)
     enseignant = models.ManyToManyField(Enseignant)

@@ -17,7 +17,7 @@ class FiliereList(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class FiliereDetails (APIView):
 
@@ -84,8 +84,6 @@ class PromoFiliere(APIView) :
         promo = Promo.objects.all()
         serializer = PromoFiliereSerializer(promo, many= True)
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-    
-    
     
     """"
     def post (self, request, format = None) : 
