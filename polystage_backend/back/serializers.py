@@ -15,7 +15,7 @@ class PromoSerializer (serializers.ModelSerializer) :
         fields = ['id', 'annee', 'filiere']
 
 class PromoFiliereSerializer (serializers.ModelSerializer) :
-    filiere = FiliereSerializer()
+    filiere = FiliereSerializer(read_only = True)
     class Meta :
         model = Promo
         fields = ['id', 'annee', 'filiere']
@@ -37,10 +37,11 @@ class EtudiantSerializer(UserSerializer):
     num_etudiant = serializers.CharField()
     date_naissance = serializers.DateField()
     profile = serializers.ChoiceField(choices=UserSerializer.PROFILE_CHOICES, default='ETU')
+    promo = PromoSerializer(allow_null=True, required=False)
 
     class Meta:
         model = Etudiant
-        fields = UserSerializer.Meta.fields + ['num_etudiant', 'date_naissance']
+        fields = UserSerializer.Meta.fields + ['num_etudiant', 'date_naissance', 'promo']
 
 class TuteurSerializer (UserSerializer) :
     profile = serializers.ChoiceField(choices=UserSerializer.PROFILE_CHOICES, default='TUT')
@@ -76,11 +77,13 @@ class StageSerializer (serializers.ModelSerializer) :
         fields = ['id', 'confidentiel', 'sujet', 'date_debut', 'date_fin', 'nom_entreprise', 'tuteur']
 
 class JurySerializer (serializers.ModelSerializer) : 
+    professionnel = ProfessionnelSerializer(many = True, read_only = True)
+    enseignant = EnseignantSerializer(many = True, read_only = True)
     class Meta : 
         model = Jury
-        fields = ['id', 'profesionnel', 'enseignant']
+        fields = ['id', 'professionnel', 'enseignant']
 
 class SoutenanceSerializer (serializers.ModelSerializer) : 
     class Meta : 
         model = Soutenance
-        fields = ['id', 'date_soutenance', 'etudiant', 'jury', 'stage']
+        fields = ['id', 'date_soutenance', 'heure_soutenance', 'etudiant', 'jury', 'stage']

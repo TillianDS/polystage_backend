@@ -2,10 +2,10 @@ import re
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from ..models import CustomUser, Enseignant, Tuteur, Admin, Professionnel, Etudiant
-from ..serializers import UserSerializer, EnseignantSerializer, TuteurSerializer, ProfessionnelSerializer, AdminSerializer, EtudiantSerializer
+from ..models import CustomUser, Enseignant, Tuteur, Admin, Professionnel, Etudiant, Promo
+from ..serializers import UserSerializer, EnseignantSerializer, TuteurSerializer, ProfessionnelSerializer, AdminSerializer, EtudiantSerializer, PromoSerializer
 from rest_framework.authentication import TokenAuthentication
-
+from .date_heure import getDate
 
 class UserList(APIView):
 
@@ -31,7 +31,9 @@ class UserList(APIView):
             return ProfessionnelSerializer(user, many= many)
         elif profile == 'TUT':
             return TuteurSerializer(user, many = many)
-
+        else :
+            return 'error'
+        
     def choice_deserializer (self, profile, user, many) :
         if profile == 'ENS' : 
             return EnseignantSerializer(data =user, many = many)
@@ -43,6 +45,8 @@ class UserList(APIView):
             return ProfessionnelSerializer(data = user, many= many)
         elif profile == 'TUT':
             return TuteurSerializer(data = user, many = many)
+        else :
+            return 'error'
           
     def choice_user (self, profile):
         if profile == 'ENS' : 
@@ -59,21 +63,32 @@ class UserList(APIView):
     """
     définie les fonction sur l'enseignant
     """
+    def getPromo(self, pk):
+        return Promo.objects.get(pk=pk)
+    
     def get(self, request, format=None):
         profile = request.data['profile']
         user = self.choice_user(profile)
         
-        if user:
+        if user != 'error':
             serializer = self.choice_serializer(profile, user, True)
             return Response(serializer.data) 
-        return Response({"error" : "le profile n'est pas valide"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error" : "le profile n'est pas bon"}, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, format=None):
         profile = request.data['profile']
-        serializer = self.choice_deserializer(profile, request.data, False)
+        data = request.data
+        if profile == 'ETU' :
+            data = data.copy()
+            data['promo'] = Promo.objects.get(pk=request.data['promo']).pk
+
+            data['date_naissance'] = getDate(request.data['date_naissance'])
+        serializer = self.choice_deserializer(profile, data, False)
         
         password_length = 7
         if serializer.is_valid(): 
+
+            return Response(data)
             password1 = request.data["password1"]
             password2 = request.data["password2"]
 
@@ -91,6 +106,9 @@ class UserList(APIView):
             user = serializer.save()
 
             user.set_password(password1)
+            if profile == 'ETU':
+                user:Etudiant
+                user.promo = self.getPromo(pk=request.data['promo'])
             user.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
                             

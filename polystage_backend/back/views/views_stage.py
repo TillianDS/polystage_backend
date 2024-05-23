@@ -6,6 +6,9 @@ from ..serializers import StageSerializer
 from rest_framework import status
 
 class StageList(APIView):
+    """
+    permet d'obtenir la liste des stages ou de créer un stage 
+    """
     def getDate(self, request, date_str):
         date = datetime.strptime(date_str, '%d-%m-%Y').date()
         return date

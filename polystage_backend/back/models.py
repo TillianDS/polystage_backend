@@ -77,7 +77,7 @@ class Stage(models.Model):
     nom_entreprise = models.CharField(max_length= 200)
 
     def __str__(self):
-        return self.pk
+        return self.sujet
 
 class Jury(models.Model):
     professionnel = models.ManyToManyField(Professionnel)
@@ -105,7 +105,7 @@ class Promo(models.Model):
 class Etudiant (CustomUser):
     num_etudiant = models.CharField(max_length= 15)
     date_naissance = models.DateField()
-    promo = models.ForeignKey(Promo, on_delete=models.CASCADE )
+    promo = models.ForeignKey(Promo, on_delete=models.CASCADE , blank=True, null=True)
 
     class Meta : 
         verbose_name = 'Etudiant'
