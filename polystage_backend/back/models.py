@@ -82,6 +82,7 @@ class Stage(models.Model):
 class Jury(models.Model):
     professionnel = models.ManyToManyField(Professionnel)
     enseignant = models.ManyToManyField(Enseignant)
+    salle = models.CharField(max_length=100)
 
 
 class Filiere(models.Model):
