@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'rest_auth.registration',
     'back',
+    'formulaire',
     'corsheaders',
     
 ]

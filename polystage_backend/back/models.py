@@ -51,7 +51,6 @@ class CodePassword(models.Model):
     code = models.IntegerField()
 
 class Admin(CustomUser):
-    
     class Meta : 
         verbose_name = 'Admin'
 
@@ -73,7 +72,7 @@ class Stage(models.Model):
     confidentiel = models.BooleanField(default= False)
     date_debut = models.DateField()
     date_fin = models.DateField()
-    tuteur =  models.ForeignKey(Tuteur, on_delete=models.CASCADE )
+    tuteur =  models.ForeignKey(Tuteur, on_delete=models.CASCADE)
     nom_entreprise = models.CharField(max_length= 200)
 
     def __str__(self):

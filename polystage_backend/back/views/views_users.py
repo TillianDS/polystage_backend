@@ -84,11 +84,11 @@ class UserList(APIView):
 
             data['date_naissance'] = getDate(request.data['date_naissance'])
         serializer = self.choice_deserializer(profile, data, False)
-        
+            
         password_length = 7
         if serializer.is_valid(): 
 
-            return Response(data)
+            #return Response(data)
             password1 = request.data["password1"]
             password2 = request.data["password2"]
 
