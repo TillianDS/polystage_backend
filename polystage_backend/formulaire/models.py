@@ -8,15 +8,15 @@ class Formulaire (models.Model):
     #id_createur
     id = models.CharField(max_length=200, primary_key=True)
     title = models.CharField(max_length=200)
-    description = models.CharField(max_length=200)
+    description = models.CharField(max_length=200, blank= True, null= True)
     def __str__ (self) :
-        return self.title
+        return self.title, 
    
 
 class Question (models.Model):
     title = models.CharField(max_length=200)
     TYPE_CHOICES = [
-        ('text', 'text'), 
+        ('text', 'text'),
         ('paragraphe', 'paragraphe'),
         ('checkbox', 'checkbox'),
         ('dropdown', 'dropdown')
