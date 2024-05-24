@@ -8,7 +8,7 @@ class FormulaireSerializer (serializers.ModelSerializer):
 
     
 class QuestionSerializer (serializers.ModelSerializer):
-    formulaire = serializers.RelatedField(source = 'Formulaire', read_only = True)
+    formulaire = serializers.PrimaryKeyRelatedField(queryset=Formulaire.objects.all())
     class Meta :
         model = Question
         fields = ['id', 'title', 'type', 'formulaire']
