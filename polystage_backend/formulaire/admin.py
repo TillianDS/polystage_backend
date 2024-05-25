@@ -5,3 +5,4 @@ from .models import *
 admin.site.register(Formulaire)
 admin.site.register(Question)
 admin.site.register(Response)
+admin.site.register(CheckBox)

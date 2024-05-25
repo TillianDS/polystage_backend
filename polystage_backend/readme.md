@@ -582,7 +582,6 @@ affiche toutes les promos avec la filiere associé
 ]
 ```
 
-
 ## Stage
 
 informations d'une filiere :
@@ -605,6 +604,139 @@ http://127.0.0.1/stageList/'
 #### GET
 
 accès aux informations de toutes les stages
+
+##### response 
+
+les informations de toutes les stages
+
+```bash
+[
+    {
+        "id": 2,
+        "confidentiel": true,
+        "sujet": "Gestion des cellules",
+        "date_debut": "2024-01-18",
+        "date_fin": "2024-08-18",
+        "nom_entreprise": "Biomérieux",
+        "tuteur": 3
+    }
+]
+```
+
+#### POST
+creation d'un stage
+
+#### Requete
+- sujet (string)  : sujet du stage
+- nom_entreprise (string): nom de l'entreprise dans lequel se déroule le stage
+- confidentiel (booléen) : le stage est il Confidentiel ? 
+- date_debut (date) : date de debut de stage
+- date_fin (date) : date de fin de stage
+- tuteur (int) : id du tuteur
+
+##### response
+
+informations du stage crée.
+
+```bash
+    {
+        "id": 2,
+        "confidentiel": true,
+        "sujet": "Gestion des cellules",
+        "date_debut": "2024-01-18",
+        "date_fin": "2024-08-18",
+        "nom_entreprise": "Biomérieux",
+        "tuteur": 3
+    }
+```
+
+### stageDetails
+
+permet d'accèder à une stage spécifique, de le modifier ou de le supprimer
+
+```url
+http://127.0.0.1/stageDetails/<int:pk>/'
+```
+
+##### argument url
+
+- pk (int) : id du stage que l'on voudra modifier
+
+#### GET
+
+##### response
+
+informations du stage
+
+```bash
+http://127.0.0.1/stageDetails/2/
+    {
+        "id": 2,
+        "confidentiel": true,
+        "sujet": "Gestion des cellules",
+        "date_debut": "2024-01-18",
+        "date_fin": "2024-08-18",
+        "nom_entreprise": "Biomérieux",
+        "tuteur": 3
+    }
+```
+
+#### PUT
+
+permet de modifier un stage
+##### arguments requete
+
+les informations que l'on veut modifier
+si certains champ ne changement pas, il faut aussi les renvoyer : la base compare le stage existant avec le stage renvoyé pour détecter ce qui a été modifié
+
+##### response
+
+```bash
+{
+        "id": 2,
+        "confidentiel": true,
+        "sujet": "Gestion des cellules",
+        "date_debut": "2024-01-18",
+        "date_fin": "2024-08-18",
+        "nom_entreprise": "Biomérieux",
+        "tuteur": 3
+    }
+```
+
+#### DELETE
+
+suprime le stage
+
+##### response
+
+```bash
+{
+    "success": "stage supprimé avec succès"
+}
+```
+
+# Gestion des formulaires
+
+le formulaire est composé de plusieurs tables, Formulaire, Question, Checkbox et Reponse
+
+Un formulaire peut avoir plusieurs questions, si la question est de type checkbox elle peut avoir plusieurs éléments checkbox, les réponses sont associès à chaque question ainsi qu'à un utilisateur
+
+## Formulaire
+
+- id (string) : id du formulaire
+- title (string): titre du formulaire
+- description (string) : description du formulaire
+
+### formulaireList
+
+accèder aux informations de toutes les formulaires ou créer un formulaire
+```url
+http://127.0.0.1/formulaireList/'
+```
+
+#### GET
+
+accès aux informations de tous les formulaires
 
 ##### response 
 
