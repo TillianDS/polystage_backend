@@ -28,6 +28,7 @@ class CheckboxSerializer (serializers.ModelSerializer):
         fields = ['id', 'title', 'question']
 
 
+# serializer pour l'affichage et l'enregistrement de tout un formulaire, question et checbox
 
 class CheckboxAllSerializer (serializers.ModelSerializer):
     class Meta :
@@ -35,13 +36,13 @@ class CheckboxAllSerializer (serializers.ModelSerializer):
         fields = ['id', 'title']
 
 class QuestionAllSerializer (serializers.ModelSerializer):
-    checkbox = CheckboxSerializer(many = True)
+    checkbox = CheckboxAllSerializer(many = True)
     class Meta :
         model = Question
         fields = ['id', 'title', 'type', 'checkbox']
 
 class FormulaireAllSerializer (serializers.ModelSerializer):
-    question = QuestionSerializer(many = True)
+    question = QuestionAllSerializer(many = True)
 
     class Meta :
         model = Formulaire
