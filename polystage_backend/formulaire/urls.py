@@ -20,7 +20,8 @@ urlpatterns = [
 
 
     path('formulaireAllList/', views_formulaire.FormulaireAllList.as_view()),
-    
+    path('formulaireAllDetails/<str:pk>/', views_formulaire.FormulaireAllDetails.as_view()),
+
     path('testList/', views_test.testList.as_view()),
 
     ]

@@ -43,10 +43,10 @@ class FormulaireAllList(List):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.set_attribute(Formulaire, FormulaireAllSerializer)
-"""
-class CheckboxDetails(Details):
+
+class FormulaireAllDetails(Details):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.set_attribute(CheckBox, CheckboxSerializer, "Checkbox")
+        self.set_attribute(Formulaire, FormulaireAllSerializer, "Formulaire")
 
-"""
+

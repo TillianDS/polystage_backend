@@ -87,3 +87,7 @@ class SoutenanceSerializer (serializers.ModelSerializer) :
     class Meta : 
         model = Soutenance
         fields = ['id', 'date_soutenance', 'heure_soutenance', 'etudiant', 'jury', 'stage']
+
+
+class FileSerializer (serializers.ModelSerializer):
+    file = serializers.FileField(use_url=False)
