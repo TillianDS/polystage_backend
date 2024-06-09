@@ -71,23 +71,48 @@ class AdminSerializer (UserSerializer) :
         model = Admin
         fields = UserSerializer.Meta.fields
 
-class StageSerializer (serializers.ModelSerializer) : 
+class StageSerializer (serializers.ModelSerializer) :
+    tuteur = serializers.PrimaryKeyRelatedField(queryset = Tuteur.objects.all())
     class Meta : 
         model = Stage
-        fields = ['id', 'confidentiel', 'sujet', 'date_debut', 'date_fin', 'nom_entreprise', 'tuteur']
+        fields = "__all__"
 
 class JurySerializer (serializers.ModelSerializer) : 
-    professionnel = ProfessionnelSerializer(many = True, read_only = True)
-    enseignant = EnseignantSerializer(many = True, read_only = True)
+    professionnel = ProfessionnelSerializer(Professionnel.objects.all(), many = True)
+    enseignant = EnseignantSerializer(Enseignant.objects.all(), many = True )
     class Meta : 
         model = Jury
-        fields = ['id', 'professionnel', 'enseignant']
+        fields = "__all__"
+    
+    def create(self, validated_data):
+        pro_data = validated_data.pop('professionnel')
+        enseignant_data = validated_data.pop('enseignant')
+        jury = Jury.objects.create(**validated_data)
+        for pro in pro_data:
+            professionnel = Professionnel.objects.get(id = pro.id)
+            jury.professionnel.add(professionnel)
+        for ens in enseignant_data :
+            enseignant = Enseignant.objects.get(id = ens)
+            jury.enseignant.add(enseignant)
+        return jury
+    
 
-class SoutenanceSerializer (serializers.ModelSerializer) : 
+class SoutenanceSerializer (serializers.ModelSerializer) :
+    etudiant = serializers.PrimaryKeyRelatedField(queryset = Etudiant.objects.all())
+    jury = serializers.PrimaryKeyRelatedField(queryset = Jury.objects.all())
+    stage = serializers.PrimaryKeyRelatedField(queryset = Stage.objects.all())
+    date_soutenance = serializers.DateField(format='%d-%m-%Y', input_formats=['%d-%m-%Y'])
+    heure_soutenance = serializers.TimeField(format= '%H:%M', input_formats=['%H:%M'])
     class Meta : 
         model = Soutenance
-        fields = ['id', 'date_soutenance', 'heure_soutenance', 'etudiant', 'jury', 'stage']
+        fields = "__all__"
 
 
 class FileSerializer (serializers.ModelSerializer):
     file = serializers.FileField(use_url=False)
+
+
+# serializer d'importation
+
+class ImportUserSerializer():
+    pass

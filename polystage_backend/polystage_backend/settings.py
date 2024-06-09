@@ -155,6 +155,7 @@ CORS_ALLOW_ALL_ORIGINS = True  # Autoriser tous les domaines
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5050",  # Autoriser les requêtes depuis ce domaine
 ]
+CORS_ALLOW_ALL_ORIGINS = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'

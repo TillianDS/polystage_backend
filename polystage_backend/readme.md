@@ -45,7 +45,7 @@ pour les etudiants on trouve en plus :
 permet d'authentifier l'utilisateur et de la connecter à l'application
 
 ```url
-http://127.0.0.1/login/
+http://127.0.0.1:8000/login/
 ```
 
 #### POST
@@ -77,7 +77,7 @@ envoie un mail à l'utilisateur avec son code de réinitilisation, s'il existe
 si l'utilisateur n'existe pas, on a le même message de succès mais aucun mail n'est envoyé
 
 ```url
-http://127.0.0.1/codeReset/
+http://127.0.0.1:8000/codeReset/
 ```
 
 #### POST
@@ -100,7 +100,7 @@ permet de changer modifier le mot de passe d'un utilisateur
 le mot de passe doit contenir une majuscule, une minuscule, un caractère spécial et doit avoir une taille minimum de 7 caractères
 
 ```url
-http://127.0.0.1/password/
+http://127.0.0.1:8000/password/
 ```
 
 #### POST
@@ -132,7 +132,7 @@ informations de l'utilisateur
 afficher ou créer des utilisateurs
 
 ```url
-http://127.0.0.1/userList/'
+http://127.0.0.1:8000/userList/'
 ```
 
 #### POST
@@ -160,7 +160,7 @@ pour les etudiants on trouve en plus :
 informations de l'utilisateur crée
 
 ```bash
-http://127.0.0.1/userList/ENS/
+http://127.0.0.1:8000/userList/ENS/
 {
         "id": 12,
         "email": "enseignant5@po.fr",
@@ -176,7 +176,7 @@ http://127.0.0.1/userList/ENS/
 permet d'accèder à un user spécifique, de le modifier ou de le supprimer
 
 ```url
-http://127.0.0.1/userDetails/<int:pk>/'
+http://127.0.0.1:8000/userDetails/<int:pk>/'
 ```
 
 ##### argument url
@@ -190,7 +190,7 @@ http://127.0.0.1/userDetails/<int:pk>/'
 informations de l'utilisateur
 
 ```bash
-http://127.0.0.1/userDetails/1/
+http://127.0.0.1:8000/userDetails/1/
 {
     "id": 12,
     "email": "enseignant5@po.fr",
@@ -219,7 +219,7 @@ si etudiant :
 ##### response
 
 ```bash
-http://127.0.0.1/userDetails/1/
+http://127.0.0.1:8000/userDetails/1/
 {
     "id": 25,
     "email": "BenoiFavre@po.fr",
@@ -249,7 +249,7 @@ suprime la filiere
 méthode de l'admin pour la gestion des utilisateur
 
 ```url
-http://127.0.0.1/userSearch/
+http://127.0.0.1:8000/userSearch/
 ```
 
 #### POST
@@ -280,7 +280,7 @@ Si aucun utilisateur ne correspond à la requete, cela renvoie une dataform vide
 informations de ou des utilisateurs trouvés
 
 ```bash
-http://127.0.0.1/userSearch/
+http://127.0.0.1:8000/userSearch/
 
 pour une requete : 
 {
@@ -324,7 +324,7 @@ informations d'une filiere :
 
 accèder aux informations de toutes les filières ou créer une filière
 ```url
-http://127.0.0.1/filiereList/'
+http://127.0.0.1:8000/filiereList/'
 ```
 
 #### GET
@@ -378,7 +378,7 @@ informations de la filiere créée
 permet d'accèder à une filiere spécifique, de la modifier ou de la supprimer
 
 ```url
-http://127.0.0.1/filiereDetails/<int:pk>/'
+http://127.0.0.1:8000/filiereDetails/<int:pk>/'
 ```
 
 ##### argument url
@@ -441,7 +441,7 @@ les informations et la création d'une promo
 ### PromoList
 
 ```url
-http://127.0.0.1/promoList/'
+http://127.0.0.1:8000/promoList/'
 ```
 
 #### GET
@@ -491,7 +491,7 @@ les données de la promo créée
 permet d'accèder à un promo spécifique, de la modifier ou de la supprimer
 
 ```url
-http://127.0.0.1/promoDetails/<int:pk>/
+http://127.0.0.1:8000/promoDetails/<int:pk>/
 ```
 
 ##### argument url
@@ -548,7 +548,7 @@ suprime la promo
 permet d'afficher une promo associé à sa filière
 
 ```url
-http://127.0.0.1/promoFiliere/
+http://127.0.0.1:8000/promoFiliere/
 ```
 
 #### GET
@@ -598,7 +598,7 @@ informations d'une filiere :
 
 accèder aux informations de toutes les stages ou créer un stage
 ```url
-http://127.0.0.1/stageList/'
+http://127.0.0.1:8000/stageList/'
 ```
 
 #### GET
@@ -655,7 +655,7 @@ informations du stage crée.
 permet d'accèder à une stage spécifique, de le modifier ou de le supprimer
 
 ```url
-http://127.0.0.1/stageDetails/<int:pk>/'
+http://127.0.0.1:8000/stageDetails/<int:pk>/'
 ```
 
 ##### argument url
@@ -669,7 +669,255 @@ http://127.0.0.1/stageDetails/<int:pk>/'
 informations du stage
 
 ```bash
-http://127.0.0.1/stageDetails/2/
+http://127.0.0.1:8000/stageDetails/5/
+   {
+    "id": 5,
+    "confidentiel": false,
+    "sujet": "Participer au maintien d’APRIL ON au sein de l’équipe RUN",
+    "date_debut": "2024-06-03",
+    "date_fin": "2024-08-02",
+    "nom_entreprise": "April",
+    "tuteur": 31
+    }
+```
+
+#### PUT
+
+permet de modifier un stage
+##### arguments requete
+
+les informations que l'on veut modifier
+si certains champ ne changement pas, il faut aussi les renvoyer : la base compare le stage existant avec le stage renvoyé pour détecter ce qui a été modifié
+
+##### response
+
+```bash
+{
+        "id": 2,
+        "confidentiel": true,
+        "sujet": "Gestion des cellules",
+        "date_debut": "2024-01-18",
+        "date_fin": "2024-08-18",
+        "nom_entreprise": "Biomérieux",
+        "tuteur": 3
+    }
+```
+
+#### DELETE
+
+suprime le stage
+
+##### response
+
+```bash
+{
+    "success": "stage supprimé avec succès"
+}
+```
+
+## Soutenance
+
+gere toutes les soutenances
+
+### informations d'un soutenance
+
+- "id" : id de la soutenance
+- "etudiant": id de l'étudiant
+- "jury": id du jury
+- "stage": id du stage
+- "date_soutenance": date du déroulement de la soutenance
+- "heure_soutenance": heure du déroulement de la soutenance
+- "note": note de la soutenance
+
+```url
+http://127.0.0.1:8000/soutenanceList/
+
+http://127.0.0.1:8000/soutenanceDetails/<int:idSoutenance>/
+
+```
+
+### envoie
+
+```bash
+{
+    "etudiant": 32,
+    "jury": 1,
+    "stage": 2,
+    "date_soutenance": "03-09-2024",
+    "heure_soutenance": "11:50",
+    "note": 15.0
+}
+```
+
+### reçu
+
+```bash
+{
+    "id" : 1,
+    "etudiant": 32,
+    "jury": 1,
+    "stage": 2,
+    "date_soutenance": "03-09-2024",
+    "heure_soutenance": "11:50",
+    "note": 15.0
+}
+```
+
+# Gestion des formulaires
+
+le formulaire est composé de plusieurs tables, Formulaire, Question, Checkbox et Reponse
+
+Un formulaire peut avoir plusieurs questions, si la question est de type checkbox elle peut avoir plusieurs éléments checkbox, les réponses sont associès à chaque question ainsi qu'à un utilisateur
+
+## Formulaire All
+
+formulaire all permet de créer et gérer tous les entités d'un formualire : le formulaire, les question et les checkbox
+
+- id (string) : id du formulaire
+- title (string): titre du formulaire
+- description (string) : description du formulaire
+
+### formulaireAllList
+
+accèder aux informations de tous les formulaires ou créer un formulaire
+
+```url
+http://127.0.0.1:8000/formulaireAllList/'
+```
+
+#### GET
+
+accès aux informations de tous les formulaires
+
+##### response 
+
+les informations de toutes les stages
+
+```bash
+[
+    {
+        "id": "1",
+        "title": "Evaluation",
+        "description": "fomulaire pour l'evaluation de Louise",
+        "question": [
+            {
+                "id": 3,
+                "title": "qu'avez vous pensé de votre stage ?",
+                "type": "text",
+                "checkbox": []
+            },
+            {
+                "id": 5,
+                "title": "titre",
+                "type": "checkbox",
+                "checkbox": []
+            }
+        ]
+    },
+    {
+        "id": "dedefohzeouhfzeuhfouzfuzeufz",
+        "title": "Evaluationde",
+        "description": "formulaire pour l'evaluation de Louise",
+        "question": []
+    },
+    {
+        "id": "id",
+        "title": "Avis du tuteur",
+        "description": "formulaire pour l'evaluation de Louise",
+        "question": [
+            {
+                "id": 4,
+                "title": "qu'avez vous pensé du stagiaire ?",
+                "type": "text",
+                "checkbox": []
+            },
+            {
+                "id": 6,
+                "title": "qu'avez vous pensé du stagiaire ?",
+                "type": "text",
+                "checkbox": [
+                    {
+                        "id": 1,
+                        "title": "Oui"
+                    },
+                    {
+                        "id": 2,
+                        "title": "non"
+                    }
+                ]
+            },
+            {
+                "id": 7,
+                "title": "qu'avez vous pensé du stagiaire ?",
+                "type": "text",
+                "checkbox": []
+            },
+            {
+                "id": 8,
+                "title": "qu'avez vous pensé du stagiaire ?",
+                "type": "text",
+                "checkbox": []
+            },
+            {
+                "id": 9,
+                "title": "qu'avez vous pensé du stagiaire ?",
+                "type": "text",
+                "checkbox": []
+            }
+        ]
+    }
+]
+```
+
+#### POST
+
+création d'un formulaire
+
+#### Requete
+
+- sujet (string)  : sujet du stage
+- nom_entreprise (string): nom de l'entreprise dans lequel se déroule le stage
+- confidentiel (booléen) : le stage est il Confidentiel ? 
+- date_debut (date) : date de debut de stage
+- date_fin (date) : date de fin de stage
+- tuteur (int) : id du tuteur
+
+##### response
+
+informations du stage crée.
+
+```bash
+    {
+        "id": 2,
+        "confidentiel": true,
+        "sujet": "Gestion des cellules",
+        "date_debut": "2024-01-18",
+        "date_fin": "2024-08-18",
+        "nom_entreprise": "Biomérieux",
+        "tuteur": 3
+    }
+```
+
+### stageDetails
+
+permet d'accèder à une stage spécifique, de le modifier ou de le supprimer
+
+```url
+http://127.0.0.1:8000/stageDetails/<int:pk>/'
+```
+
+##### argument url
+
+- pk (int) : id du stage que l'on voudra modifier
+
+#### GET
+
+##### response
+
+informations du stage
+
+```bash
+http://127.0.0.1:8000/stageDetails/2/
     {
         "id": 2,
         "confidentiel": true,
@@ -715,57 +963,54 @@ suprime le stage
 }
 ```
 
-# Gestion des formulaires
+## Response
 
-le formulaire est composé de plusieurs tables, Formulaire, Question, Checkbox et Reponse
+- id (string) : id de la response
+- content (string): content de la response
+- question (int) : id de la question associée
+- user (int) : id de l'utilisateur
 
-Un formulaire peut avoir plusieurs questions, si la question est de type checkbox elle peut avoir plusieurs éléments checkbox, les réponses sont associès à chaque question ainsi qu'à un utilisateur
-
-## Formulaire
-
-- id (string) : id du formulaire
-- title (string): titre du formulaire
-- description (string) : description du formulaire
-
-### formulaireList
+### ResponseList
 
 accèder aux informations de toutes les formulaires ou créer un formulaire
+
 ```url
-http://127.0.0.1/formulaireList/'
+http://127.0.0.1:8000/responseList/'
 ```
 
 #### GET
 
-accès aux informations de tous les formulaires
+accès aux informations de tous les réponses
 
 ##### response 
 
-les informations de toutes les stages
+les informations de toutes les réponses
 
 ```bash
 [
     {
+        "id": 1,
+        "content": "oui",
+        "question": 3,
+        "user": 33
+    },
+    {
         "id": 2,
-        "confidentiel": true,
-        "sujet": "Gestion des cellules",
-        "date_debut": "2024-01-18",
-        "date_fin": "2024-08-18",
-        "nom_entreprise": "Biomérieux",
-        "tuteur": 3
-    }
+        "content": "oui",
+        "question": 4,
+        "user": 33
+    },
 ]
 ```
 
 #### POST
-creation d'un stage
+creation d'une réponse
 
 #### Requete
-- sujet (string)  : sujet du stage
-- nom_entreprise (string): nom de l'entreprise dans lequel se déroule le stage
-- confidentiel (booléen) : le stage est il Confidentiel ? 
-- date_debut (date) : date de debut de stage
-- date_fin (date) : date de fin de stage
-- tuteur (int) : id du tuteur
+
+- content (string): content de la response
+- question (int) : id de la question associée
+- user (int) : id de l'utilisateur
 
 ##### response
 
@@ -774,26 +1019,23 @@ informations du stage crée.
 ```bash
     {
         "id": 2,
-        "confidentiel": true,
-        "sujet": "Gestion des cellules",
-        "date_debut": "2024-01-18",
-        "date_fin": "2024-08-18",
-        "nom_entreprise": "Biomérieux",
-        "tuteur": 3
+        "content": "oui",
+        "question": 4,
+        "user": 33
     }
 ```
 
-### stageDetails
+### responseDetails
 
-permet d'accèder à une stage spécifique, de le modifier ou de le supprimer
+permet d'accèder à une réponse spécifique, de la modifier ou de la supprimer
 
 ```url
-http://127.0.0.1/stageDetails/<int:pk>/'
+http://127.0.0.1:8000/responseDetails/<int:pk>/'
 ```
 
 ##### argument url
 
-- pk (int) : id du stage que l'on voudra modifier
+- pk (int) : id de la réponse que l'on voudra modifier
 
 #### GET
 
@@ -802,48 +1044,44 @@ http://127.0.0.1/stageDetails/<int:pk>/'
 informations du stage
 
 ```bash
-http://127.0.0.1/stageDetails/2/
+http://127.0.0.1:8000/responseDetails/1/
+
     {
-        "id": 2,
-        "confidentiel": true,
-        "sujet": "Gestion des cellules",
-        "date_debut": "2024-01-18",
-        "date_fin": "2024-08-18",
-        "nom_entreprise": "Biomérieux",
-        "tuteur": 3
+    "id": 1,
+    "content": "oui",
+    "question": 3,
+    "user": 33
     }
 ```
 
 #### PUT
 
-permet de modifier un stage
+permet de modifier une réponse
 ##### arguments requete
 
 les informations que l'on veut modifier
-si certains champ ne changement pas, il faut aussi les renvoyer : la base compare le stage existant avec le stage renvoyé pour détecter ce qui a été modifié
+si certains champ ne changement pas, il faut aussi les renvoyer : la base compare la réponse existante avec la  réponse renvoyée pour détecter ce qui a été modifié
 
 ##### response
 
 ```bash
 {
-        "id": 2,
-        "confidentiel": true,
-        "sujet": "Gestion des cellules",
-        "date_debut": "2024-01-18",
-        "date_fin": "2024-08-18",
-        "nom_entreprise": "Biomérieux",
-        "tuteur": 3
-    }
+    "id": 1,
+    "content": "oui",
+    "question": 3,
+    "user": 33
+}
+
 ```
 
 #### DELETE
 
-suprime le stage
+suprime la réponse
 
 ##### response
 
 ```bash
 {
-    "success": "stage supprimé avec succès"
+    "success": "response supprimée avec succès"
 }
 ```

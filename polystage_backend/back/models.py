@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from django.core.validators import MaxValueValidator
 
 #on définie ici une class pour les utilisateurs afin de pouvoir définir leur mail en tant que clé de connexion
 class CustomUserManager(BaseUserManager):
@@ -81,8 +82,11 @@ class Stage(models.Model):
 class Jury(models.Model):
     professionnel = models.ManyToManyField(Professionnel)
     enseignant = models.ManyToManyField(Enseignant)
-    salle = models.CharField(max_length=100)
-
+    salle = models.CharField(max_length=100, null = True)
+    batiment = models.CharField(max_length=100, null = True)
+    campus = models.CharField(max_length=200, null = True)
+    zoom = models.CharField(max_length=300, null = True )
+    #models.models.URLField(_(""), max_length=200)
 
 class Filiere(models.Model):
     nom = models.CharField(max_length = 100, unique=True)
@@ -109,11 +113,12 @@ class Etudiant (CustomUser):
     class Meta : 
         verbose_name = 'Etudiant'
 
+
 class Soutenance(models.Model):
-    date_soutenance = models.DateTimeField()
+    date_soutenance = models.DateField()
     heure_soutenance = models.TimeField(default = None)
     etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE )
     jury =  models.ForeignKey(Jury, on_delete=models.CASCADE )
     stage = models.ForeignKey(Stage, on_delete=models.CASCADE )
-
+    note = models.FloatField(validators=[MaxValueValidator(20.0)])
 

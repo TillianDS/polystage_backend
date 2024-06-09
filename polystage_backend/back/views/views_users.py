@@ -5,7 +5,6 @@ from rest_framework import status
 from ..models import CustomUser, Enseignant, Tuteur, Admin, Professionnel, Etudiant, Promo
 from ..serializers import UserSerializer, EnseignantSerializer, TuteurSerializer, ProfessionnelSerializer, AdminSerializer, EtudiantSerializer, PromoSerializer
 from rest_framework.authentication import TokenAuthentication
-from .date_heure import getDate
 
 class UserList(APIView):
 
@@ -82,13 +81,11 @@ class UserList(APIView):
             data = data.copy()
             data['promo'] = Promo.objects.get(pk=request.data['promo']).pk
 
-            data['date_naissance'] = getDate(request.data['date_naissance'])
         serializer = self.choice_deserializer(profile, data, False)
             
         password_length = 7
         if serializer.is_valid(): 
 
-            #return Response(data)
             password1 = request.data["password1"]
             password2 = request.data["password2"]
 

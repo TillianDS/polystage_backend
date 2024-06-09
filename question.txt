@@ -1,0 +1,3 @@
+- les jurys ont ils besoin d'avoir un numéro (selon la filière) : jury 1, jury2, ...
+
+- comment fonctionne le token CAS
