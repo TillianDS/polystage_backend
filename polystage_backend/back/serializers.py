@@ -35,13 +35,12 @@ class UserSerializer(serializers.ModelSerializer):
 
 class EtudiantSerializer(UserSerializer):
     num_etudiant = serializers.CharField()
-    date_naissance = serializers.DateField()
     profile = serializers.ChoiceField(choices=UserSerializer.PROFILE_CHOICES, default='ETU')
-    promo = PromoSerializer(allow_null=True, required=False)
+    promo = serializers.PrimaryKeyRelatedField(queryset = Promo.objects.all())
 
     class Meta:
         model = Etudiant
-        fields = UserSerializer.Meta.fields + ['num_etudiant', 'date_naissance', 'promo']
+        fields = UserSerializer.Meta.fields + ['num_etudiant', 'promo']
 
 class TuteurSerializer (UserSerializer) :
     profile = serializers.ChoiceField(choices=UserSerializer.PROFILE_CHOICES, default='TUT')
@@ -100,9 +99,9 @@ class JurySerializer (serializers.ModelSerializer) :
 class SoutenanceSerializer (serializers.ModelSerializer) :
     etudiant = serializers.PrimaryKeyRelatedField(queryset = Etudiant.objects.all())
     jury = serializers.PrimaryKeyRelatedField(queryset = Jury.objects.all())
-    stage = serializers.PrimaryKeyRelatedField(queryset = Stage.objects.all())
     date_soutenance = serializers.DateField(format='%d-%m-%Y', input_formats=['%d-%m-%Y'])
     heure_soutenance = serializers.TimeField(format= '%H:%M', input_formats=['%H:%M'])
+
     class Meta : 
         model = Soutenance
         fields = "__all__"
@@ -113,6 +112,29 @@ class FileSerializer (serializers.ModelSerializer):
 
 
 # serializer d'importation
+class StageAllSerializer (serializers.ModelSerializer) :
+    tuteur = TuteurSerializer()
+    class Meta : 
+        model = Stage
+        exclude = ['etudiant']
 
-class ImportUserSerializer():
-    pass
+"""class SoutenanceAllSerializer (serializers.ModelSerializer) :
+    etudiant = serializers.PrimaryKeyRelatedField(queryset = Etudiant.objects.all())
+    jury = serializers.PrimaryKeyRelatedField(queryset = Jury.objects.all())
+    date_soutenance = serializers.DateField(format='%d-%m-%Y', input_formats=['%d-%m-%Y'])
+    heure_soutenance = serializers.TimeField(format= '%H:%M', input_formats=['%H:%M'])
+    class Meta : 
+        model = Soutenance
+        fields = "__all__"
+        """
+
+class EtudiantAllSeralizer (UserSerializer) :
+    num_etudiant = serializers.CharField()
+    promo = PromoFiliereSerializer()
+    stage = StageAllSerializer(many =True)
+    soutenance = SoutenanceSerializer(many = True)
+
+    class Meta:
+        model = Etudiant
+        fields = UserSerializer.Meta.fields + ['num_etudiant', 'promo', 'stage', 'soutenance']
+

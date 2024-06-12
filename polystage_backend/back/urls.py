@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import views_login, views_users, views_admin, views_promo_filiere, views_stage, views_soutenance, views_jury, views_csv
+from .views import views_login, views_users, views_admin, views_promo_filiere, views_stage, views_soutenance, views_jury, views_csv, views_import, views_etudiant, views_export
 
 urlpatterns = [
      #views_Users
@@ -39,7 +39,14 @@ urlpatterns = [
     path('juryList/', views_jury.JuryList.as_view()),
     path('juryList/<int:pk>', views_jury.JuryList.as_view()),
 
+    #views_etudiant
+    path('etudiantAll/<int:pk>/', views_etudiant.EtudiantAll.as_view()),
+
+    #views_import 
+    path('importUser/',views_import.importUser.as_view()),
     
+    #views_export
+    path("exportNote/", views_export.exportNote.as_view())
     ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

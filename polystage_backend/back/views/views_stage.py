@@ -62,3 +62,4 @@ class StageDetails (APIView):
         stage = Stage.objects.get(pk=pk)
         stage.delete()
         return Response({"success" : "stage supprimé avec succés"}, status = status.HTTP_200_OK)
+    

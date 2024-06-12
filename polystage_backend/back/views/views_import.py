@@ -37,6 +37,7 @@ class importUser (APIView):
             return Tuteur.objects.all()
 
     def post (self, request, format = None) :
+
         users_data = request.data
 
         errors = []
@@ -49,3 +50,20 @@ class importUser (APIView):
         if errors :
             return Response({"errors" : errors}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"success" : "tous les utilisateurs ont été crées avec succès"}, status= status.HTTP_201_CREATED)
+
+""""
+class importPromoFiliere(APIView) :
+
+    def post (self, request, format = None):
+        promoFiliereData = request.data
+
+        errors = []
+
+        for promFil in promoFiliereData: 
+            serializer = promofil
+        return Response()
+"""
+
+class importStage (APIView):
+    def post(self, request, format = None):
+        return Response()

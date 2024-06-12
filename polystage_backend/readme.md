@@ -763,6 +763,111 @@ http://127.0.0.1:8000/soutenanceDetails/<int:idSoutenance>/
 }
 ```
 
+## utilisateur avec toutes les infos stage, promo, filiere et soutenance
+
+```url
+http://127.0.0.1:8000/etudiantAll/<int:idEtudiant>/
+```
+
+### envoie
+
+on passe l'id de l'utilisateur dans l'url
+
+### retour
+
+renvoie les informations de l'utilisateur avec son stage, sa promo, sa filière et sa soutenance 
+
+```json
+{
+    "id": 34,
+    "email": "tiit@po.fr",
+    "first_name": "tillian",
+    "last_name": "dhume",
+    "first_connection": false,
+    "profile": "ETU",
+    "num_etudiant": "d2201421",
+    "promo": {
+        "id": 4,
+        "annee": 2027,
+        "filiere": {
+            "id": 2,
+            "nom": "Genie Biologique",
+            "nom_directeur": "Parsiegla",
+            "prenom_directeur": "Goetz"
+        }
+    },
+    "stage": [
+        {
+            "id": 2,
+            "tuteur": {
+                "id": 30,
+                "email": "tuteur2@po.fr",
+                "first_name": "tuteur",
+                "last_name": "tuteur",
+                "first_connection": false,
+                "profile": "TUT"
+            },
+            "sujet": "Optimisation des cultures de bactéries",
+            "confidentiel": false,
+            "date_debut": "2024-01-10",
+            "date_fin": "2024-08-18",
+            "nom_entreprise": "Biomérieux"
+        }
+    ]
+}
+```
+
+## export des notes
+
+```url
+http://127.0.0.1:8000/exportNote/
+```
+
+### envoie
+
+- filiere (string) : nom de la filiere
+- annee (int) : année de la promo
+
+### retourne
+
+```json
+[
+    {
+        "num_etudiant": "d22014217",
+        "first_name": "Tillian",
+        "last_name": "Dhume",
+        "promo_annee": 2027,
+        "filiere": "Genie Biologique",
+        "note_soutenance": null
+    },
+    {
+        "num_etudiant": "d2201421",
+        "first_name": "tillian",
+        "last_name": "dhume",
+        "promo_annee": 2027,
+        "filiere": "Genie Biologique",
+        "note_soutenance": 15.0
+    },
+    {
+        "num_etudiant": "d2201421",
+        "first_name": "tillian",
+        "last_name": "dhume",
+        "promo_annee": 2027,
+        "filiere": "Genie Biologique",
+        "note_soutenance": 15.0
+    },
+    {
+        "num_etudiant": "d22014217",
+        "first_name": "tillian",
+        "last_name": "dhume",
+        "promo_annee": 2027,
+        "filiere": "Genie Biologique",
+        "note_soutenance": null
+    }
+]
+```
+
+
 # Gestion des formulaires
 
 le formulaire est composé de plusieurs tables, Formulaire, Question, Checkbox et Reponse
@@ -1084,4 +1189,121 @@ suprime la réponse
 {
     "success": "response supprimée avec succès"
 }
+```
+
+# Import des données
+
+### envoie
+l'envoie des données se fait sous format JSON, un tableau contient chaque champ de l'instance à créer
+
+```json
+[
+    //instance 1
+    {
+        "clé" : "valeur",
+        "clé" : "valeur"
+
+    },
+    //instance 2
+    {
+        "clé" : "valeur",
+        "clé" : "valeur"
+    },
+
+    //...
+]
+```
+
+### réception
+
+```json
+{
+    "errors": [
+        {
+            "nomInstance": {
+                //instance
+            },
+            "errors": {
+                //erreur rencontré lors de l'enregistrement
+            }
+        },
+        {
+            "nomInstance": {
+                //instance
+            },
+            "errors": {
+                //erreur rencontré lors de l'enregistrement
+            }
+        },
+        {
+            "nomInstance": {
+                //instance
+            },
+            "errors": {
+                //erreur rencontré lors de l'enregistrement
+            }
+        }
+    ]
+}
+```
+
+## Import des utilisateurs
+
+```url
+http://127.0.0.1:8000/importUser/
+```
+
+### Envoie
+
+```json
+[
+    {
+        "email": "test@po.fr",
+        "first_name": "",
+        "last_name": "jean",
+        "profile": "TUT"
+    },
+    {
+        "email": "enseignant10@po.fr",
+        "first_name": "Benoit",
+        "last_name": "Favre",
+        "profile": "ENS"
+    },
+    {
+        "email": "titi@po.fr",
+        "first_name": "Titi",
+        "last_name": "Titi",
+        "profile": "ETU",
+        "promo" : 5,
+        "num_etudiant" : "d22014217"
+    }
+]
+```
+
+### Réception
+
+
+```bash
+[
+    {
+        "email": "test@po.fr",
+        "first_name": "",
+        "last_name": "jean",
+        "profile": "TUT"
+    },
+    {
+        "email": "enseignant10@po.fr",
+        "first_name": "Benoit",
+        "last_name": "Favre",
+        "profile": "ENS"
+    },
+    {
+        "email": "titi@po.fr",
+        "first_name": "Titi",
+        "last_name": "Titi",
+        "profile": "ETU",
+        "promo" : 5,
+        "num_etudiant" : "d22014217"
+    }
+]
 ```

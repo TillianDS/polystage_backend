@@ -1,3 +1,16 @@
+
+réunion du 11 juin
+
 - les jurys ont ils besoin d'avoir un numéro (selon la filière) : jury 1, jury2, ...
 
+- les filieres : doit on les importer ou les créer une par une ?
+
 - comment fonctionne le token CAS
+
+- donnée supprimée ou inactive ? 
+
+Autres question :
+
+- que fait on des utilisateurs déjà présent dans la base : ex un étudiant pour lequel c'est son 2ème stage et qui a déjà été rentré dans le logiciel pour le premier"
+
+- est ce utile d'avoir le nom prénom du directeur de filiere dans la promo ? 

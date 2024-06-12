@@ -67,18 +67,6 @@ class Professionnel(CustomUser):
     class Meta : 
         verbose_name = 'Professionnel'
 
-class Stage(models.Model):
-    
-    sujet = models.TextField()
-    confidentiel = models.BooleanField(default= False)
-    date_debut = models.DateField()
-    date_fin = models.DateField()
-    tuteur =  models.ForeignKey(Tuteur, on_delete=models.CASCADE)
-    nom_entreprise = models.CharField(max_length= 200)
-
-    def __str__(self):
-        return self.sujet
-
 class Jury(models.Model):
     professionnel = models.ManyToManyField(Professionnel)
     enseignant = models.ManyToManyField(Enseignant)
@@ -106,19 +94,30 @@ class Promo(models.Model):
 
 
 class Etudiant (CustomUser):
-    num_etudiant = models.CharField(max_length= 15)
-    date_naissance = models.DateField()
+    num_etudiant = models.CharField(max_length= 20)
     promo = models.ForeignKey(Promo, on_delete=models.CASCADE , blank=True, null=True)
 
     class Meta : 
         verbose_name = 'Etudiant'
 
 
+class Stage(models.Model):
+    
+    sujet = models.TextField()
+    confidentiel = models.BooleanField(default= False)
+    date_debut = models.DateField()
+    date_fin = models.DateField()
+    tuteur =  models.ForeignKey(Tuteur, on_delete=models.CASCADE)
+    nom_entreprise = models.CharField(max_length= 200)
+    etudiant = models.ForeignKey(Etudiant, related_name ='stage', on_delete=models.CASCADE )
+
+    def __str__(self):
+        return self.sujet
+
 class Soutenance(models.Model):
     date_soutenance = models.DateField()
     heure_soutenance = models.TimeField(default = None)
-    etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE )
     jury =  models.ForeignKey(Jury, on_delete=models.CASCADE )
-    stage = models.ForeignKey(Stage, on_delete=models.CASCADE )
     note = models.FloatField(validators=[MaxValueValidator(20.0)])
+    etudiant = models.ForeignKey(Etudiant, related_name ='soutenance', on_delete=models.CASCADE )
 
