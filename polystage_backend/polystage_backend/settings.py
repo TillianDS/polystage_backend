@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'back',
     'formulaire',
     'corsheaders',
+
+    'django_cas_ng',
     
 ]
 
@@ -57,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django_cas_ng.middleware.CASMiddleware',
 ]
 
 #CSRF_COOKIE_SECURE = False
@@ -135,9 +138,22 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'back.CustomUser'
+
 REST_AUTH_SERIALIZERS = {
     'USER_DETAILS_SERIALIZER': 'back.serializers.UserSerializer',
 }
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',  # Conservez le backend par défaut
+    'django_cas_ng.backends.CASBackend',
+
+)
+
+
+CAS_SERVER_URL = 'https://ident.univ-amu.fr/cas'
+CAS_VERSION : 3
+CAS_LOGOUT_URL_NAME = 'https://ident.univ-amu.fr/cas/logout'
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -164,3 +180,4 @@ EMAIL_HOST_PASSWORD = 'cpwg mnuh pkoe pgfx'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'default from email'
+
