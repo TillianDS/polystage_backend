@@ -77,25 +77,36 @@ class StageSerializer (serializers.ModelSerializer) :
         fields = "__all__"
 
 class JurySerializer (serializers.ModelSerializer) : 
+    professionnel = serializers.PrimaryKeyRelatedField(queryset=Professionnel.objects.all(), many=True)
+    enseignant = serializers.PrimaryKeyRelatedField(queryset=Enseignant.objects.all(), many=True)
+    
+    class Meta : 
+        model = Jury
+        fields = "__all__"
+    """
+    def create(self, validated_data):
+        pro_data = validated_data.pop('professionnel')
+        enseignant_data = validated_data.pop('enseignant')
+        jury = Jury.objects.create(**validated_data)
+
+        for pro in pro_data:
+            professionnel = Professionnel.objects.get(id = pro.id)
+            jury.professionnel.add(professionnel)
+
+        for ens in enseignant_data :
+            enseignant = Enseignant.objects.get(id = ens)
+            jury.enseignant.add(enseignant)
+            
+        return jury
+    """
+    
+class JuryAffichageSerializer (serializers.ModelSerializer) : 
     professionnel = ProfessionnelSerializer(Professionnel.objects.all(), many = True)
     enseignant = EnseignantSerializer(Enseignant.objects.all(), many = True )
     class Meta : 
         model = Jury
         fields = "__all__"
     
-    def create(self, validated_data):
-        pro_data = validated_data.pop('professionnel')
-        enseignant_data = validated_data.pop('enseignant')
-        jury = Jury.objects.create(**validated_data)
-        for pro in pro_data:
-            professionnel = Professionnel.objects.get(id = pro.id)
-            jury.professionnel.add(professionnel)
-        for ens in enseignant_data :
-            enseignant = Enseignant.objects.get(id = ens)
-            jury.enseignant.add(enseignant)
-        return jury
-    
-
 class SoutenanceSerializer (serializers.ModelSerializer) :
     etudiant = serializers.PrimaryKeyRelatedField(queryset = Etudiant.objects.all())
     jury = serializers.PrimaryKeyRelatedField(queryset = Jury.objects.all())

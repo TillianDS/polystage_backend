@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'rest_auth.registration',
     'back',
+    'mail',
     'formulaire',
     'corsheaders',
 
@@ -162,6 +163,9 @@ REST_FRAMEWORK = {
 
         #'rest_framework.authentication.TokenAuthentication', 
     ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ]
 }
 
 SITE_ID = 1

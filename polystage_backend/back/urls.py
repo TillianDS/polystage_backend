@@ -38,7 +38,7 @@ urlpatterns = [
 
     #views_jury
     path('juryList/', views_jury.JuryList.as_view()),
-    path('juryList/<int:pk>', views_jury.JuryList.as_view()),
+    path('juryDetails/<int:pk>/', views_jury.JuryDetails.as_view()),
 
     #views_etudiant
     path('etudiantAll/<int:pk>/', views_etudiant.EtudiantAll.as_view()),

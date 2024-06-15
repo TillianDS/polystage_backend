@@ -21,4 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('back.urls')),
     path('', include('formulaire.urls')),
+    path('', include('mail.urls')),
+
 ]

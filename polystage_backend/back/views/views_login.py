@@ -10,6 +10,7 @@ from rest_framework.authentication import TokenAuthentication
 from django.contrib.auth import login, authenticate
 from django.core.mail import send_mail
 from django.conf import settings
+from rest_framework.permissions import AllowAny
 
 class CostumLogin(APIView):
     """
@@ -28,15 +29,15 @@ class CostumLogin(APIView):
         - "type utilisateur" : type de l'utilisateur qui se connecte
 
     """
+    permission_classes = [AllowAny]
 
     def post(self, request, format=None):
         email = request.data['email']
         password = request.data['password']
-        user = authenticate (request, email= email, password = password, backend = 'django.contrib.auth.backends.ModelBackend',)
+        user : CustomUser = authenticate (request, email= email, password = password, backend='django.contrib.auth.backends.ModelBackend')
         if user :
-            user2 = CustomUser.objects.get(email = email)
-            if not user2.first_connection: 
-                login(request, user2) 
+            if not user.first_connection: 
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend') 
 
                 serializer = UserSerializer(user)
                 token, create = Token.objects.get_or_create(user = user)
@@ -45,6 +46,8 @@ class CostumLogin(APIView):
         return Response({'error' : "password or email are not correct"}, status=status.HTTP_401_UNAUTHORIZED)
 
 class ChangePassword (APIView) :
+    permission_classes = [AllowAny]
+
     def get_user (self, pk):
         return CustomUser.objects.get(pk = pk)
     """
@@ -98,6 +101,7 @@ class ChangePassword (APIView) :
         return Response(UserSerializer(user).data, status= status.HTTP_202_ACCEPTED)
 
 class gestionCode(APIView):
+
     def generate_code(self, user: CustomUser): 
         codePassword = CodePassword.objects.filter(user=user)
         code = random.randint(100000, 999999)

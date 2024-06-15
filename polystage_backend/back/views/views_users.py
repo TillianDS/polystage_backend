@@ -1,13 +1,12 @@
-import re
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from ..models import CustomUser, Enseignant, Tuteur, Admin, Professionnel, Etudiant, Promo
 from ..serializers import UserSerializer, EnseignantSerializer, TuteurSerializer, ProfessionnelSerializer, AdminSerializer, EtudiantSerializer, PromoSerializer
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import AllowAny
 
 class UserList(APIView):
-
     """
         méthode d'enregistrement pour chaque utilisateur
         verifie la correspondance des deux mots de passe et si les informations renvoyées sont les bonnes
