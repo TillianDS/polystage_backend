@@ -3,7 +3,6 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.urlpatterns import format_suffix_patterns
 from .views import views_login, views_users, views_admin, views_promo_filiere, views_stage, views_soutenance, views_jury, views_csv, views_import, views_etudiant, views_export
-import django_cas_ng.views as cas_views
 
 urlpatterns = [
      #views_Users
@@ -49,9 +48,7 @@ urlpatterns = [
     #views_export
     path("exportNote/", views_export.exportNote.as_view()),
 
-    path('accounts/login/', cas_views.LoginView.as_view(), name='cas_ng_login'),
-    path('accounts/logout/', cas_views.LogoutView.as_view(), name='cas_ng_logout'),
-
+    
     ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

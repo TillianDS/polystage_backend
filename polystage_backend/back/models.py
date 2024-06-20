@@ -2,15 +2,24 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.core.validators import MaxValueValidator
 
-#on définie ici une class pour les utilisateurs afin de pouvoir définir leur mail en tant que clé de connexion
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email, password=None, **extra_fields):
+    def get_queryset(self):
+        # Ne renvoie que les utilisateurs actifs
+        return super().get_queryset().filter(is_active=True)
+    
+    def create_user(self, email, password, **extra_fields):
         if not email:
             raise ValueError("L'adresse e-mail est obligatoire.")
         email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
-        user.set_password(password)
-        user.save()
+
+        try :
+            user : CustomUser= self.get(email =email)
+            user.is_active = True
+            
+        except CustomUser.DoesNotExist :
+            user = self.model(email=email, **extra_fields)
+            user.set_password(password)
+            user.save()
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
@@ -43,6 +52,7 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
+    #allUser = 
 
     def __str__(self):
         return self.email
