@@ -3,9 +3,6 @@ from django.db import models
 from django.core.validators import MaxValueValidator
 
 class CustomUserManager(BaseUserManager):
-    def get_queryset(self):
-        # Ne renvoie que les utilisateurs actifs
-        return super().get_queryset().filter(is_active=True)
     
     def create_user(self, email, password, **extra_fields):
         if not email:
@@ -13,13 +10,14 @@ class CustomUserManager(BaseUserManager):
         email = self.normalize_email(email)
 
         try :
-            user : CustomUser= self.get(email =email)
+            user : CustomUser = self.get(email =email)
             user.is_active = True
             
         except CustomUser.DoesNotExist :
             user = self.model(email=email, **extra_fields)
             user.set_password(password)
-            user.save()
+        
+        user.save()
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
@@ -33,7 +31,13 @@ class CustomUserManager(BaseUserManager):
             raise ValueError("Le superutilisateur doit avoir is_superuser=True.")
 
         return self.create_user(email, password, **extra_fields)
+    
 
+class ActiveUserManager(CustomUserManager):
+    def get_queryset(self):
+        # Ne renvoie que les utilisateurs actifs
+        return super().get_queryset().filter(is_active=True)
+  
 class CustomUser(AbstractUser):
     username = None 
     email = models.EmailField(unique=True)
@@ -51,8 +55,12 @@ class CustomUser(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-    objects = CustomUserManager()
-    #allUser = 
+    objects = ActiveUserManager()
+    all_user = CustomUserManager()
+
+    def delete(self):
+        self.is_active = False
+        self.save()
 
     def __str__(self):
         return self.email

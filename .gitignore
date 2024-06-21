@@ -1,1 +1,11 @@
+# environnement virtuel
 .venv/
+env/
+venv/
+env2/
+
+# Fichiers temporaires
+*.pyc
+__pycache__/
+*.log
+*.swp

@@ -8,6 +8,7 @@ urlpatterns = [
      #views_Users
     path('userDetails/<int:pk>/', views_users.UserDetails.as_view()),
     path('userList/', views_users.UserList.as_view()),
+    path('userAllList/', views_users.UserAllList.as_view()),
 
     #views_login
     path('changePassword/', views_login.ChangePassword.as_view()),

@@ -138,4 +138,12 @@ class UserDetails(APIView):
         user = self.get_User(pk)
         user.delete()
         return Response ({"success" : "utilisateur supprimé avec succès"}, status= status.HTTP_200_OK)
-    
+
+class UserAllList(APIView):
+    def get(self, request, format=None):
+        #profile = request.data['profile']
+        user = Etudiant.all_user.all()
+        
+        serializer = EtudiantSerializer(user, many = True)
+        return Response(serializer.data) 
+        return Response({"error" : "le profile n'est pas bon"}, status=status.HTTP_400_BAD_REQUEST)
