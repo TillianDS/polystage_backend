@@ -59,4 +59,4 @@ class FormulaireAllSerializer (serializers.ModelSerializer):
         return formulaire
     
 class FormulaireQuestionSerializer (serializers.ModelField):
-    
+    pass
