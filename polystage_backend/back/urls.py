@@ -2,13 +2,12 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import views_login, views_users, views_admin, views_promo_filiere, views_stage, views_soutenance, views_jury, views_csv, views_import, views_etudiant, views_export
+from .views import views_login, views_users, views_admin, views_promo_filiere, views_stage, views_soutenance, views_jury, views_csv, views_import, views_etudiant, views_export, cas
 
 urlpatterns = [
      #views_Users
     path('userDetails/<int:pk>/', views_users.UserDetails.as_view()),
     path('userList/', views_users.UserList.as_view()),
-    path('userAllList/', views_users.UserAllList.as_view()),
 
     #views_login
     path('changePassword/', views_login.ChangePassword.as_view()),
@@ -48,8 +47,8 @@ urlpatterns = [
     
     #views_export
     path("exportNote/", views_export.exportNote.as_view()),
-
     
+    path('', cas.user_cas.as_view())
     ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

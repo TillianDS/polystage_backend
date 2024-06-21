@@ -57,3 +57,6 @@ class FormulaireAllSerializer (serializers.ModelSerializer):
             for checkbox in checkbox_data :
                 CheckBox.objects.create(question = question_create, **checkbox)
         return formulaire
+    
+class FormulaireQuestionSerializer (serializers.ModelField):
+    

@@ -65,6 +65,13 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.email
 
+class CustomModel(models.Model): 
+    is_active = models.BooleanField(default=True)
+    def delete(self):
+        self.is_active = False
+        self.save()
+
+
 class CodePassword(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     code = models.IntegerField()

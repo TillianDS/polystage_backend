@@ -24,8 +24,8 @@ urlpatterns = [
     path('', include('formulaire.urls')),
     path('', include('mail.urls')),
 
-    #path('accounts/login/', cas_views.LoginView.as_view(), name='cas_ng_login'),
-    #path('accounts/logout/', cas_views.LogoutView.as_view(), name='cas_ng_logout'),
+    path('accounts/login/', cas_views.LoginView.as_view(), name='cas_ng_login'),
+    path('accounts/logout/', cas_views.LogoutView.as_view(), name='cas_ng_logout'),
 
 
 ]
