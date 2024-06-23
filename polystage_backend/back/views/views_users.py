@@ -149,3 +149,4 @@ class UserAllList(APIView):
         serializer = EtudiantSerializer(user, many = True)
         return Response(serializer.data) 
         return Response({"error" : "le profile n'est pas bon"}, status=status.HTTP_400_BAD_REQUEST)
+    

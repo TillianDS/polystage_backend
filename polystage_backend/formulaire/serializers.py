@@ -46,7 +46,7 @@ class FormulaireAllSerializer (serializers.ModelSerializer):
 
     class Meta :
         model = Formulaire
-        fields = ['id', 'title', 'description', 'question']
+        fields = ['id', 'title', 'profile', 'description', 'question']
     
     def create(self, validated_data):
         question_data = validated_data.pop('question')

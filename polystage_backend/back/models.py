@@ -65,12 +65,6 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.email
 
-class CustomModel(models.Model): 
-    is_active = models.BooleanField(default=True)
-    def delete(self):
-        self.is_active = False
-        self.save()
-
 
 class CodePassword(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
@@ -83,6 +77,9 @@ class Admin(CustomUser):
 class Tuteur(CustomUser):
     class Meta : 
         verbose_name = 'Tuteur'
+"""
+class membreJury(CustomUser):
+    pass"""
 
 class Enseignant(CustomUser):
     class Meta : 
@@ -100,6 +97,8 @@ class Jury(models.Model):
     campus = models.CharField(max_length=200, null = True)
     zoom = models.CharField(max_length=300, null = True )
     #models.models.URLField(_(""), max_length=200)
+
+    #leader = models.ForeignKey(membreJury, on_delete=models.CASCADE)
 
 class Filiere(models.Model):
     nom = models.CharField(max_length = 100, unique=True)

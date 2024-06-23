@@ -15,6 +15,10 @@ urlpatterns = [
     path('checkboxList/', views_formulaire.CheckboxList.as_view()),
     path('checkboxDetails/<int:pk>/', views_formulaire.CheckboxDetails.as_view()),
 
+    path('searchFormulaire/', views_formulaire.SearchFormulaire.as_view()),
+
+
+    #views_response
     path('responseList/', views_response.ResponseList.as_view()),
     path('responseDetails/<int:pk>/', views_response.ResponseDetails.as_view()),
 

@@ -882,6 +882,7 @@ formulaire all permet de créer et gérer tous les entités d'un formualire : le
 
 - id (string) : id du formulaire
 - title (string): titre du formulaire
+- profile = profile à qui le formulaire est déstiné
 - description (string) : description du formulaire
 
 ### formulaireAllList

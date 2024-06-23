@@ -2,8 +2,9 @@ from datetime import datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from ..models import Etudiant, Enseignant, CustomUser
-from ..serializers import EtudiantSerializer, EnseignantSerializer, UserSerializer
+from ..models import Etudiant, CustomUser, Tuteur, Stage, Soutenance, Jury
+from formulaire.models import Question
+from ..serializers import EtudiantSerializer, UserSerializer
 from rest_framework.authentication import TokenAuthentication
 from .views_users import UserList
 
@@ -61,3 +62,20 @@ class GetUser (APIView):
         else :
             user = CustomUser.objects.filter(last_name__icontains = nom, first_name__icontains = prenom, email__icontains = email)
         return Response(UserSerializer(user, many = True).data)
+
+class SetAllInactive(APIView):
+    #rend inactive toutes les données active d'un model
+    def modelInactive(self, models):
+        models = models.objects.all()
+        for model in models :
+            model.delete()
+    
+    def post(self, request, format = None):
+        self.modelInactive(Etudiant)
+        self.modelInactive(Stage)
+        self.modelInactive(Soutenance)
+        self.modelInactive(Tuteur)
+        self.modelInactive(Jury)
+        self.modelInactive(Question)
+        
+        return Response ({"success" : "les données de Etudiants, Stage, Soutenances, Tuteur, Jury ont été rendus inactives" }, status=status.HTTP_200_OK)

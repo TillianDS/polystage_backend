@@ -49,4 +49,21 @@ class FormulaireAllDetails(Details):
         super().__init__(*args, **kwargs)
         self.set_attribute(Formulaire, FormulaireAllSerializer, "Formulaire")
 
+class SearchFormulaire (APIView):
+    def get_string_data (self, request, data_name) :
+            if data_name in request.data :
+                data = request.data[data_name]
+            else :
+                data = ""
+            return data
+    
+    def post(self, request, format = None):
+        titre = self.get_string_data(request, 'titre')
+        description = self.get_string_data(request, 'description')
+        profile = self.get_string_data(request, 'profile')
 
+        #promo = 
+        #filiere = 
+        
+        formulaire = Formulaire.objects.filter(titre__icontains = titre, description__icontains = description, profile__icontains = profile)
+        return Response(FormulaireSerializer(formulaire, many = True).data)

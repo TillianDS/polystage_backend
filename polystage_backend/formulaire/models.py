@@ -1,14 +1,27 @@
 from django.db import models
 
-from back.models import CustomUser
+from back.models import CustomUser, Etudiant
 # Create your models here.
 
 #gestion droits lectur ecriture
 class Formulaire (models.Model):
     #id_createur
     id = models.CharField(max_length=200, primary_key=True)
-    title = models.CharField(max_length=200)
-    description = models.CharField(max_length=200, blank= True, null= True)
+    titre = models.CharField(max_length=200)
+    description = models.CharField(max_length=400, blank= True, null= True)
+    PROFILE_CHOICES = [
+        ('ENS', 'Enseignant'),
+        ('ETU', 'Etudiant'),
+        ('JUR', 'Jury'),
+    ]
+    profile = models.CharField(max_length=3, choices=PROFILE_CHOICES)
+
+    PROFILE_CHOICES = [
+        ('FR', 'Français'),
+        ('AN', 'Anglais'),
+    ]
+    langue = models.CharField(max_length=3, choices=PROFILE_CHOICES)
+    
     def __str__ (self) :
         return str(self.title)
 
@@ -26,9 +39,10 @@ class Question (models.Model):
         return str(self.id) + " " +self.title
     
 class Response (models.Model):
-    content = models.CharField(max_length=500)
+    content = models.CharField(max_length=1000)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    #id_etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE)
     def __str__ (self) :
         return str(self.user) + " : " + str(self.content)
 
