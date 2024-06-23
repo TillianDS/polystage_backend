@@ -13,6 +13,12 @@ def getPromoFilireMail(promo, filiere):
     mail = Etudiant.objects.select_related("promo__filiere").filter(promo__filiere__nom = filiere, promo__annee = promo).values_list("email", flat=True)
     return mail
 
+class ChangeMail(APIView):
+    def post(self, request, format = None):
+        promo = request.data['sujet']
+        
+
+
 class sendMailOpenPolystage(APIView) :
     # envoie un mail pour l'ouverture de la plateforme AMU Stage
     def post (self, request, format = None) :

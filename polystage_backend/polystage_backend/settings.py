@@ -155,13 +155,16 @@ CAS_SERVER_URL = 'https://ident.univ-amu.fr/cas/'
 CAS_VERSION : 3
 CAS_LOGOUT_URL_NAME = 'https://ident.univ-amu.fr/cas/logout/'
 
+LOGIN_URL = '/accounts/login/'
+LOGOUT_URL = '/accounts/logout/'
+LOGIN_REDIRECT_URL = '/filiereList/'
 
 
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.BasicAuthentication',
-
+        #'django_ng_cas.authentication.CASAuthentication',
         #'rest_framework.authentication.TokenAuthentication', 
     ],
     'DEFAULT_PERMISSION_CLASSES': [
@@ -176,7 +179,6 @@ CORS_ALLOW_ALL_ORIGINS = True  # Autoriser tous les domaines
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5050",  # Autoriser les requêtes depuis ce domaine
 ]
-CORS_ALLOW_ALL_ORIGINS = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'

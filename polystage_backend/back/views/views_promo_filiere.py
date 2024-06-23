@@ -5,8 +5,9 @@ from ..models import Filiere, Promo, Etudiant
 from ..serializers import FiliereSerializer, PromoSerializer, PromoFiliereSerializer
 from rest_framework.authentication import TokenAuthentication
 
-class FiliereList(APIView):
 
+class FiliereList(APIView):
+    
     def get (self, request, format = None):
         filiere = Filiere.objects.all()
         serializer = FiliereSerializer(filiere, many = True)
