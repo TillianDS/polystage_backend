@@ -5,7 +5,7 @@ from ..models import Jury
 from ..serializers import JurySerializer
 from rest_framework.authentication import TokenAuthentication
 from ..models import CustomUser, Enseignant, Tuteur, Admin, Professionnel, Etudiant, Promo
-from ..serializers import UserSerializer, EnseignantSerializer, TuteurSerializer, ProfessionnelSerializer, AdminSerializer, EtudiantSerializer, PromoSerializer
+from ..serializers import UserSerializer, EnseignantSerializer, TuteurSerializer, ProfessionnelSerializer, AdminSerializer, EtudiantSerializer, PromoSerializer, StageSerializer, SoutenanceSerializer, JurySerializer
 
 
 class importUser (APIView):
@@ -66,4 +66,32 @@ class importPromoFiliere(APIView) :
 
 class importStage (APIView):
     def post(self, request, format = None):
+        stages_data = request.data
+        errors = []
+
+        tuteurs = Tuteur
+        for stage in stages_data :
+            email_tuteur = stage.pop('email')
+            id_tuteur = tuteurs.objects.get(email = email_tuteur).pk
+
+            stage['tuteur'] = id_tuteur
+            serializer = StageSerializer(data=stage)
+            if serializer.is_valid() : 
+                serializer.save()
+            else : 
+                errors.append({"stage" : stage, "errors" : serializer.errors})
+        if errors :
+            return Response({"errors" : errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"success" : "tous les utilisateurs ont été crées avec succès"}, status= status.HTTP_201_CREATED)
+
+    
+class importSoutenance(APIView):
+    def post (self, request, format = None):
+        tuteurs = Tuteur.objects.get(pk=3)
+
+        
+        return Response({'id':tuteurs.jurys.all()})
+    
+class importJury(APIView):
+    def post (self, request, format = None):
         return Response()

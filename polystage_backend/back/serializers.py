@@ -83,6 +83,7 @@ class JurySerializer (serializers.ModelSerializer) :
     class Meta : 
         model = Jury
         fields = "__all__"
+        
     """
     def create(self, validated_data):
         pro_data = validated_data.pop('professionnel')

@@ -5,9 +5,11 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from .views import views_login, views_users, views_admin, views_promo_filiere, views_stage, views_soutenance, views_jury, views_csv, views_import, views_etudiant, views_export, cas, test_cas
 
 urlpatterns = [
-     #views_Users
+    #views_Users
     path('userDetails/<int:pk>/', views_users.UserDetails.as_view()),
     path('userList/', views_users.UserList.as_view()),
+
+    #test_cas
     path('profile/', test_cas.user_profile, name='user_profile'),
 
     #views_login
@@ -46,7 +48,10 @@ urlpatterns = [
 
     #views_import 
     path('importUser/',views_import.importUser.as_view()),
-    
+    path('importStage/', views_import.importStage.as_view()),
+    path('importSoutenance/', views_import.importSoutenance.as_view()),
+    path('importJury/', views_import.importJury.as_view()),
+
     #views_export
     path("exportNote/", views_export.exportNote.as_view()),
     

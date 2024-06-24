@@ -1,40 +1,119 @@
 
-pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host=files.pythonhosted.org django-rest-auth
-
-# Methode bash pour le serveur
+# commandes json pour le serveur
 
 ## lancer le serveur
 
-```bash
+```json
 python3 manage.py runserver
 ```
 
 ## mettre à jour les migrations
 
-```bash
+```json
 python3 manage.py makemigrations 
 python3 manage.py migrate
 ```
 
 # URL
 
-### Utilisateur
+Chaque endpoint de l'API polystage Backend est détaillé ci dessous. Certaines vues sont CRUD d'autres ne le sont pas.
 
-##### les informations de l'utilisateur :
+## organisation vues CRUD
+
+Chaque model possède une implémentation avec des fonctions CRUD (create, read update, delete). 
+
+Cette implémentation CRUD est dedontante à chaque model, nous n'allons pas détailler le fonctionnement à chaque fois, nous préciserons pour chaque url, les informations nécessaires à envoyer et les informations reçus.
+
+Les vues CRUD sont organisé de la manière suivante : 
+
+On a deux class ModelList et ModelDetails
+
+### modelList :
+
+```
+url : http://127.0.0.1:8000/modelList/
+```
+méthode :  GET, POST
+
+#### GET
+
+Renvoie toutes les données de la table en question
+
+#### POST
+
+Permet d'enregisrer dans la table une instance du model en question en fournissant dans la requête les informations nécessaires
+
+### modelDetails
+Permet d'accèder à un instance précise de la table, à la fin de l'url il faut rajouter la clé primaire (un entier : integer) de l'instance sur laquelle la requête va s'appliquer.
+
+```
+url : http://127.0.0.1:8000/modelDetail/<integer>/
+```
+méthode : GET, PUT, DELETE
+
+#### GET
+
+Renvoie les informations de l'instance spécifié
+
+#### PUT
+
+Permet de modifier les informations de l'instance.
+
+#### Données à envoyer 
+
+Les données que l'ont a modifié ET AUSSI celle qui n'ont pas été modifié.
+
+Django compare ensuite les informations et modifie celle qui ont changée.
+
+### Données reçues 
+
+Les données de l'instance modifiée
+
+### DELETE
+
+Supprimer l'instance spécifiée. 
+
+#### Données à envoyer 
+Aucune information de plus que la clé primaire dans l'url n'est nécessaire. 
+
+#### Donbées reçues
+
+Lors de la suppression renvoie un message :
+
+```json
+{
+    "success": "{{NomModelInstance}} supprimé avec succès"
+}
+```
+
+#### Infos 
+Les données ne sont pas réellement supprimées de la base, elles prennent le statu `is_active = True` ce qui les rend non visible par toutes les requetes (à part en utilisant un autre objet du model Django)
+
+## autres vues
+
+Un certains nombre de vue prennent d'autres formes et seront détaillées plus en détails
+
+# CRUD
+
+## Utilisateurs
+
+### URL
+
+```url
+http://127.0.0.1:8000/userList/
+
+http://127.0.0.1:8000/userDetails/<int>/
+```
+### les informations de l'utilisateur :
 
 - id (int) : identfifiant de l'utilisateur
 - email (email) : email de l'utilisateur
 - first_name (string) : prenom
 - last_name (string) : prenom
-- first_connection (boolean): est ce la première connection de l'utilisateur ? (true si premiere connection, false s'il s'est déjà connecté)
+- first_connection (boolean): est ce la première connection de l'utilisateur ? true si premiere connection, false s'il s'est déjà connecté
 - profile (string: profile) : profile de l'utilisateur
 
-pour les etudiants on trouve en plus :
-
-- num_etudiant (int) : numéro de l'etudiant
-- date_naissance (date) : date de naissance de l'etudiant
-
-##### les profiles possibles pour un utilisateur
+#### les profiles possibles pour un utilisateur
 
 - ENS : enseignant
 - ADM : admin
@@ -42,126 +121,27 @@ pour les etudiants on trouve en plus :
 - TUT : tuteur
 - PRO : professionnel
 
-### login
+### pour les etudiants on trouve en plus :
 
-permet d'authentifier l'utilisateur et de la connecter à l'application
+- num_etudiant (int) : numéro de l'etudiant
 
-```url
-http://127.0.0.1:8000/login/
-```
-
-#### POST
-
-##### arguments requete
-
-- "email" : email de l'utilisateur
-- "password" : nouveau mot de passe
-
-##### response
-
-si les identifiants :
-
-- "id" : identifiants utilisateurs
-- "token" : token d'authentification
-- "type utilisateur" : type de l'utilisateur qui se connecte
-
-```bash
-{
-    "token": "a5d8e22e748f34af4205d2b2714b22a4a7bcdcbe",
-    "user_id": 14,
-    "profile": "ADM"
-}
-```
-
-### codeReset
-
-envoie un mail à l'utilisateur avec son code de réinitilisation, s'il existe
-si l'utilisateur n'existe pas, on a le même message de succès mais aucun mail n'est envoyé
-
-```url
-http://127.0.0.1:8000/codeReset/
-```
-
-#### POST
-
-##### arguments requete
-
-- "email" : email de l'utilisateur
-
-##### response
-
-```bash
-{
-    "success": "email envoyé avec succès"
-}
-```
-
-### change password
-
-permet de changer modifier le mot de passe d'un utilisateur
-le mot de passe doit contenir une majuscule, une minuscule, un caractère spécial et doit avoir une taille minimum de 7 caractères
-
-```url
-http://127.0.0.1:8000/password/
-```
-
-#### POST
-
-##### arguments requete
-
-- "email" : email de l'utilisateur dont on souhaite modifier le mdp
-- password1 (string) : mdp de l'utilisateur
-- password2 (string) : confirmation du mdp de l'utilisateur
-
-les mdp doivent contenir une majuscule, une minuscule, un caractère spécial parmis [()[\]{}|\\`~!@#$%^&*_\-+=;:\'",<>./?] et doivent avoir uen longueur d'au moins 7 caractères
-
-##### response
-
-informations de l'utilisateur
-
-```bash
-    {
-        "id": 21,
-        "email": "enseignant14@po.fr",
-        "first_name": "Benoit",
-        "last_name": "Favre",
-        "first_connection": true,
-        "profile": "ENS"
-    }
-```
-### UserList
-
-afficher ou créer des utilisateurs
-
-```url
-http://127.0.0.1:8000/userList/'
-```
-
-#### POST
-creation d'un user selon le profile spécifié
-
-##### requete
+##### Données à envoyer 
 
 - email (email) : email du user
 - first_name (string) : prenom
 - last_name (string) : prenom
-- password1 (string) : mdp de l'utilisateur
-- password2 (string) : confirmation du mdp de l'utilisateur
 - profile (profile) : profile de l'utilisateur
-
-les mdp doivent contenir une majuscule, une minuscule, un caractère spécial parmis [()[\]{}|\\`~!@#$%^&*_\-+=;:\'",<>./?] et doivent avoir uen longueur d'au moins 7 caractères
 
 pour les etudiants on trouve en plus :
 
 - idFiliere : 
 - num_etudiant (int) : numéro de l'etudiant
-- date_naissance (date) : date de naissance de l'etudiant
 
 ##### response
 
 informations de l'utilisateur crée
 
-```bash
+```json
 http://127.0.0.1:8000/userList/ENS/
 {
         "id": 12,
@@ -172,26 +152,13 @@ http://127.0.0.1:8000/userList/ENS/
         "profile": "ENS"
     }
 ```
-
-### userDetails
-
-permet d'accèder à un user spécifique, de le modifier ou de le supprimer
-
-```url
-http://127.0.0.1:8000/userDetails/<int:pk>/'
-```
-
-##### argument url
-
-- pk (int) : id du user que l'on voudra modifier
-
 #### GET
 
 ##### response
 
 informations de l'utilisateur
 
-```bash
+```json
 http://127.0.0.1:8000/userDetails/1/
 {
     "id": 12,
@@ -214,13 +181,11 @@ les informations que l'on veut modifier mais aussi celles qui ne changent pas
 - last_name : nom
 
 si etudiant :
-
-- date_naissance (string : Day-Month-Year) : date naissance
 - num_etudiant (string) : numéro etudiant
 
 ##### response
 
-```bash
+```json
 http://127.0.0.1:8000/userDetails/1/
 {
     "id": 25,
@@ -232,15 +197,40 @@ http://127.0.0.1:8000/userDetails/1/
 }
 ```
 
-#### DELETE
+## Authentification 
 
-suprime la filiere
+### login
 
-```bash
+permet d'authentifier l'utilisateur et de la connecter à l'application
+
+```url
+http://127.0.0.1:8000/login/
+```
+
+#### POST
+
+##### arguments requete
+
+- "email" : email de l'utilisateur
+- "password" : mot de passe
+
+##### response
+
+si les identifiants sont correctes:
+
+- "id" : identifiants utilisateurs
+- "token" : token d'authentification
+- "type utilisateur" : type de l'utilisateur qui se connecte
+
+
+```json
 {
-    "success": "utilisateur supprimé avec succès"
+    "token": "a5d8e22e748f34af4205d2b2714b22a4a7bcdcbe",
+    "user_id": 14,
+    "profile": "ADM"
 }
 ```
+
 
 ##### response
 
@@ -264,7 +254,6 @@ champ sur lesquels on souhaite faire la recherche
 - last_name (string)
 - email (string)
 - num_etudiant (string)
-- date_naissance (string : Day-Month-Year)
 - profile (string)
 
 à part pour la date et le profile qui doivent être entier, les autres champ peuvent être incomplet et la base cherchera les utilisateurs contenant cette chaine dans l'attribut
@@ -281,7 +270,7 @@ Si aucun utilisateur ne correspond à la requete, cela renvoie une dataform vide
 
 informations de ou des utilisateurs trouvés
 
-```bash
+```json
 http://127.0.0.1:8000/userSearch/
 
 pour une requete : 
@@ -319,9 +308,6 @@ informations d'une filiere :
 
 - id (int) : id de la filiere
 - nom (string)  : nom filiere
-- nom_directeur (string): nom directeur de filiere
-- prenom_directeur (string) : prenom directeur de filiere
-
 ### filiereList
 
 accèder aux informations de toutes les filières ou créer une filière
@@ -337,19 +323,15 @@ accès aux informations de toutes les filières
 
 les informations de toutes les filieres
 
-```bash
+```json
 [
     {
         "id": 2,
         "nom": "Genie Biologique",
-        "nom_directeur": "Parsiegla",
-        "prenom_directeur": "Goetz"
     },
     {
         "id": 3,
         "nom": "Materiaux",
-        "nom_directeur": "jean",
-        "prenom_directeur": "jean"
     }
 ]
 ```
@@ -358,20 +340,17 @@ les informations de toutes les filieres
 creation d'une filière
 
 ##### requete
+
 - nom (string) : nom filiere
-- nom_directeur (string): nom directeur de filiere
-- prenom_directeur (string) : prenom directeur de filiere
 
 ##### response
 
 informations de la filiere créée
 
-```bash
+```json
 {
         "id": 2,
-        "nom": "Genie Biologique",
-        "nom_directeur": "Parsiegla",
-        "prenom_directeur": "Goetz"
+        "nom": "Genie Biologique"
     },
 ```
 
@@ -393,13 +372,10 @@ http://127.0.0.1:8000/filiereDetails/<int:pk>/'
 
 informations de la filiere
 
-```bash
+```json
 {
     "id": 5,
-    "nom": "Informatique",
-    "nom_directeur": "Ayache",
-    "prenom_directeur": "Stephane"
-}
+    "nom": "Informatique"
 ```
 
 #### PUT
@@ -411,24 +387,10 @@ si certains champ ne changement pas, il faut aussi les renvoyer : la base compar
 
 ##### response
 
-```bash
+```json
 {
     "id": 5,
-    "nom": "Informatique",
-    "nom_directeur": "Ayache",
-    "prenom_directeur": "Stephane"
-}
-```
-
-#### DELETE
-
-suprime la filiere
-
-##### response
-
-```bash
-{
-    "success": "filiere supprimée avec succès"
+    "nom": "Informatique"
 }
 ```
 
@@ -452,7 +414,7 @@ http://127.0.0.1:8000/promoList/'
 
 les informations de toutes les promos
 
-```bash
+```json
 [
     {
         "id": 4,
@@ -480,7 +442,7 @@ permet de créer une promo
 
 les données de la promo créée
 
-```bash
+```json
 {
     "id": 6,
     "annee": 2029,
@@ -504,7 +466,7 @@ http://127.0.0.1:8000/promoDetails/<int:pk>/
 
 ##### response
 
-```bash
+```json
 {
     "id": 2,
     "annee": 2026,
@@ -524,7 +486,7 @@ si certains champ ne changement pas, il faut aussi les renvoyer : la base compar
 
 information de la promo avec les modifications
 
-```bash
+```json
 {
     "id": 2,
     "annee": 2026,
@@ -539,7 +501,7 @@ suprime la promo
 
 ##### response
 
-```bash
+```json
 {
     "success": "promo supprimée avec succès"
 }
@@ -559,16 +521,14 @@ affiche toutes les promos avec la filiere associé
 
 ##### response
 
-```bash
+```json
 [
     {
         "id": 2,
         "annee": 2026,
         "filiere": {
             "id": 2,
-            "nom": "Genie Biologique",
-            "nom_directeur": "Parsiegla",
-            "prenom_directeur": "Goetz"
+            "nom": "Genie Biologique"
         }
     },
     {
@@ -576,9 +536,7 @@ affiche toutes les promos avec la filiere associé
         "annee": 2027,
         "filiere": {
             "id": 2,
-            "nom": "Genie Biologique",
-            "nom_directeur": "Parsiegla",
-            "prenom_directeur": "Goetz"
+            "nom": "Genie Biologique"
         }
     }
 ]
@@ -611,7 +569,7 @@ accès aux informations de toutes les stages
 
 les informations de toutes les stages
 
-```bash
+```json
 [
     {
         "id": 2,
@@ -640,7 +598,7 @@ creation d'un stage
 
 informations du stage crée.
 
-```bash
+```json
     {
         "id": 2,
         "confidentiel": true,
@@ -670,7 +628,7 @@ http://127.0.0.1:8000/stageDetails/<int:pk>/'
 
 informations du stage
 
-```bash
+```json
 http://127.0.0.1:8000/stageDetails/5/
    {
     "id": 5,
@@ -693,7 +651,7 @@ si certains champ ne changement pas, il faut aussi les renvoyer : la base compar
 
 ##### response
 
-```bash
+```json
 {
         "id": 2,
         "confidentiel": true,
@@ -711,7 +669,7 @@ suprime le stage
 
 ##### response
 
-```bash
+```json
 {
     "success": "stage supprimé avec succès"
 }
@@ -740,7 +698,7 @@ http://127.0.0.1:8000/soutenanceDetails/<int:idSoutenance>/
 
 ### envoie
 
-```bash
+```json
 {
     "etudiant": 32,
     "jury": 1,
@@ -753,7 +711,7 @@ http://127.0.0.1:8000/soutenanceDetails/<int:idSoutenance>/
 
 ### reçu
 
-```bash
+```json
 {
     "id" : 1,
     "etudiant": 32,
@@ -793,9 +751,7 @@ renvoie les informations de l'utilisateur avec son stage, sa promo, sa filière 
         "annee": 2027,
         "filiere": {
             "id": 2,
-            "nom": "Genie Biologique",
-            "nom_directeur": "Parsiegla",
-            "prenom_directeur": "Goetz"
+            "nom": "Genie Biologique"
         }
     },
     "stage": [
@@ -901,7 +857,7 @@ accès aux informations de tous les formulaires
 
 les informations de toutes les stages
 
-```bash
+```json
 [
     {
         "id": "1",
@@ -994,7 +950,7 @@ création d'un formulaire
 
 informations du stage crée.
 
-```bash
+```json
     {
         "id": 2,
         "confidentiel": true,
@@ -1024,7 +980,7 @@ http://127.0.0.1:8000/stageDetails/<int:pk>/'
 
 informations du stage
 
-```bash
+```json
 http://127.0.0.1:8000/stageDetails/2/
     {
         "id": 2,
@@ -1047,7 +1003,7 @@ si certains champ ne changement pas, il faut aussi les renvoyer : la base compar
 
 ##### response
 
-```bash
+```json
 {
         "id": 2,
         "confidentiel": true,
@@ -1065,7 +1021,7 @@ suprime le stage
 
 ##### response
 
-```bash
+```json
 {
     "success": "stage supprimé avec succès"
 }
@@ -1083,7 +1039,8 @@ suprime le stage
 accèder aux informations de toutes les formulaires ou créer un formulaire
 
 ```url
-http://127.0.0.1:8000/responseList/'
+http://127.0.0.1:8000/responseList/
+http://127.0.0.1:8000/responseDetails/<int:pk>/
 ```
 
 #### GET
@@ -1094,7 +1051,7 @@ accès aux informations de tous les réponses
 
 les informations de toutes les réponses
 
-```bash
+```json
 [
     {
         "id": 1,
@@ -1124,7 +1081,7 @@ creation d'une réponse
 
 informations du stage crée.
 
-```bash
+```json
     {
         "id": 2,
         "content": "oui",
@@ -1138,7 +1095,6 @@ informations du stage crée.
 permet d'accèder à une réponse spécifique, de la modifier ou de la supprimer
 
 ```url
-http://127.0.0.1:8000/responseDetails/<int:pk>/'
 ```
 
 ##### argument url
@@ -1151,8 +1107,7 @@ http://127.0.0.1:8000/responseDetails/<int:pk>/'
 
 informations du stage
 
-```bash
-http://127.0.0.1:8000/responseDetails/1/
+```json
 
     {
     "id": 1,
@@ -1162,17 +1117,9 @@ http://127.0.0.1:8000/responseDetails/1/
     }
 ```
 
-#### PUT
-
-permet de modifier une réponse
-##### arguments requete
-
-les informations que l'on veut modifier
-si certains champ ne changement pas, il faut aussi les renvoyer : la base compare la réponse existante avec la  réponse renvoyée pour détecter ce qui a été modifié
-
 ##### response
 
-```bash
+```json
 {
     "id": 1,
     "content": "oui",
@@ -1182,21 +1129,10 @@ si certains champ ne changement pas, il faut aussi les renvoyer : la base compar
 
 ```
 
-#### DELETE
-
-suprime la réponse
-
-##### response
-
-```bash
-{
-    "success": "response supprimée avec succès"
-}
-```
 
 # Import des données
 
-### envoie
+### Données envoyées
 l'envoie des données se fait sous format JSON, un tableau contient chaque champ de l'instance à créer
 
 ```json
@@ -1217,7 +1153,7 @@ l'envoie des données se fait sous format JSON, un tableau contient chaque champ
 ]
 ```
 
-### réception
+### Données reçues
 
 ```json
 {
@@ -1256,7 +1192,7 @@ l'envoie des données se fait sous format JSON, un tableau contient chaque champ
 http://127.0.0.1:8000/importUser/
 ```
 
-### Envoie
+### Données à envoyer
 
 ```json
 [
@@ -1283,10 +1219,10 @@ http://127.0.0.1:8000/importUser/
 ]
 ```
 
-### Réception
 
+### Données reçues
 
-```bash
+```json
 [
     {
         "email": "test@po.fr",
@@ -1309,4 +1245,111 @@ http://127.0.0.1:8000/importUser/
         "num_etudiant" : "d22014217"
     }
 ]
+```
+## Import des Stages
+
+```url
+http://127.0.0.1:8000/importStage/
+```
+
+### Données à envoyer
+
+```json
+```
+
+### Données reçues
+
+```json
+```
+
+## Import des Soutenances 
+
+```url
+http://127.0.0.1:8000/importSoutenance/
+```
+
+### Données à envoyer
+
+```json
+```
+
+### Données reçues
+
+```json
+```
+
+## Import des Jurys
+
+```url
+http://127.0.0.1:8000/importJury/
+```
+
+### Données à envoyer
+
+```json
+```
+
+### Données reçues
+
+```json
+```
+
+
+
+
+### codeReset
+
+envoie un mail à l'utilisateur avec son code de réinitilisation, s'il existe
+si l'utilisateur n'existe pas, on a le même message de succès mais aucun mail n'est envoyé
+
+```url
+http://127.0.0.1:8000/codeReset/
+```
+
+#### POST
+
+##### arguments requete
+
+- "email" : email de l'utilisateur
+
+##### response
+
+```json
+{
+    "success": "email envoyé avec succès"
+}
+```
+
+### change password
+
+permet de changer modifier le mot de passe d'un utilisateur
+le mot de passe doit contenir une majuscule, une minuscule, un caractère spécial et doit avoir une taille minimum de 7 caractères
+
+```url
+http://127.0.0.1:8000/password/
+```
+
+#### POST
+
+##### arguments requete
+
+- "email" : email de l'utilisateur dont on souhaite modifier le mdp
+- password1 (string) : mdp de l'utilisateur
+- password2 (string) : confirmation du mdp de l'utilisateur
+
+les mdp doivent contenir une majuscule, une minuscule, un caractère spécial parmis [()[\]{}|\\`~!@#$%^&*_\-+=;:\'",<>./?] et doivent avoir uen longueur d'au moins 7 caractères
+
+##### response
+
+informations de l'utilisateur
+
+```json
+    {
+        "id": 21,
+        "email": "enseignant14@po.fr",
+        "first_name": "Benoit",
+        "last_name": "Favre",
+        "first_connection": true,
+        "profile": "ENS"
+    }
 ```
