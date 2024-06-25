@@ -1,5 +1,5 @@
 
-# commandes json pour le serveur
+# commandes bash pour le serveur
 
 ## lancer le serveur
 
@@ -515,7 +515,7 @@ permet d'afficher une promo associé à sa filière
 http://127.0.0.1:8000/promoFiliere/
 ```
 
-#### GET
+#### GET
 
 affiche toutes les promos avec la filiere associé
 
@@ -538,6 +538,46 @@ affiche toutes les promos avec la filiere associé
             "id": 2,
             "nom": "Genie Biologique"
         }
+    }
+]
+```
+## getPromoOfFiliere
+
+renvoie les promos d'une filiere
+
+méthode : POST
+
+```url
+getPromoOfFiliere/
+```
+### Données à envoyer
+
+```json
+{
+    "id_filiere" :  "id de la filiere"
+}
+```
+
+### Données reçues
+
+toutes les promos associées
+
+```json
+[
+    {
+        "id": 4,
+        "annee": 2027,
+        "filiere": 2
+    },
+    {
+        "id": 5,
+        "annee": 2028,
+        "filiere": 2
+    },
+    {
+        "id": 6,
+        "annee": 2029,
+        "filiere": 2
     }
 ]
 ```

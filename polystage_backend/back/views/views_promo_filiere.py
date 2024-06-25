@@ -110,3 +110,13 @@ class PromoFiliere(APIView) :
         #serializer = PromoSerializer(data = request.data)
         return Response({'error' : 'error'})
     """
+
+class getPromoOfFiliere(APIView):
+    def post(self, request, format = None):
+        try :
+            id_filiere = request.data["id_filiere"]
+        except :
+            return Response({"error" : "vous devez inclure un id_filiere"}, status = status.HTTP_400_BAD_REQUEST)
+        filiere = Filiere.objects.get(pk=id_filiere)
+        promos =filiere.promo_set.all()
+        return Response(PromoSerializer(promos, many = True).data)
