@@ -133,7 +133,7 @@ class Stage(models.Model):
     date_fin = models.DateField()
     tuteur =  models.ForeignKey(Tuteur, on_delete=models.CASCADE)
     nom_entreprise = models.CharField(max_length= 200)
-    etudiant = models.ForeignKey(Etudiant, related_name ='stage', on_delete=models.CASCADE )
+    #etudiant = models.ForeignKey(Etudiant, related_name ='stage', on_delete=models.CASCADE )
 
     def __str__(self):
         return self.sujet

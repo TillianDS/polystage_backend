@@ -107,11 +107,7 @@ class stageSearch (APIView):
     def post(self, request, format = None):
         search = request.data['search']
 
-        stages = Stage.objects.filter(Q(last_name__icontains = search) |
-                                           Q(first_name__icontains = search) | 
-                                           Q(num_etudiant = search) | 
-                                           Q(email__icontains = search))
-        
+        stages = Stage.objects.filter(sujet__icontains = search)
         stages_data = StageSerializer(stages, many = True).data
 
         return Response({'stages' : stages_data})

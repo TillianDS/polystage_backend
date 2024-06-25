@@ -5,14 +5,14 @@ from back.models import CustomUser
 class FormulaireSerializer (serializers.ModelSerializer):
     class Meta :
         model = Formulaire
-        fields = ['id', 'title', 'description', 'question']
+        fields = ['id', 'titre', 'description', 'question']
 
     
 class QuestionSerializer (serializers.ModelSerializer):
     formulaire = serializers.PrimaryKeyRelatedField(queryset=Formulaire.objects.all())
     class Meta :
         model = Question
-        fields = ['id', 'title', 'type', 'formulaire']
+        fields = ['id', 'titre', 'type', 'formulaire']
         
 class ResponseSerializer (serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset = CustomUser.objects.all())
@@ -25,7 +25,7 @@ class CheckboxSerializer (serializers.ModelSerializer):
     question = serializers.PrimaryKeyRelatedField(queryset = Question.objects.all())
     class Meta :
         model = CheckBox
-        fields = ['id', 'title', 'question']
+        fields = ['id', 'titre', 'question']
 
 
 # serializer pour l'affichage et l'enregistrement de tout un formulaire, question et checbox
@@ -33,20 +33,20 @@ class CheckboxSerializer (serializers.ModelSerializer):
 class CheckboxAllSerializer (serializers.ModelSerializer):
     class Meta :
         model = CheckBox
-        fields = ['id', 'title']
+        fields = ['id', 'titre']
 
 class QuestionAllSerializer (serializers.ModelSerializer):
     checkbox = CheckboxAllSerializer(many = True)
     class Meta :
         model = Question
-        fields = ['id', 'title', 'type', 'checkbox']
+        fields = ['id', 'titre', 'type', 'checkbox']
 
 class FormulaireAllSerializer (serializers.ModelSerializer):
     question = QuestionAllSerializer(many = True)
 
     class Meta :
         model = Formulaire
-        fields = ['id', 'title', 'profile', 'description', 'question']
+        fields = ['id', 'titre', 'profile', 'description', 'question']
     
     def create(self, validated_data):
         question_data = validated_data.pop('question')

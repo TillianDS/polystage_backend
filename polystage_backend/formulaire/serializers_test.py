@@ -6,20 +6,20 @@ from back.models import CustomUser
 class CheckboxSerializer (serializers.ModelSerializer):
     class Meta :
         model = CheckBox
-        fields = ['id', 'title']
+        fields = ['id', 'titre']
 
 class QuestionSerializer (serializers.ModelSerializer):
     checkbox = CheckboxSerializer(many = True)
     class Meta :
         model = Question
-        fields = ['id', 'title', 'type', 'checkbox']
+        fields = ['id', 'titre', 'type', 'checkbox']
 
 class FormulaireSerializer (serializers.ModelSerializer):
     question = QuestionSerializer(many = True)
 
     class Meta :
         model = Formulaire
-        fields = ['id', 'title', 'description', 'profile', 'question']
+        fields = ['id', 'titre', 'description', 'profile', 'question']
     
     def create(self, validated_data):
         question_data = validated_data.pop('question')
