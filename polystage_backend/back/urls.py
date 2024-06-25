@@ -19,7 +19,11 @@ urlpatterns = [
     path('code/', views_login.gestionCode.as_view()),
 
     #views_admin
-    path('userSearch/', views_admin.GetUser.as_view()),
+    path('userSearchAllChamp/', views_admin.userSearchAllChamp.as_view()),
+    path('userSearch/', views_admin.userSearch.as_view()),
+    path('stageSearch/', views_admin.stageSearch.as_view()),
+    path('stageSearch/', views_admin.soutenanceSearch.as_view()),
+
     path('setAllInactive/', views_admin.SetAllInactive.as_view()),
 
     #views_promo_filiere

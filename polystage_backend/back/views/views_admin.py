@@ -4,12 +4,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from ..models import Etudiant, CustomUser, Tuteur, Stage, Soutenance, Jury
 from formulaire.models import Question
-from ..serializers import EtudiantSerializer, UserSerializer
+from ..serializers import EtudiantSerializer, UserSerializer, StageSerializer, SoutenanceSerializer
 from rest_framework.authentication import TokenAuthentication
 from .views_users import UserList
+from django.db.models import Q
+from itertools import chain
 
 
-class GetUser (APIView):
+class userSearchAllChamp (APIView):
 
     def get_string_data (self, request, data_name) :
         if data_name in request.data :
@@ -56,6 +58,89 @@ class GetUser (APIView):
         else :
             user = CustomUser.objects.filter(last_name__icontains = nom, first_name__icontains = prenom, email__icontains = email)
         return Response(UserSerializer(user, many = True).data)
+
+
+class userSearch (APIView):
+    """
+    permet de rechercher des utilisateurs selon leur nom, prénom, email ou numéro étudiant sur un seul champ
+    la méthode recherche dans la base si les champs utilisateurs contiennent la chaine passé en data  
+    le nom de l'utlisateur n'a pas besoin d'être complet et la reqeute ne tient pas compte de la casse
+    la requete peut renvoyer un ou plusieurs utilisateurs
+
+    type de requete : POST
+    
+    Response : informations correspondants à un utilisateurs
+
+    """
+    def post(self, request, format = None):
+        search = request.data['search']
+
+        etudiants = Etudiant.objects.filter(Q(last_name__icontains = search) |
+                                           Q(first_name__icontains = search) | 
+                                           Q(num_etudiant = search) | 
+                                           Q(email__icontains = search))
+        
+        users = CustomUser.objects.filter(Q(email__icontains = search) | 
+                                         Q(last_name__icontains = search) |
+                                         Q(first_name__icontains = search))
+        
+        etudiants_data = EtudiantSerializer(etudiants, many = True).data
+        users_data = (UserSerializer(users, many = True).data)
+
+        users_results = list(chain(etudiants_data, users_data))
+
+        return Response({'users' : users_results})
+
+class stageSearch (APIView):
+
+    """
+    permet de rechercher des utilisateurs selon leur nom, prénom, email ou numéro étudiant sur un seul champ
+    la méthode recherche dans la base si les champs utilisateurs contiennent la chaine passé en data  
+    le nom de l'utlisateur n'a pas besoin d'être complet et la reqeute ne tient pas compte de la casse
+    la requete peut renvoyer un ou plusieurs utilisateurs
+
+    type de requete : POST
+    
+    Response : informations correspondants à un utilisateurs
+
+    """
+    def post(self, request, format = None):
+        search = request.data['search']
+
+        stages = Stage.objects.filter(Q(last_name__icontains = search) |
+                                           Q(first_name__icontains = search) | 
+                                           Q(num_etudiant = search) | 
+                                           Q(email__icontains = search))
+        
+        stages_data = StageSerializer(stages, many = True).data
+
+        return Response({'stages' : stages_data})
+
+
+class soutenanceSearch (APIView):
+    """
+    permet de rechercher des utilisateurs selon leur nom, prénom, email ou numéro étudiant sur un seul champ
+    la méthode recherche dans la base si les champs utilisateurs contiennent la chaine passé en data  
+    le nom de l'utlisateur n'a pas besoin d'être complet et la reqeute ne tient pas compte de la casse
+    la requete peut renvoyer un ou plusieurs utilisateurs
+
+    type de requete : POST
+    
+    Response : informations correspondants à un utilisateurs
+
+    """
+    def post(self, request, format = None):
+        search = request.data['search']
+
+        soutenances = Soutenance.objects.filter(Q(last_name__icontains = search) |
+                                           Q(first_name__icontains = search) | 
+                                           Q(num_etudiant = search) | 
+                                           Q(email__icontains = search))
+        
+        soutenances_data = SoutenanceSerializer(soutenances, many = True).data
+
+        return Response({'users' : soutenances_data})
+    
 
 class SetAllInactive(APIView):
     #rend inactive toutes les données active d'un model

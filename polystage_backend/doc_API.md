@@ -1186,7 +1186,7 @@ l'envoie des données se fait sous format JSON, un tableau contient chaque champ
 }
 ```
 
-## Import des utilisateurs
+## Import des utilisateurs
 
 ```url
 http://127.0.0.1:8000/importUser/
@@ -1281,7 +1281,7 @@ http://127.0.0.1:8000/importSoutenance/
 ## Import des Jurys
 
 ```url
-http://127.0.0.1:8000/importJury/
+importJury/
 ```
 
 ### Données à envoyer
@@ -1294,9 +1294,109 @@ http://127.0.0.1:8000/importJury/
 ```json
 ```
 
+# Search
+
+rechercher dans les différentes tables selon un / des critères souhaité
+
+## userSearch
+
+recherche un utilisateur selon son nom, prénom, email ou numéro étudiant (si étudiant). Le champ n'a pas besoin d'être entier, on regarde dans chaque colonne pour chaque utilisaterur si un champ contient la propriété recherché.
+
+```url
+userSearch/
+```
+### Données à envoyer
+
+```json
+{
+    "search" :  "champ à chercher"
+}
+```
+
+### Données reçues
+
+```json
+envoie : 
+{
+    "search" :  "jea"
+}
+
+reçus :
+{
+    "users": [
+        {
+            "id": 34,
+            "email": "jean@po.fr",
+            "first_name": "tillian",
+            "last_name": "dhume",
+            "first_connection": false,
+            "profile": "ETU",
+            "num_etudiant": "d2201421",
+            "promo": 4
+        },
+        {
+            "id": 6,
+            "email": "enseignant@po.fr",
+            "first_name": "jean",
+            "last_name": "jean",
+            "first_connection": false,
+            "profile": "ENS"
+        },
+        {
+            "id": 35,
+            "email": "test@po.fr",
+            "first_name": "",
+            "last_name": "jean",
+            "first_connection": true,
+            "profile": "TUT"
+        },
+    ]
+}
+```
+
+## stageSearch
+
+recherche un stage 
+
+```url
+stageSearch/
+```
+### Données à envoyer
+
+```json
+{
+    "search" :  "champ à chercher"
+}
+```
+
+### Données reçues
+
+```json
+```
 
 
+## soutenanceSearch
 
+recherche un stage 
+
+```url
+soutenanceSearch/
+```
+### Données à envoyer
+
+```json
+{
+    "search" :  "champ à chercher"
+}
+```
+
+### Données reçues
+
+```json
+```
+
+
+# Autres
 ### codeReset
 
 envoie un mail à l'utilisateur avec son code de réinitilisation, s'il existe
