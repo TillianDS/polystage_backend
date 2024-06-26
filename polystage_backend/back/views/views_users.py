@@ -103,7 +103,6 @@ class UserList(APIView):
             """
             user = serializer.save()
 
-            #user.set_password(password1)
             if profile == 'ETU':
                 user:Etudiant
                 user.promo = self.getPromo(pk=request.data['promo'])
@@ -116,21 +115,61 @@ class UserDetails(APIView):
     """
     Retrieve, update or delete a User.
     """
-
+    def choice_serializer (self, profile, user, many) :
+        if profile == 'ENS' : 
+            return EnseignantSerializer(user, many = many)
+        elif profile == 'ETU':
+            return EtudiantSerializer(user, many = many)
+        elif profile == 'ADM':
+            return AdminSerializer(user, many = many)
+        elif profile == 'PRO':
+            return ProfessionnelSerializer(user, many= many)
+        elif profile == 'TUT':
+            return TuteurSerializer(user, many = many)
+        else :
+            return 'error'
+        
+    def choice_deserializer (self, profile, user, data, many) :
+        if profile == 'ENS' : 
+            return EnseignantSerializer(user,data =data, many = many)
+        elif profile == 'ETU':
+            return EtudiantSerializer(user,data = data, many = many)
+        elif profile == 'ADM':
+            return AdminSerializer(user,data =data, many = many)
+        elif profile == 'PRO':
+            return ProfessionnelSerializer(user,data = data, many= many)
+        elif profile == 'TUT':
+            return TuteurSerializer(user, data = user, many = many)
+        else :
+            return 'error'
+          
+    def choice_user (self,pk, profile):
+        if profile == 'ENS' : 
+            return Enseignant.objects.get(pk=pk)
+        elif profile == 'ETU':
+            return Etudiant.objects.get(pk=pk)
+        elif profile == 'ADM':
+            return Admin.objects.get(pk=pk)
+        elif profile == 'PRO':
+            return Professionnel.objects.get(pk=pk)
+        elif profile == 'TUT':
+            return Tuteur.objects.get(pk=pk)
+        
     def get_User(self, pk) : 
         return CustomUser.objects.get(pk = pk)
 
     def get (self, request, pk, format = None) : 
-        user = self.get_User(pk)
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
-    
-    def put(self, request, pk, format = None):
-        user = self.get_User(pk)
-        data = request.data.copy()
+        profile = CustomUser.objects.get(pk=pk).profile
+        user = self.choice_user(pk, profile)
 
-        data['profile'] =  user.profile
-        serializer = UserSerializer(user,data = data)
+        serializer = self.choice_serializer(profile, user, False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, pk, format = None):
+        user = self.choice_user(pk, 'ETU')
+
+        serializer = self.choice_deserializer('ETU', user, request.data, False)
+        
         if serializer.is_valid() :
             serializer.save()
             return Response(serializer.data)

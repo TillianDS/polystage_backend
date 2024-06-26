@@ -64,18 +64,26 @@ class importPromoFiliere(APIView) :
         return Response()
 """
 
+"""
+import en masse de stage, pour les tuteur on précisera seulement leur adresse mai let les étudiants leur numéro étudiant
+"""
 class importStage (APIView):
     def post(self, request, format = None):
         stages_data = request.data
         errors = []
 
-        tuteurs = Tuteur
         for stage in stages_data :
-            email_tuteur = stage.pop('email')
-            id_tuteur = tuteurs.objects.get(email = email_tuteur).pk
+            email_tuteur = stage.pop('email_tuteur')
+            num_etudiant = stage.pop('num_etudiant')
+
+            id_etudiant = Etudiant.objects.get(num_etudiant= num_etudiant) .pk
+            id_tuteur = Tuteur.objects.get(email = email_tuteur).pk
 
             stage['tuteur'] = id_tuteur
+            stage['etudiant'] = id_etudiant
+            
             serializer = StageSerializer(data=stage)
+
             if serializer.is_valid() : 
                 serializer.save()
             else : 

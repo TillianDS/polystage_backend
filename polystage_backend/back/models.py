@@ -118,7 +118,7 @@ class Promo(models.Model):
 
 
 class Etudiant (CustomUser):
-    num_etudiant = models.CharField(max_length= 20)
+    num_etudiant = models.CharField(max_length= 20, unique= True)
     promo = models.ForeignKey(Promo, on_delete=models.CASCADE , blank=True, null=True)
 
     class Meta : 
