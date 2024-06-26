@@ -109,10 +109,8 @@ class JuryAffichageSerializer (serializers.ModelSerializer) :
         fields = "__all__"
     
 class SoutenanceSerializer (serializers.ModelSerializer) :
-    soutenance = serializers.PrimaryKeyRelatedField(queryset = Etudiant.objects.all())
-    jury = serializers.PrimaryKeyRelatedField(queryset = Jury.objects.all())
-    date_soutenance = serializers.DateField(format='%d-%m-%Y', input_formats=['%d-%m-%Y'])
-    heure_soutenance = serializers.TimeField(format= '%H:%M', input_formats=['%H:%M'])
+    date_soutenance = serializers.DateField(format='%d-%m-%Y', input_formats=['%d-%m-%Y'], required=False, allow_null=True)
+    heure_soutenance = serializers.TimeField(format= '%H:%M', input_formats=['%H:%M'], required=False, allow_null=True)
 
     class Meta : 
         model = Soutenance

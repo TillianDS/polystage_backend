@@ -133,15 +133,15 @@ class Stage(models.Model):
     date_fin = models.DateField()
     tuteur =  models.ForeignKey(Tuteur, on_delete=models.CASCADE)
     nom_entreprise = models.CharField(max_length= 200)
-    #etudiant = models.ForeignKey(Etudiant, related_name ='stage', on_delete=models.CASCADE )
+    etudiant = models.ForeignKey(Etudiant, related_name ='stage', on_delete=models.CASCADE )
 
     def __str__(self):
         return self.sujet
 
-class Soutenance(models.Model):
-    date_soutenance = models.DateField()
-    heure_soutenance = models.TimeField(default = None)
-    jury =  models.ForeignKey(Jury, on_delete=models.CASCADE )
-    note = models.FloatField(validators=[MaxValueValidator(20.0)])
-    etudiant = models.ForeignKey(Etudiant, related_name ='soutenance', on_delete=models.CASCADE )
 
+class Soutenance(models.Model):
+    date_soutenance = models.DateField(blank= True, null = True)
+    heure_soutenance = models.TimeField(blank = True, null = True)
+    jury =  models.ForeignKey(Jury, on_delete=models.CASCADE, null= True )
+    note = models.FloatField(validators=[MaxValueValidator(20.0)], null = True)
+    etudiant = models.ForeignKey(Etudiant, related_name ='soutenance', on_delete=models.CASCADE )
