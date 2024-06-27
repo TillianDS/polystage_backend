@@ -77,21 +77,32 @@ class importStage (APIView):
                 errors.append({"stage" : stage, "errors" : "tous les champs nécessaires n'ont pas été remplie"})
 
             else :
+                
                 email_tuteur = stage.pop('email_tuteur')
                 num_etudiant = stage.pop('num_etudiant')
 
-                id_etudiant = Etudiant.objects.get(num_etudiant= num_etudiant) .pk
-                id_tuteur = Tuteur.objects.get(email = email_tuteur).pk
+                try:
+                    id_etudiant = Etudiant.objects.get(num_etudiant=num_etudiant).pk
+                except Etudiant.DoesNotExist:
+                    errors.append({"stage": stage, "errors": f"Étudiant avec numéro {num_etudiant} n'existe pas"})
+                    continue
 
-                stage['tuteur'] = id_tuteur
-                stage['etudiant'] = id_etudiant
+                try:
+                    id_tuteur = Tuteur.objects.get(email=email_tuteur).pk
+                except Tuteur.DoesNotExist:
+                    errors.append({"stage": stage, "errors": f"Tuteur avec email {email_tuteur} n'existe pas"})
+                    continue
                 
-                serializer = StageSerializer(data=stage)
+                else :
+                    stage['tuteur'] = id_tuteur
+                    stage['etudiant'] = id_etudiant
+                    
+                    serializer = StageSerializer(data=stage)
 
-                if serializer.is_valid() : 
-                    serializer.save()
-                else : 
-                    errors.append({"stage" : stage, "errors" : serializer.errors})
+                    if serializer.is_valid() : 
+                        serializer.save()
+                    else : 
+                        errors.append({"stage" : stage, "errors" : serializer.errors})
            
         if errors :
             return Response({"errors" : errors}, status=status.HTTP_400_BAD_REQUEST)
