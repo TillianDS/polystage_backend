@@ -73,21 +73,26 @@ class importStage (APIView):
         errors = []
 
         for stage in stages_data :
-            email_tuteur = stage.pop('email_tuteur')
-            num_etudiant = stage.pop('num_etudiant')
+            if ('num_etudiant' not in stage) | ('email_tuteur' not in stage):
+                errors.append({"stage" : stage, "errors" : "tous les champs nécessaires n'ont pas été remplie"})
 
-            id_etudiant = Etudiant.objects.get(num_etudiant= num_etudiant) .pk
-            id_tuteur = Tuteur.objects.get(email = email_tuteur).pk
+            else :
+                email_tuteur = stage.pop('email_tuteur')
+                num_etudiant = stage.pop('num_etudiant')
 
-            stage['tuteur'] = id_tuteur
-            stage['etudiant'] = id_etudiant
-            
-            serializer = StageSerializer(data=stage)
+                id_etudiant = Etudiant.objects.get(num_etudiant= num_etudiant) .pk
+                id_tuteur = Tuteur.objects.get(email = email_tuteur).pk
 
-            if serializer.is_valid() : 
-                serializer.save()
-            else : 
-                errors.append({"stage" : stage, "errors" : serializer.errors})
+                stage['tuteur'] = id_tuteur
+                stage['etudiant'] = id_etudiant
+                
+                serializer = StageSerializer(data=stage)
+
+                if serializer.is_valid() : 
+                    serializer.save()
+                else : 
+                    errors.append({"stage" : stage, "errors" : serializer.errors})
+           
         if errors :
             return Response({"errors" : errors}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"success" : "tous les utilisateurs ont été crées avec succès"}, status= status.HTTP_201_CREATED)

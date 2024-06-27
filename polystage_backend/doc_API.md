@@ -704,6 +704,9 @@ si certaines données n'ont pas pu être importée à cause d'erreurs cela renvo
 #### Sucess 
 
 ```json
+{
+    "success": "tous les {models} ont été crées avec succès"
+}
 ```
 
 #### Errors
@@ -782,28 +785,7 @@ données des
 ### Données reçues
 
 ```json
-[
-    {
-        "email": "test@po.fr",
-        "first_name": "",
-        "last_name": "jean",
-        "profile": "TUT"
-    },
-    {
-        "email": "enseignant10@po.fr",
-        "first_name": "Benoit",
-        "last_name": "Favre",
-        "profile": "ENS"
-    },
-    {
-        "email": "titi@po.fr",
-        "first_name": "Titi",
-        "last_name": "Titi",
-        "profile": "ETU",
-        "promo" : 5,
-        "num_etudiant" : "d22014217"
-    }
-]
+
 ```
 ## Import des Stages
 
@@ -818,6 +800,17 @@ http://127.0.0.1:8000/importStage/
 ### Données à envoyer
 
 ```json
+[
+    {
+        "email_tuteur": "tim-ross@amu.fr",
+        "sujet": "Gestion du Run",
+        "confidentiel": false,
+        "date_debut": "2024-06-03",
+        "date_fin": "2024-08-2",
+        "nom_entreprise": "April",
+        "num_etudiant": "d030232"
+    }
+]
 ```
 
 ### Données reçues
@@ -919,7 +912,9 @@ reçus :
 
 ## stageSearch
 
-recherche un stage 
+recherche un stage
+
+la recherche se fait sur le sujet, le nom de l'entreprise, le numéro étudiant
 
 ```url
 stageSearch/
@@ -933,7 +928,7 @@ stageSearch/
 ```
 
 ### Données reçues
-
+les stages correspondants
 ```json
 ```
 
