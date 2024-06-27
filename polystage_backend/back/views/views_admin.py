@@ -106,7 +106,11 @@ class stageSearch (APIView):
     def post(self, request, format = None):
         search = request.data['search']
 
-        stages = Stage.objects.filter(Q(sujet__icontains = search) | Q(nom_entreprise__icontains =search))
+        stages = Stage.objects.filter(Q(sujet__icontains = search) | #recherche selon le sujet
+                                      Q(nom_entreprise__icontains =search) | #recherche selon le nom de l'entreprise
+                                      Q(etudiant__num_etudiant__icontains = search) |#recherche selon le numéro étudiant
+                                      Q(etudiant__email__icontains = search) #recherche selon le numéro étudiant
+                                      ) 
         stages_data = StageSerializer(stages, many = True).data
 
         return Response({'stages' : stages_data})
@@ -127,14 +131,14 @@ class soutenanceSearch (APIView):
     def post(self, request, format = None):
         search = request.data['search']
 
-        soutenances = Soutenance.objects.filter(Q(last_name__icontains = search) |
-                                           Q(first_name__icontains = search) | 
-                                           Q(num_etudiant = search) | 
-                                           Q(email__icontains = search))
-        
+        soutenances = Soutenance.objects.filter( Q(etudiant__num_etudiant__icontains = search) |#recherche selon le numéro étudiant
+                                      Q(etudiant__email__icontains = search) |#recherche selon le numéro étudiant
+                                      Q(etudiant__first_name__icontains = search) |
+                                      Q(etudiant__last_name__icontains = search)
+                                      ) 
         soutenances_data = SoutenanceSerializer(soutenances, many = True).data
 
-        return Response({'users' : soutenances_data})
+        return Response({'soutenances' : soutenances_data})
     
 
 class SetAllInactive(APIView):
