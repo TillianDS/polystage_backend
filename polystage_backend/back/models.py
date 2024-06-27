@@ -58,6 +58,11 @@ class CustomUser(AbstractUser):
     objects = ActiveUserManager()
     all_user = CustomUserManager()
 
+    class Meta : 
+        indexes = [
+            models.Index(fields=['email']),
+        ]
+
     def delete(self):
         self.is_active = False
         self.save()
@@ -123,6 +128,9 @@ class Etudiant (CustomUser):
 
     class Meta : 
         verbose_name = 'Etudiant'
+        indexes = [
+            models.Index(fields=['num_etudiant']),
+        ]
 
 
 class Stage(models.Model):
@@ -132,7 +140,7 @@ class Stage(models.Model):
     date_debut = models.DateField()
     date_fin = models.DateField()
     tuteur =  models.ForeignKey(Tuteur, on_delete=models.CASCADE)
-    nom_entreprise = models.CharField(max_length= 200)
+    nom_entreprise = models.CharField(max_length= 400)
     etudiant = models.ForeignKey(Etudiant, related_name ='stage', on_delete=models.CASCADE )
 
     def __str__(self):

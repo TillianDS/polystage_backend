@@ -59,7 +59,6 @@ class userSearchAllChamp (APIView):
             user = CustomUser.objects.filter(last_name__icontains = nom, first_name__icontains = prenom, email__icontains = email)
         return Response(UserSerializer(user, many = True).data)
 
-
 class userSearch (APIView):
     """
     permet de rechercher des utilisateurs selon leur nom, prénom, email ou numéro étudiant sur un seul champ
@@ -107,7 +106,7 @@ class stageSearch (APIView):
     def post(self, request, format = None):
         search = request.data['search']
 
-        stages = Stage.objects.filter(sujet__icontains = search)
+        stages = Stage.objects.filter(Q(sujet__icontains = search) | Q(nom_entreprise__icontains =search))
         stages_data = StageSerializer(stages, many = True).data
 
         return Response({'stages' : stages_data})
