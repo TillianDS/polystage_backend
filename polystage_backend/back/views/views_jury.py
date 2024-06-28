@@ -1,8 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from ..models import Jury
-from ..serializers import JurySerializer, JuryAffichageSerializer
+from ..models import Jury, CustomUser, MembreJury
+from ..serializers import JurySerializer, JuryAffichageSerializer, MembreJurySerializer
 from rest_framework.authentication import TokenAuthentication
 
 class JuryList(APIView):
@@ -41,3 +41,27 @@ class JuryDetails (APIView):
         jury = self.getJury(pk)
         jury.delete()
         return Response({"success" : "jury supprimé avec succés"}, status = status.HTTP_200_OK)
+    
+
+class isJury(APIView):
+
+    def post (self, request, format = None):
+        try:
+            id_user = request.data['user_id']
+        except KeyError:
+            return Response({"errors": "vous n'avez pas renseigné l'id de l'utilisateur"})
+        
+        try:
+            user = MembreJury.objects.get(pk=id_user)
+        except MembreJury.DoesNotExist:
+            return Response({"is_jury": False, "jury": []})
+        
+        jury_id = []
+        jurys = user.jury_set.all()
+
+        for jury in jurys :
+            jury_id.append(jury.id)
+
+
+        return Response({"is_jury": True, 'jury' :jury_id})
+    

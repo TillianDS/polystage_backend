@@ -41,8 +41,8 @@ class Question (models.Model):
 class Response (models.Model):
     content = models.CharField(max_length=1000)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    #id_etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name = "user_responses")
+    id_etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name = "etudiant")
     def __str__ (self) :
         return str(self.user) + " : " + str(self.content)
 

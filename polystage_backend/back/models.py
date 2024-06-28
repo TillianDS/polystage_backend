@@ -67,6 +67,9 @@ class CustomUser(AbstractUser):
         self.is_active = False
         self.save()
 
+    def hard_delete(self, *args, **kwargs):
+        super(CustomUser, self).delete(*args, **kwargs)
+
     def __str__(self):
         return self.email
 
@@ -98,27 +101,27 @@ class Admin(CustomUser):
 class Tuteur(CustomUser):
     class Meta : 
         verbose_name = 'Tuteur'
-"""
-class membreJury(CustomUser):
-    pass"""
 
-class Enseignant(CustomUser):
+class MembreJury(CustomUser):
+    pass
+
+class Enseignant(MembreJury):
     class Meta : 
         verbose_name = 'Enseignant'
 
-class Professionnel(CustomUser):
+class Professionnel(MembreJury):
     class Meta : 
         verbose_name = 'Professionnel'
 
 class Jury(ActiveModel):
-    professionnel = models.ManyToManyField(Professionnel)
-    enseignant = models.ManyToManyField(Enseignant)
+    membreJury = models.ManyToManyField(MembreJury)
     salle = models.CharField(max_length=100, null = True)
     batiment = models.CharField(max_length=100, null = True)
     campus = models.CharField(max_length=200, null = True)
     zoom = models.CharField(max_length=300, null = True )
     #models.models.URLField(_(""), max_length=200)
     num_jury = models.IntegerField()
+
     #leader = models.ForeignKey(membreJury, on_delete=models.CASCADE)
 
 class Filiere(ActiveModel):

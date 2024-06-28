@@ -77,8 +77,7 @@ class StageSerializer (serializers.ModelSerializer) :
         fields = "__all__"
 
 class JurySerializer (serializers.ModelSerializer) : 
-    professionnel = serializers.PrimaryKeyRelatedField(queryset=Professionnel.objects.all(), many=True)
-    enseignant = serializers.PrimaryKeyRelatedField(queryset=Enseignant.objects.all(), many=True)
+    #membr = serializers.PrimaryKeyRelatedField(queryset=Professionnel.objects.all(), many=True)
     
     class Meta : 
         model = Jury
@@ -100,10 +99,13 @@ class JurySerializer (serializers.ModelSerializer) :
             
         return jury
     """
-    
+class MembreJurySerializer (UserSerializer):
+    class Meta: 
+        model = MembreJury
+        fields = UserSerializer.Meta.fields
+
 class JuryAffichageSerializer (serializers.ModelSerializer) : 
-    professionnel = ProfessionnelSerializer(Professionnel.objects.all(), many = True)
-    enseignant = EnseignantSerializer(Enseignant.objects.all(), many = True )
+    membreJury = MembreJurySerializer(MembreJury.objects.all(), many = True)
     class Meta : 
         model = Jury
         fields = "__all__"

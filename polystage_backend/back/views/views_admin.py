@@ -81,7 +81,9 @@ class userSearch (APIView):
         
         users = CustomUser.objects.filter(Q(email__icontains = search) | 
                                          Q(last_name__icontains = search) |
-                                         Q(first_name__icontains = search))
+                                         Q(first_name__icontains = search)
+                                         #pas d'étudiant
+                                         )
         
         etudiants_data = EtudiantSerializer(etudiants, many = True).data
         users_data = (UserSerializer(users, many = True).data)
