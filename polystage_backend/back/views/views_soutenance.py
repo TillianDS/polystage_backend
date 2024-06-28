@@ -16,3 +16,4 @@ class SoutenanceDetails(Details):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.set_attribute(Soutenance, SoutenanceSerializer, "Soutenance")
+

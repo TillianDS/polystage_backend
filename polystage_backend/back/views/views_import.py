@@ -73,49 +73,72 @@ class importStage (APIView):
         errors = []
 
         for stage in stages_data :
-            if ('num_etudiant' not in stage) | ('email_tuteur' not in stage):
-                errors.append({"stage" : stage, "errors" : "tous les champs nécessaires n'ont pas été remplie"})
-
-            else :
-                
+            try:
                 email_tuteur = stage.pop('email_tuteur')
                 num_etudiant = stage.pop('num_etudiant')
+            except KeyError:
+                errors.append({"stage": stage, "errors": "Tous les champs nécessaires n'ont pas été remplis"})
+                continue
 
-                try:
-                    id_etudiant = Etudiant.objects.get(num_etudiant=num_etudiant).pk
-                except Etudiant.DoesNotExist:
-                    errors.append({"stage": stage, "errors": f"Étudiant avec numéro {num_etudiant} n'existe pas"})
-                    continue
+            try:
+                id_etudiant = Etudiant.objects.get(num_etudiant=num_etudiant).pk
+            except Etudiant.DoesNotExist:
+                errors.append({"stage": stage, "errors": f"Étudiant avec numéro {num_etudiant} n'existe pas"})
+                continue
 
-                try:
-                    id_tuteur = Tuteur.objects.get(email=email_tuteur).pk
-                except Tuteur.DoesNotExist:
-                    errors.append({"stage": stage, "errors": f"Tuteur avec email {email_tuteur} n'existe pas"})
-                    continue
+            try:
+                id_tuteur = Tuteur.objects.get(email=email_tuteur).pk
+            except Tuteur.DoesNotExist:
+                errors.append({"stage": stage, "errors": f"Tuteur avec email {email_tuteur} n'existe pas"})
+                continue
                 
-                else :
-                    stage['tuteur'] = id_tuteur
-                    stage['etudiant'] = id_etudiant
+            stage['tuteur'] = id_tuteur
+            stage['etudiant'] = id_etudiant
                     
-                    serializer = StageSerializer(data=stage)
+            serializer = StageSerializer(data=stage)
 
-                    if serializer.is_valid() : 
+            if serializer.is_valid() : 
                         serializer.save()
-                    else : 
-                        errors.append({"stage" : stage, "errors" : serializer.errors})
+            else : 
+                errors.append({"stage" : stage, "errors" : serializer.errors})
            
         if errors :
             return Response({"errors" : errors}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({"success" : "tous les utilisateurs ont été crées avec succès"}, status= status.HTTP_201_CREATED)
+        return Response({"success" : "tous les stages ont été crées avec succès"}, status= status.HTTP_201_CREATED)
 
     
 class importSoutenance(APIView):
     def post (self, request, format = None):
-        tuteurs = Tuteur.objects.get(pk=3)
+        soutenances_data = request.data
+        errors = []
+
+        for soutenance in soutenances_data :
+            if ('num_etudiant' not in soutenance) | ('num_jury' not in soutenance):
+                errors.append({"stage" : soutenance, "errors" : "tous les champs nécessaires n'ont pas été remplie"})
+
+            else :
+                
+                num_jury = soutenance.pop('num_jury')
+                num_etudiant = soutenance.pop('num_etudiant')
+
+                try:
+                    id_etudiant = Etudiant.objects.get(num_etudiant=num_etudiant).pk
+                except Etudiant.DoesNotExist:
+                    errors.append({"soutenance": soutenance, "errors": f"Étudiant avec numéro {num_etudiant} n'existe pas"})
+                    continue
+                
+                try:
+                    id_jury = Jury.objects.get(num_etudiant=num_etudiant).pk
+                except Etudiant.DoesNotExist:
+                    errors.append({"soutenance": soutenance, "errors": f"Étudiant avec numéro {num_etudiant} n'existe pas"})
+                    continue
 
         
-        return Response({'id':tuteurs.jurys.all()})
-    
+        if errors :
+            return Response({"errors" : errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"success" : "toutes les soutenances ont été créées avec succès"}, status= status.HTTP_201_CREATED)
+
+
 class importJury(APIView):
     def post (self, request, format = None):
         return Response()

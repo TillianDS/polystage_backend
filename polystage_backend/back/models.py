@@ -33,7 +33,7 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
     
 
-class ActiveUserManager(CustomUserManager):
+class ActiveManager(CustomUserManager):
     def get_queryset(self):
         # Ne renvoie que les utilisateurs actifs
         return super().get_queryset().filter(is_active=True)
@@ -55,7 +55,7 @@ class CustomUser(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-    objects = ActiveUserManager()
+    objects = ActiveManager()
     all_user = CustomUserManager()
 
     class Meta : 
@@ -70,6 +70,22 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.email
 
+
+class ActiveModel(models.Model):
+    is_active = models.BooleanField(default=True)
+
+    objects = ActiveManager() 
+    all_objects = models.Manager()
+
+    class Meta:
+        abstract = True
+
+    def delete(self, *args, **kwargs):
+        self.is_active = False
+        self.save()
+
+    def hard_delete(self, *args, **kwargs):
+        super(ActiveModel, self).delete(*args, **kwargs)
 
 class CodePassword(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
@@ -94,7 +110,7 @@ class Professionnel(CustomUser):
     class Meta : 
         verbose_name = 'Professionnel'
 
-class Jury(models.Model):
+class Jury(ActiveModel):
     professionnel = models.ManyToManyField(Professionnel)
     enseignant = models.ManyToManyField(Enseignant)
     salle = models.CharField(max_length=100, null = True)
@@ -102,19 +118,17 @@ class Jury(models.Model):
     campus = models.CharField(max_length=200, null = True)
     zoom = models.CharField(max_length=300, null = True )
     #models.models.URLField(_(""), max_length=200)
-
+    num_jury = models.IntegerField()
     #leader = models.ForeignKey(membreJury, on_delete=models.CASCADE)
 
-class Filiere(models.Model):
+class Filiere(ActiveModel):
     nom = models.CharField(max_length = 100, unique=True)
-    nom_directeur = models.CharField(max_length = 100)
-    prenom_directeur = models.CharField(max_length = 100)
 
     def __str__(self):
         return self.nom
 
 
-class Promo(models.Model):
+class Promo(ActiveModel):
     annee = models.IntegerField(default = -1)
     filiere =  models.ForeignKey(Filiere, on_delete= models.CASCADE)
 
@@ -132,8 +146,7 @@ class Etudiant (CustomUser):
             models.Index(fields=['num_etudiant']),
         ]
 
-
-class Stage(models.Model):
+class Stage(ActiveModel):
     
     sujet = models.TextField()
     confidentiel = models.BooleanField(default= False)
@@ -147,7 +160,7 @@ class Stage(models.Model):
         return self.sujet
 
 
-class Soutenance(models.Model):
+class Soutenance(ActiveModel):
     date_soutenance = models.DateField(blank= True, null = True)
     heure_soutenance = models.TimeField(blank = True, null = True)
     jury =  models.ForeignKey(Jury, on_delete=models.CASCADE, null= True )
