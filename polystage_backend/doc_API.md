@@ -327,6 +327,14 @@ http://127.0.0.1:8000/stageDetails/<int>/
 
 ## CRUD
 
+### URL
+
+```url
+http://127.0.0.1:8000/soutenanceList/
+
+http://127.0.0.1:8000/soutenanceDetails/<int>/
+```
+
 ### Informations d'une soutenance
 
 - id : id de la soutenance
@@ -349,12 +357,54 @@ http://127.0.0.1:8000/stageDetails/<int>/
 }
 ```
 
+## setNote
+
+permet au jury de définir la note
+la note doit être comprise entre 0 et 20, elle peut être décimal, au format 18.5 ou 18,5.
+
+Pour modifier la note l'utilisateur doit être leader du jury
+
 ### URL
 
-```url
-http://127.0.0.1:8000/soutenanceList/
+Méthode : POST
 
-http://127.0.0.1:8000/soutenanceDetails/<int>/
+```url
+http://127.0.0.1:8000/setNote/
+```
+
+### informations envoyées
+
+```json
+{
+    "id_user" : "id de l'utilisateur",
+    "id_soutenance" : "soutenance à laquelle on veut définir la note",
+    "id_jury" : "id du jury",
+    "note" : "la note à définir"
+}
+```
+
+### informations reçues
+
+#### sucess
+
+```json
+{
+    {"success":"la note a bien été enregistré"}
+}
+```
+
+#### non success
+
+- si la note n'est pas comprise entre 0 et 20
+
+- si l'utilisateur n'est pas leader du jury
+
+- si la note n'est pas dans le bon format
+
+```json
+{
+    {"errors":"cause de l'erreur"}
+}
 ```
 
 # Jury
@@ -609,136 +659,12 @@ http://127.0.0.1:8000/exportNote/
 le formulaire est composé de plusieurs tables, Formulaire, Question, Checkbox et Reponse
 
 Un formulaire peut avoir plusieurs questions, si la question est de type checkbox elle peut avoir plusieurs éléments checkbox, les réponses sont associès à chaque question ainsi qu'à un utilisateur
+# Formulaire
 
-## Formulaire All
+## Informations d'un formulaire
 
-formulaire all permet de créer et gérer tous les entités d'un formualire : le formulaire, les question et les checkbox
+## CRUD
 
-- id (string) : id du formulaire
-- title (string): titre du formulaire
-- profile = profile à qui le formulaire est déstiné
-- description (string) : description du formulaire
-
-### formulaireAllList
-
-accèder aux informations de tous les formulaires ou créer un formulaire
-
-```url
-http://127.0.0.1:8000/formulaireAllList/'
-```
-
-#### GET
-
-accès aux informations de tous les formulaires
-
-##### response
-
-les informations de toutes les stages
-
-```json
-[
-    {
-        "id": "1",
-        "title": "Evaluation",
-        "description": "fomulaire pour l'evaluation de Louise",
-        "question": [
-            {
-                "id": 3,
-                "title": "qu'avez vous pensé de votre stage ?",
-                "type": "text",
-                "checkbox": []
-            },
-            {
-                "id": 5,
-                "title": "titre",
-                "type": "checkbox",
-                "checkbox": []
-            }
-        ]
-    },
-    {
-        "id": "dedefohzeouhfzeuhfouzfuzeufz",
-        "title": "Evaluationde",
-        "description": "formulaire pour l'evaluation de Louise",
-        "question": []
-    },
-    {
-        "id": "id",
-        "title": "Avis du tuteur",
-        "description": "formulaire pour l'evaluation de Louise",
-        "question": [
-            {
-                "id": 4,
-                "title": "qu'avez vous pensé du stagiaire ?",
-                "type": "text",
-                "checkbox": []
-            },
-            {
-                "id": 6,
-                "title": "qu'avez vous pensé du stagiaire ?",
-                "type": "text",
-                "checkbox": [
-                    {
-                        "id": 1,
-                        "title": "Oui"
-                    },
-                    {
-                        "id": 2,
-                        "title": "non"
-                    }
-                ]
-            },
-            {
-                "id": 7,
-                "title": "qu'avez vous pensé du stagiaire ?",
-                "type": "text",
-                "checkbox": []
-            },
-            {
-                "id": 8,
-                "title": "qu'avez vous pensé du stagiaire ?",
-                "type": "text",
-                "checkbox": []
-            },
-            {
-                "id": 9,
-                "title": "qu'avez vous pensé du stagiaire ?",
-                "type": "text",
-                "checkbox": []
-            }
-        ]
-    }
-]
-```
-
-#### POST
-
-création d'un formulaire
-
-####  Requete
-
-- sujet (string)  : sujet du stage
-- nom_entreprise (string): nom de l'entreprise dans lequel se déroule le stage
-- confidentiel (booléen) : le stage est il Confidentiel ?
-- date_debut (date) : date de debut de stage
-- date_fin (date) : date de fin de stage
-- tuteur (int) : id du tuteur
-
-##### response
-
-informations du stage crée.
-
-```json
-    {
-        "id": 2,
-        "confidentiel": true,
-        "sujet": "Gestion des cellules",
-        "date_debut": "2024-01-18",
-        "date_fin": "2024-08-18",
-        "nom_entreprise": "Biomérieux",
-        "tuteur": 3
-    }
-```
 
 ## Response
 
@@ -784,6 +710,123 @@ http://127.0.0.1:8000/responseFormulaire/
 {
     "etudiant_id" : "id de l'étudiant associé",
     "id_formulaire" : "id du formulaire souhaité"
+}
+```
+
+# Autres endpoints formulaire
+
+## getFormulaireAll
+
+getFormulaireAll permet de récupérer l'ensemble des informations d'un formulaire : l'entité formulaire avec les questions et les checkbox 
+
+### URL
+
+methode : GET
+
+```url
+http://127.0.0.1:8000/getFormulaireAll/<str:pk>/
+```
+
+pk : la clé primaire du formulaire
+
+#### données reçues
+
+les informations de toutes le formulaire
+
+```json
+[
+    {
+        "id": "id",
+        "title": "Avis du tuteur",
+        "description": "formulaire pour l'evaluation de Louise",
+        "question": [
+            {
+                "id": 4,
+                "title": "qu'avez vous pensé du stagiaire ?",
+                "type": "text",
+                "checkbox": []
+            },
+            {
+                "id": 6,
+                "title": "qu'avez vous pensé du stagiaire ?",
+                "type": "checkbox",
+                "checkbox": [
+                    {
+                        "id": 1,
+                        "title": "Oui"
+                    },
+                    {
+                        "id": 2,
+                        "title": "non"
+                    }
+                ]
+            },
+            {
+                "id": 7,
+                "title": "qu'avez vous pensé du stagiaire ?",
+                "type": "text",
+                "checkbox": []
+            },
+            {
+                "id": 8,
+                "title": "qu'avez vous pensé du stagiaire ?",
+                "type": "text",
+                "checkbox": []
+            },
+            {
+                "id": 9,
+                "title": "qu'avez vous pensé du stagiaire ?",
+                "type": "text",
+                "checkbox": []
+            }
+        ]
+    }
+]
+```
+
+## createFormulaireAll
+
+enregistrement de toute l'architecture d'un formulaire d'un seul coup ; formulaire, question, checkbox
+
+### URL
+
+methode : POST
+
+```url
+http://127.0.0.1:8000/createFormulaireAll/
+```
+
+### données envoyées
+
+```json
+{
+    "id": "materiau",
+    "question": [
+        {
+            "id": 10,
+            "titre": "qu'avez vous fati durantvotre stage",
+            "type": "checkbox",
+            "checkbox": []
+        },
+        {
+            "id": 11,
+            "titre": "le stage vous a t'il plue?",
+            "type": "checkbox",
+            "checkbox": [{
+                        "id": 1,
+                        "title": "Oui"
+                    },
+                    {
+                        "id": 2,
+                        "title": "non"
+                    }]
+        }
+    ],
+    "titre": "avis sur le stage",
+    "description": "avis de l'étudiant sur le déroulement de son stage",
+    "profile": "ETU",
+    "langue": "FR",
+    "filiere": 6
 }
 ```
 

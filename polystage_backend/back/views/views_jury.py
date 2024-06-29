@@ -42,7 +42,9 @@ class JuryDetails (APIView):
         jury.delete()
         return Response({"success" : "jury supprimé avec succés"}, status = status.HTTP_200_OK)
     
-
+"""
+permet de savoir si un utilisateur fait partie d'un jury ou non
+"""
 class isJury(APIView):
 
     def post (self, request, format = None):
@@ -61,8 +63,6 @@ class isJury(APIView):
 
         for jury in jurys :
             jury_id.append(jury.id)
-
-
         return Response({"is_jury": True, 'jury' :jury_id})
     
 

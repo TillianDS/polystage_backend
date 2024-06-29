@@ -10,7 +10,7 @@ class Formulaire (models.Model):
     description = models.CharField(max_length=400, blank= True, null= True)
     filiere =  models.ForeignKey(Filiere, on_delete=models.CASCADE)
     PROFILE_CHOICES = [
-        ('ENS', 'Enseignant'),
+        ('TUT', 'Tuteur'),
         ('ETU', 'Etudiant'),
         ('JUR', 'Jury'),
     ]
