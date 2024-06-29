@@ -374,6 +374,48 @@ http://127.0.0.1:8000/juryList/
 http://127.0.0.1:8000/juryDetails/<int>/
 ```
 
+## isJury
+
+obtenir l'information si l'utilisateur passé en paramètre est un jury 
+
+### URL
+
+Méthode : POST
+
+```url
+http://127.0.0.1:8000/isJury/
+```
+
+### informations envoyées
+
+```json
+{
+    "id_utilisateur" : "id de l'utilisateur"
+}
+```
+
+### informations reçues
+
+#### sucess
+
+```json
+{
+    "is_jury": true,
+    "jury": [ //les jurys auxquels appartient l'utilisateur
+        8 
+    ]
+}
+```
+
+#### non success
+
+```json
+{
+    "is_jury": false,
+    "jury": []
+}
+```
+
 # Authentification
 
 ### login
