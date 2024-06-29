@@ -1,5 +1,6 @@
 from .views_list_details import *
 from ..models import Formulaire, CheckBox, Question
+from back.models import Etudiant
 from ..serializers import FormulaireSerializer, CheckboxSerializer, FormulaireAllSerializer, QuestionSerializer
 
 # définition des class pour la gestion des formulaires uniquement
@@ -67,3 +68,13 @@ class SearchFormulaire (APIView):
         
         formulaire = Formulaire.objects.filter(titre__icontains = titre, description__icontains = description, profile__icontains = profile)
         return Response(FormulaireSerializer(formulaire, many = True).data)
+
+class retrieveFormulaire (APIView):
+    def post (self, request, format =None):
+        id_etudiant = request.data["id_etudiant"]
+
+        etudiant = Etudiant.objects.get(pk=id_etudiant)
+
+        formulaire = etudiant.promo.filiere.formulaire_set
+
+        return Response(FormulaireAllSerializer(formulaire, many = True).data)

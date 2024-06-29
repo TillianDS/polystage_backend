@@ -7,7 +7,7 @@ from back.models import *
 class FiliereSerializer (serializers.ModelSerializer) :
     class Meta :
         model = Filiere
-        fields = ['id', 'nom', 'nom_directeur', 'prenom_directeur']
+        fields = ['id', 'nom']
 
 class PromoSerializer (serializers.ModelSerializer) :
     class Meta :

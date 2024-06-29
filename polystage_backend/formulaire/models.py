@@ -1,7 +1,6 @@
 from django.db import models
 
-from back.models import CustomUser, Etudiant
-# Create your models here.
+from back.models import Etudiant, Filiere
 
 #gestion droits lectur ecriture
 class Formulaire (models.Model):
@@ -9,6 +8,7 @@ class Formulaire (models.Model):
     id = models.CharField(max_length=200, primary_key=True)
     titre = models.CharField(max_length=200)
     description = models.CharField(max_length=400, blank= True, null= True)
+    filiere =  models.ForeignKey(Filiere, on_delete=models.CASCADE)
     PROFILE_CHOICES = [
         ('ENS', 'Enseignant'),
         ('ETU', 'Etudiant'),
@@ -16,11 +16,11 @@ class Formulaire (models.Model):
     ]
     profile = models.CharField(max_length=3, choices=PROFILE_CHOICES)
 
-    PROFILE_CHOICES = [
+    LANGUE_CHOICES = [
         ('FR', 'Français'),
         ('AN', 'Anglais'),
     ]
-    langue = models.CharField(max_length=3, choices=PROFILE_CHOICES)
+    langue = models.CharField(max_length=3, choices=LANGUE_CHOICES)
     
     def __str__ (self) :
         return str(self.title)
@@ -41,7 +41,6 @@ class Question (models.Model):
 class Response (models.Model):
     content = models.CharField(max_length=1000)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name = "user_responses")
     id_etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name = "etudiant")
     def __str__ (self) :
         return str(self.user) + " : " + str(self.content)

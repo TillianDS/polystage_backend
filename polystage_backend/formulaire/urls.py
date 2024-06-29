@@ -16,12 +16,14 @@ urlpatterns = [
     path('checkboxDetails/<int:pk>/', views_formulaire.CheckboxDetails.as_view()),
 
     path('searchFormulaire/', views_formulaire.SearchFormulaire.as_view()),
+    path('retrieveFormulaire/', views_formulaire.retrieveFormulaire.as_view()),
+
 
 
     #views_response
     path('responseList/', views_response.ResponseList.as_view()),
     path('responseDetails/<int:pk>/', views_response.ResponseDetails.as_view()),
-
+    path('responseFormulaire/', views_response.responseFormulaire.as_view()),
 
     path('formulaireAllList/', views_formulaire.FormulaireAllList.as_view()),
     path('formulaireAllDetails/<str:pk>/', views_formulaire.FormulaireAllDetails.as_view()),

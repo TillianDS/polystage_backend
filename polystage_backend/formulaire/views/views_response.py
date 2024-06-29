@@ -11,3 +11,14 @@ class ResponseDetails (Details):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.set_attribute(Response, ResponseSerializer, "Response")
+
+class responseFormulaire(APIView):
+    
+    def post (self, request, format = None):
+        data = request.data
+
+        id_etudiant = data['id_etudiant']
+        id_formulaire = data['id_formulaire']
+
+
+        return Response()
