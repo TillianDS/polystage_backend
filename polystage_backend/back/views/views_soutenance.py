@@ -58,7 +58,7 @@ class setNote(APIView):
         soutenance.save()
         return Response({'success' :"la note a bien été enregistré"})
 
-class getJurySoutenance(APIView):
+class getSoutenanceJury(APIView):
     def post(self,request, format= None):
 
         id_jury = request.data.get('id_jury')

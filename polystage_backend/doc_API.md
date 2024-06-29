@@ -408,7 +408,7 @@ http://127.0.0.1:8000/setNote/
 ```
 
 
-## getJurySoutenance
+## getSoutenanceJury
 
 permet d'obtenir les soutenances et étudiants, associés au jury
 
@@ -417,7 +417,7 @@ permet d'obtenir les soutenances et étudiants, associés au jury
 Méthode : POST
 
 ```url
-http://127.0.0.1:8000/getJurySoutenance/
+http://127.0.0.1:8000/getSoutenanceJury/
 ```
 
 ### informations envoyées
