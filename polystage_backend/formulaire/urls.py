@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import views_formulaire, views_response, views_test
+from .views import views_formulaire, views_response
 
 urlpatterns = [
      #views_formulaire
@@ -23,12 +23,13 @@ urlpatterns = [
     #views_response
     path('responseList/', views_response.ResponseList.as_view()),
     path('responseDetails/<int:pk>/', views_response.ResponseDetails.as_view()),
+
+    path('responseCheckboxList/', views_response.ResponseCheckboxList.as_view()),
+    path('responseCheckbocDetails/<int:pk>/', views_response.ResponseCheckboxDetails.as_view()),
     path('responseFormulaire/', views_response.responseFormulaire.as_view()),
 
     path('formulaireAllList/', views_formulaire.FormulaireAllList.as_view()),
     path('formulaireAllDetails/<str:pk>/', views_formulaire.FormulaireAllDetails.as_view()),
-
-    path('testList/', views_test.testList.as_view()),
 
     ]
 

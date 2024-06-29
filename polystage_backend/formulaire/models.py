@@ -26,7 +26,7 @@ class Formulaire (models.Model):
         return str(self.title)
 
 class Question (models.Model):
-    title = models.CharField(max_length=200)
+    titre = models.CharField(max_length=200)
     TYPE_CHOICES = [
         ('text', 'text'),
         ('paragraphe', 'paragraphe'),
@@ -34,11 +34,12 @@ class Question (models.Model):
         ('dropdown', 'dropdown')
         ]
     type = models.CharField(max_length=15, choices = TYPE_CHOICES)
+    obligatoire = models.BooleanField(default=True)
     formulaire = models.ForeignKey(Formulaire, related_name = 'question', on_delete=models.CASCADE)
     def __str__ (self) :
         return str(self.id) + " " +self.title
     
-class Response (models.Model):
+class ResponseForm (models.Model):
     content = models.CharField(max_length=1000)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     id_etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name = "etudiant")
@@ -46,7 +47,11 @@ class Response (models.Model):
         return str(self.user) + " : " + str(self.content)
 
 class CheckBox (models.Model):
-    title = models.CharField(max_length=200)
+    titre = models.CharField(max_length=200)
     question = models.ForeignKey(Question, related_name = 'checkbox', on_delete= models.CASCADE )
     def __str__ (self) :
         return str(self.question) + " " + str(self.title)
+
+class ResponseCheckbox(models.Model):
+    checkbox = models.ForeignKey(CheckBox, on_delete=models.CASCADE)
+    id_etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE)

@@ -20,19 +20,20 @@ Chaque endpoint de l'API polystage Backend est détaillé ci dessous. Certaines 
 
 ## organisation vues CRUD
 
-Chaque model possède une implémentation avec des fonctions CRUD (create, read update, delete). 
+Chaque model possède une implémentation avec des fonctions CRUD (create, read update, delete).
 
 Cette implémentation CRUD est dedontante à chaque model, nous n'allons pas détailler le fonctionnement à chaque fois, nous préciserons pour chaque url, les informations nécessaires à envoyer et les informations reçus.
 
-Les vues CRUD sont organisé de la manière suivante : 
+Les vues CRUD sont organisé de la manière suivante :
 
 On a deux class ModelList et ModelDetails
 
-### modelList :
+### modelList
 
 ```
 url : http://127.0.0.1:8000/modelList/
 ```
+
 méthode :  GET, POST
 
 #### GET
@@ -44,11 +45,13 @@ Renvoie toutes les données de la table en question
 Permet d'enregisrer dans la table une instance du model en question en fournissant dans la requête les informations nécessaires
 
 ### modelDetails
+
 Permet d'accèder à un instance précise de la table, à la fin de l'url il faut rajouter la clé primaire (un entier : integer) de l'instance sur laquelle la requête va s'appliquer.
 
 ```
 url : http://127.0.0.1:8000/modelDetail/<integer>/
 ```
+
 méthode : GET, PUT, DELETE
 
 #### GET
@@ -59,22 +62,23 @@ Renvoie les informations de l'instance spécifié
 
 Permet de modifier les informations de l'instance.
 
-#### Données à envoyer 
+#### Données à envoyer
 
 Les données que l'ont a modifié ET AUSSI celle qui n'ont pas été modifié.
 
 Django compare ensuite les informations et modifie celle qui ont changée.
 
-### Données reçues 
+### Données reçues
 
 Les données de l'instance modifiée
 
 #### DELETE
 
-Supprimer l'instance spécifiée. 
+Supprimer l'instance spécifiée.
 
-#### Données à envoyer 
-Aucune information de plus que la clé primaire dans l'url n'est nécessaire. 
+#### Données à envoyer
+
+Aucune information de plus que la clé primaire dans l'url n'est nécessaire.
 
 #### Données reçues
 
@@ -86,13 +90,13 @@ Lors de la suppression renvoie un message :
 }
 ```
 
-#### Infos 
+#### Infos
+
 Les données ne sont pas réellement supprimées de la base, elles prennent le statu `is_active = True` ce qui les rend non visible par toutes les requetes (à part en utilisant un autre objet du model Django)
 
 ## autres vues
 
 Un certains nombre de vue prennent d'autres formes et seront détaillées plus en détails
-
 
 # Utilisateurs
 
@@ -105,7 +109,8 @@ http://127.0.0.1:8000/userList/
 
 http://127.0.0.1:8000/userDetails/<int>/
 ```
-### les informations de l'utilisateur :
+
+### les informations de l'utilisateur
 
 - id (int) : identfifiant de l'utilisateur
 - email (email) : email de l'utilisateur
@@ -122,11 +127,11 @@ http://127.0.0.1:8000/userDetails/<int>/
 - TUT : tuteur
 - PRO : professionnel
 
-### pour les etudiants on trouve en plus :
+### pour les etudiants on trouve en plus
 
 - num_etudiant (int) : numéro de l'etudiant
 
-##### Données à envoyer 
+##### Données à envoyer
 
 - email (email) : email du user
 - first_name (string) : prenom
@@ -135,7 +140,7 @@ http://127.0.0.1:8000/userDetails/<int>/
 
 pour les etudiants on trouve en plus :
 
-- idFiliere : 
+- idFiliere :
 - num_etudiant (int) : numéro de l'etudiant
 
 ##### Données reçues
@@ -157,6 +162,7 @@ http://127.0.0.1:8000/userList/ENS/
 # Filiere
 
 ## CRUD
+
 ### URL
 
 ```url
@@ -165,8 +171,7 @@ http://127.0.0.1:8000/filiereList/
 http://127.0.0.1:8000/userDetails/<int>/
 ```
 
-
-### informations d'une filiere :
+### informations d'une filiere
 
 - id (int) : id de la filiere
 - nom (string)  : nom filiere
@@ -178,7 +183,6 @@ http://127.0.0.1:8000/userDetails/<int>/
     "nom": "Genie Biologique",
 }
 ```
-
 
 # Promo
 
@@ -242,6 +246,7 @@ affiche toutes les promos avec la filiere associé
     }
 ]
 ```
+
 ## getPromoOfFiliere
 
 renvoie les promos d'une filiere
@@ -251,6 +256,7 @@ méthode : POST
 ```url
 getPromoOfFiliere/
 ```
+
 ### Données à envoyer
 
 ```json
@@ -290,7 +296,7 @@ toutes les promos associées
 - id (int) : id du stage
 - sujet (string)  : sujet du stage
 - nom_entreprise (string): nom de l'entreprise dans lequel se déroule le stage
-- Confidentiel (booléen) : le stage est il Confidentiel ? 
+- Confidentiel (booléen) : le stage est il Confidentiel ?
 - date_debut (date) : date de debut de stage
 - date_fin (date) : date de fin de stage
 - tuteur (int) : id du tuteur
@@ -306,9 +312,11 @@ toutes les promos associées
     "tuteur": 3
 }
 ```
+
 ## CRUD
 
-### url 
+### url
+
 ```url
 http://127.0.0.1:8000/stageList/
 
@@ -318,6 +326,7 @@ http://127.0.0.1:8000/stageDetails/<int>/
 # Soutenance
 
 ## CRUD
+
 ### Informations d'une soutenance
 
 - id : id de la soutenance
@@ -327,7 +336,6 @@ http://127.0.0.1:8000/stageDetails/<int>/
 - date_soutenance: date du déroulement de la soutenance
 - heure_soutenance: heure du déroulement de la soutenance
 - note: note de la soutenance
-
 
 ```json
 {
@@ -342,19 +350,21 @@ http://127.0.0.1:8000/stageDetails/<int>/
 ```
 
 ### URL
+
 ```url
 http://127.0.0.1:8000/soutenanceList/
 
 http://127.0.0.1:8000/soutenanceDetails/<int>/
 ```
-# Jury 
+
+# Jury
 
 ## Informations d'un Jury
 
 ```json
 ```
 
-## CRUD 
+## CRUD
 
 ### URL
 
@@ -364,7 +374,7 @@ http://127.0.0.1:8000/juryList/
 http://127.0.0.1:8000/juryDetails/<int>/
 ```
 
-# Authentification 
+# Authentification
 
 ### login
 
@@ -389,7 +399,6 @@ si les identifiants sont correctes:
 - "token" : token d'authentification
 - "type utilisateur" : type de l'utilisateur qui se connecte
 
-
 ```json
 {
     "token": "a5d8e22e748f34af4205d2b2714b22a4a7bcdcbe",
@@ -402,20 +411,19 @@ si les identifiants sont correctes:
 
 - success : message de succès
 
-
 ## utilisateur avec toutes les infos stage, promo, filiere et soutenance
 
 ```url
 http://127.0.0.1:8000/etudiantAll/<int:idEtudiant>/
 ```
 
-### envoie
+###  envoie
 
 on passe l'id de l'utilisateur dans l'url
 
 ### retour
 
-renvoie les informations de l'utilisateur avec son stage, sa promo, sa filière et sa soutenance 
+renvoie les informations de l'utilisateur avec son stage, sa promo, sa filière et sa soutenance
 
 ```json
 {
@@ -460,6 +468,7 @@ renvoie les informations de l'utilisateur avec son stage, sa promo, sa filière 
 ## exportNote
 
 méthode : POST
+
 ```url
 http://127.0.0.1:8000/exportNote/
 ```
@@ -508,7 +517,6 @@ http://127.0.0.1:8000/exportNote/
 ]
 ```
 
-
 # Gestion des formulaires
 
 le formulaire est composé de plusieurs tables, Formulaire, Question, Checkbox et Reponse
@@ -536,7 +544,7 @@ http://127.0.0.1:8000/formulaireAllList/'
 
 accès aux informations de tous les formulaires
 
-##### response 
+##### response
 
 les informations de toutes les stages
 
@@ -620,11 +628,11 @@ les informations de toutes les stages
 
 création d'un formulaire
 
-#### Requete
+####  Requete
 
 - sujet (string)  : sujet du stage
 - nom_entreprise (string): nom de l'entreprise dans lequel se déroule le stage
-- confidentiel (booléen) : le stage est il Confidentiel ? 
+- confidentiel (booléen) : le stage est il Confidentiel ?
 - date_debut (date) : date de debut de stage
 - date_fin (date) : date de fin de stage
 - tuteur (int) : id du tuteur
@@ -648,6 +656,7 @@ informations du stage crée.
 ## Response
 
 ### Informations d'un réponse
+
 - id (string) : id de la response
 - content (string): contenu de la response
 - question (int) : id de la question associée
@@ -662,12 +671,33 @@ informations du stage crée.
     "user": 33
 }
 ```
+
 ### CRUD
 
 #### URL
+
 ```url
 http://127.0.0.1:8000/responseList/
 http://127.0.0.1:8000/responseDetails/<int>/
+```
+
+## ResponseFormulaire
+
+renvoie le formulaire, les questions et checkbox associés en fonction de l'étudiant concerné
+
+### URL
+
+```url
+http://127.0.0.1:8000/responseFormulaire/
+```
+
+### Données envoyées
+
+```json
+{
+    "etudiant_id" : "id de l'étudiant associé",
+    "id_formulaire" : "id du formulaire souhaité"
+}
 ```
 
 # Import des données
@@ -677,6 +707,7 @@ http://127.0.0.1:8000/responseDetails/<int>/
 Permet d'importer des données massivement, sous format JSON. Si l'instance importé existe déjà dans la base cela modifie ses informations par rapport à celle envoyées. Si l'instance est inactive, cela la rend active.
 
 ### Données envoyées
+
 l'envoie des données se fait sous format JSON, un tableau contient chaque champ de l'instance à créer
 
 ```json
@@ -698,10 +729,10 @@ l'envoie des données se fait sous format JSON, un tableau contient chaque champ
 ```
 
 ### Données reçues
+
 si certaines données n'ont pas pu être importée à cause d'erreurs cela renvoie l'instance en question avec la cause de l'error, les données en erreurs ne sont pas importés, celles qui n'ont pas d'erreurs sont importées. Si il n'y aucune erreur, cela renvoie un message de succés
 
-
-#### Sucess 
+#### Sucess
 
 ```json
 {
@@ -710,7 +741,6 @@ si certaines données n'ont pas pu être importée à cause d'erreurs cela renvo
 ```
 
 #### Errors
-
 
 ```json
 {
@@ -744,11 +774,12 @@ si certaines données n'ont pas pu être importée à cause d'erreurs cela renvo
 ```
 
 ## Import des utilisateurs
-permet d'import des utilisateurs en masse. 
+
+permet d'import des utilisateurs en masse.
 
 ### URL
 
-méthode : POST 
+méthode : POST
 
 ```url
 http://127.0.0.1:8000/importUser/
@@ -756,7 +787,8 @@ http://127.0.0.1:8000/importUser/
 
 ### Données à envoyer
 
-données des 
+données des
+
 ```json
 [
     {
@@ -787,6 +819,7 @@ données des
 ```json
 
 ```
+
 ## Import des Stages
 
 ### URL
@@ -818,7 +851,7 @@ http://127.0.0.1:8000/importStage/
 ```json
 ```
 
-## Import des Soutenances 
+## Import des Soutenances
 
 ```url
 http://127.0.0.1:8000/importSoutenance/
@@ -861,6 +894,7 @@ recherche un utilisateur selon son nom, prénom, email ou numéro étudiant (si 
 ```url
 userSearch/
 ```
+
 ### Données à envoyer
 
 ```json
@@ -919,6 +953,7 @@ la recherche se fait sur le sujet, le nom de l'entreprise, le numéro étudiant
 ```url
 stageSearch/
 ```
+
 ### Données à envoyer
 
 ```json
@@ -928,18 +963,20 @@ stageSearch/
 ```
 
 ### Données reçues
+
 les stages correspondants
+
 ```json
 ```
 
-
 ## soutenanceSearch
 
-recherche un stage 
+recherche un stage
 
 ```url
 soutenanceSearch/
 ```
+
 ### Données à envoyer
 
 ```json
@@ -953,8 +990,8 @@ soutenanceSearch/
 ```json
 ```
 
-
 # Autres
+
 ### codeReset
 
 envoie un mail à l'utilisateur avec son code de réinitilisation, s'il existe

@@ -2,6 +2,7 @@ from .views_list_details import *
 from ..models import Formulaire, CheckBox, Question
 from back.models import Etudiant
 from ..serializers import FormulaireSerializer, CheckboxSerializer, FormulaireAllSerializer, QuestionSerializer
+from rest_framework.response import Response
 
 # définition des class pour la gestion des formulaires uniquement
 class FormulaireList(List):
