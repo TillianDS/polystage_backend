@@ -3,6 +3,7 @@ from ..models import Formulaire, CheckBox, Question
 from back.models import Etudiant
 from ..serializers import FormulaireSerializer, CheckboxSerializer, FormulaireAllSerializer, QuestionSerializer
 from rest_framework.response import Response
+from django.db.models import Q
 
 # définition des class pour la gestion des formulaires uniquement
 class FormulaireList(List):
@@ -55,24 +56,19 @@ class GetFormulaireAll(APIView):
         formulaire = Formulaire.objects.get(pk=pk)
         serializer = FormulaireAllSerializer(formulaire)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
-class SearchFormulaire (APIView):
-    def get_string_data (self, request, data_name) :
-            if data_name in request.data :
-                data = request.data[data_name]
-            else :
-                data = ""
-            return data
-    
-    def post(self, request, format = None):
-        titre = self.get_string_data(request, 'titre')
-        description = self.get_string_data(request, 'description')
-        profile = self.get_string_data(request, 'profile')
 
-        #promo = 
-        #filiere = 
+"""
+permet de rechercher un formulaire selon son titre, sa description, le rôle à qui il s'adresse, sa filière
+"""  
+class FormulaireSearch (APIView):
+    def post(self, request, format = None):
+        search = request.data['search']
+
+        formulaire = Formulaire.objects.filter(Q(titre__icontains = search) |
+                                           Q(profile__icontains = search) | 
+                                           Q(description__icontains = search) | 
+                                           Q(filiere__nom__icontains = search))
         
-        formulaire = Formulaire.objects.filter(titre__icontains = titre, description__icontains = description, profile__icontains = profile)
         return Response(FormulaireSerializer(formulaire, many = True).data)
 
 """

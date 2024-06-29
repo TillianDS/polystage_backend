@@ -1042,8 +1042,7 @@ envoie :
 }
 
 reçus :
-{
-    "users": [
+    [
         {
             "id": 34,
             "email": "jean@po.fr",
@@ -1071,7 +1070,6 @@ reçus :
             "profile": "TUT"
         },
     ]
-}
 ```
 
 ## stageSearch
@@ -1118,6 +1116,52 @@ soutenanceSearch/
 ### Données reçues
 
 ```json
+```
+
+## formulaireSearch
+
+permet de rechercher un formulaire selon son titre, sa description, le rôle à qui il s'adresse, sa filière
+
+```url
+http://127.0.0.1:8000/formulaireSearch/
+```
+
+### Données à envoyer
+
+```json
+{
+    "search" :  "champ à chercher"
+}
+```
+
+### Données reçues
+
+```json
+envoie : 
+{
+    "search" :  "form"
+}
+
+reçus :
+    [
+        {
+            "id": "id",
+            "titre": "Avis du tuteur",
+            "description": "formulaire pour l'evaluation de Louise",
+            "profile": "ETU",
+            "langue": "FR",
+            "filiere": 5
+        },
+        {
+            "id": "formulaire",
+            "titre": "soutenance de stage",
+            "description": "evaluation du jury",
+            "profile": "ETU",
+            "langue": "FR",
+            "filiere": 5
+     },
+    ]
+
 ```
 
 # Autres

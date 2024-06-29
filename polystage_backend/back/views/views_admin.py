@@ -76,21 +76,20 @@ class userSearch (APIView):
 
         etudiants = Etudiant.objects.filter(Q(last_name__icontains = search) |
                                            Q(first_name__icontains = search) | 
-                                           Q(num_etudiant = search) | 
+                                           Q(num_etudiant__icontains = search) | 
                                            Q(email__icontains = search))
         
         users = CustomUser.objects.filter(Q(email__icontains = search) | 
                                          Q(last_name__icontains = search) |
                                          Q(first_name__icontains = search)
-                                         #pas d'étudiant
-                                         )
+                                         ).exclude(profile='ETU')
         
         etudiants_data = EtudiantSerializer(etudiants, many = True).data
         users_data = (UserSerializer(users, many = True).data)
 
-        users_results = list(chain(etudiants_data, users_data))
+        data = list(chain(etudiants_data, users_data))
 
-        return Response({'users' : users_results})
+        return Response(data)
 
 class stageSearch (APIView):
 
@@ -113,9 +112,9 @@ class stageSearch (APIView):
                                       Q(etudiant__num_etudiant__icontains = search) |#recherche selon le numéro étudiant
                                       Q(etudiant__email__icontains = search) #recherche selon le numéro étudiant
                                       ) 
-        stages_data = StageSerializer(stages, many = True).data
+        serializer = StageSerializer(stages, many = True)
 
-        return Response({'stages' : stages_data})
+        return Response(serializer.data)
 
 
 class soutenanceSearch (APIView):
@@ -138,9 +137,9 @@ class soutenanceSearch (APIView):
                                       Q(etudiant__first_name__icontains = search) |
                                       Q(etudiant__last_name__icontains = search)
                                       ) 
-        soutenances_data = SoutenanceSerializer(soutenances, many = True).data
+        serializer = SoutenanceSerializer(soutenances, many = True)
 
-        return Response({'soutenances' : soutenances_data})
+        return Response(serializer.data)
     
 
 class SetAllInactive(APIView):
