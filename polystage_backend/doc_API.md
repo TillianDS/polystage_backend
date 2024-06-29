@@ -403,9 +403,85 @@ http://127.0.0.1:8000/setNote/
 
 ```json
 {
-    {"errors":"cause de l'erreur"}
+    "errors":"cause de l'erreur"
 }
 ```
+
+
+## getJurySoutenance
+
+permet d'obtenir les soutenances et étudiants, associés au jury
+
+### URL
+
+Méthode : POST
+
+```url
+http://127.0.0.1:8000/getJurySoutenance/
+```
+
+### informations envoyées
+
+```json
+{
+    "id_jury" : "id du jury",
+}
+```
+
+### informations reçues
+
+#### sucess
+
+```json
+[
+    {
+        "id": 3,
+        "date_soutenance": "30-06-2024",
+        "heure_soutenance": "11:00",
+        "etudiant": {
+            "id": 50,
+            "email": "etu1@po.fr",
+            "first_name": "etu1",
+            "last_name": "etu1",
+            "first_connection": false,
+            "profile": "ETU",
+            "num_etudiant": "d00001",
+            "promo": 7
+        },
+        "is_active": true,
+        "note": 20.0,
+        "jury": 8
+    },
+    {
+        "id": 4,
+        "date_soutenance": "30-06-2024",
+        "heure_soutenance": "12:00",
+        "etudiant": {
+            "id": 51,
+            "email": "etu2@po.fr",
+            "first_name": "etu2",
+            "last_name": "etu2",
+            "first_connection": false,
+            "profile": "ETU",
+            "num_etudiant": "d00002",
+            "promo": 7
+        },
+        "is_active": true,
+        "note": null,
+        "jury": 8
+    }
+]
+```
+
+#### non success
+
+- le jury n'existe pas
+
+```json
+{
+    "errors":"cause de l'erreur"
+}
+``
 
 # Jury
 
@@ -794,6 +870,53 @@ methode : POST
 
 ```url
 http://127.0.0.1:8000/createFormulaireAll/
+```
+
+### données envoyées
+
+```json
+{
+    "id": "materiau",
+    "question": [
+        {
+            "id": 10,
+            "titre": "qu'avez vous fati durantvotre stage",
+            "type": "checkbox",
+            "checkbox": []
+        },
+        {
+            "id": 11,
+            "titre": "le stage vous a t'il plue?",
+            "type": "checkbox",
+            "checkbox": [{
+                        "id": 1,
+                        "title": "Oui"
+                    },
+                    {
+                        "id": 2,
+                        "title": "non"
+                    }]
+        }
+    ],
+    "titre": "avis sur le stage",
+    "description": "avis de l'étudiant sur le déroulement de son stage",
+    "profile": "ETU",
+    "langue": "FR",
+    "filiere": 6
+}
+```
+
+
+## retrieveFormulaire
+
+retrouve un formulaire
+
+### URL
+
+methode : POST
+
+```url
+http://127.0.0.1:8000/retrieveFormulaire/
 ```
 
 ### données envoyées

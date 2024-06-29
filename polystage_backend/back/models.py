@@ -168,4 +168,4 @@ class Soutenance(ActiveModel):
     heure_soutenance = models.TimeField(blank = True, null = True)
     jury =  models.ForeignKey(Jury, on_delete=models.CASCADE, null= True )
     note = models.FloatField(validators=[MaxValueValidator(20.0)], null = True)
-    etudiant = models.ForeignKey(Etudiant, related_name ='soutenance', on_delete=models.CASCADE )
+    etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE )

@@ -118,6 +118,13 @@ class SoutenanceSerializer (serializers.ModelSerializer) :
         model = Soutenance
         fields = "__all__"
 
+class SoutenanceEtudiantSerializer (serializers.ModelSerializer) :
+    date_soutenance = serializers.DateField(format='%d-%m-%Y', input_formats=['%d-%m-%Y'], required=False, allow_null=True)
+    heure_soutenance = serializers.TimeField(format= '%H:%M', input_formats=['%H:%M'], required=False, allow_null=True)
+    etudiant = EtudiantSerializer()
+    class Meta : 
+        model = Soutenance
+        fields = "__all__"
 
 class FileSerializer (serializers.ModelSerializer):
     file = serializers.FileField(use_url=False)

@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from ..models import Soutenance, CustomUser, MembreJury, Jury
-from ..serializers import SoutenanceSerializer, JurySerializer
+from ..serializers import SoutenanceSerializer, JurySerializer, SoutenanceEtudiantSerializer
 from rest_framework.authentication import TokenAuthentication
 from .views_list_details import List, Details
 
@@ -57,3 +57,19 @@ class setNote(APIView):
         soutenance.note= note
         soutenance.save()
         return Response({'success' :"la note a bien été enregistré"})
+
+class getJurySoutenance(APIView):
+    def post(self,request, format= None):
+
+        id_jury = request.data.get('id_jury')
+        if not id_jury :
+            return Response ({'error': "vous devez spécifier l'id du jury"}, status=status.HTTP_400_BAD_REQUEST)
+        try : 
+            jury = Jury.objects.get(pk=id_jury)
+        except Jury.DoesNotExist:
+            return Response({"error" :"le jury n'existe pas"})
+        soutenance = jury.soutenance_set.all()
+    
+        serializer = SoutenanceEtudiantSerializer(soutenance, many = True)
+
+        return Response(serializer.data)

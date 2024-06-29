@@ -47,7 +47,8 @@ urlpatterns = [
     path('soutenanceList/', views_soutenance.SoutenanceList.as_view()),
     path('soutenanceDetails/<int:pk>/', views_soutenance.SoutenanceDetails.as_view()),
     path('setNote/', views_soutenance.setNote.as_view()),
-
+    path('getJurySoutenance/', views_soutenance.getJurySoutenance.as_view()),
+  
     #views_jury
     path('juryList/', views_jury.JuryList.as_view()),
     path('juryDetails/<int:pk>/', views_jury.JuryDetails.as_view()),
