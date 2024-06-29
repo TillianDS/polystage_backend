@@ -86,7 +86,7 @@ class UserList(APIView):
         password_length = 7
         
         if serializer.is_valid(): 
-            """"
+            """
             password1 = request.data["password1"]
             password2 = request.data["password2"]
 
