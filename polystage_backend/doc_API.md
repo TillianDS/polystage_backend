@@ -390,7 +390,7 @@ http://127.0.0.1:8000/isJury/
 
 ```json
 {
-    "id_utilisateur" : "id de l'utilisateur"
+    "id_user" : "id de l'utilisateur"
 }
 ```
 
@@ -413,6 +413,51 @@ http://127.0.0.1:8000/isJury/
 {
     "is_jury": false,
     "jury": []
+}
+```
+
+## becomeLeader
+
+definie un user comme leader d'un jury
+
+### URL
+
+Méthode : POST
+
+```url
+http://127.0.0.1:8000/becomeLeader/
+```
+
+### informations envoyées
+
+```json
+{
+    "id_user" : "id de l'utilisateur",
+    "id_jury" : "id du jury dont on veut le mettre leader"
+}
+```
+
+### informations reçues
+
+#### sucess
+
+```json
+{
+    "success": "changement du leader du jury",
+    "leader": 54 //id du membre du jury
+
+}
+```
+
+#### non success
+
+- si l'utilisateur n'est pas un membre de jury
+
+- si l'utilisateur ne fait pas partie du jury spécifié
+
+```json
+{
+    {"errors":"cause de l'erreur"}
 }
 ```
 

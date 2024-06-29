@@ -47,7 +47,7 @@ class isJury(APIView):
 
     def post (self, request, format = None):
         try:
-            id_user = request.data['user_id']
+            id_user = request.data['id_user']
         except KeyError:
             return Response({"errors": "vous n'avez pas renseigné l'id de l'utilisateur"})
         
@@ -65,3 +65,33 @@ class isJury(APIView):
 
         return Response({"is_jury": True, 'jury' :jury_id})
     
+
+class becomeLeader(APIView):
+    def post(self, request, format = None):
+        try:
+            id_user = request.data['id_user']
+        except KeyError:
+            return Response({"errors": "vous n'avez pas renseigné l'id de l'utilisateur"})
+        
+        try:
+            id_jury = request.data['id_jury']
+        except KeyError:
+            return Response({"errors": "vous n'avez pas renseigné l'id du jury"})
+        
+        try:
+            jury = Jury.objects.get(pk=id_jury)
+        except Jury.DoesNotExist:
+            return Response({"errors": "le jury n'existe pas"})
+        
+        try:
+            user = MembreJury.objects.get(pk = id_user)
+        except MembreJury.DoesNotExist:
+            return Response({"errors": "l'utilisateur n'est pas un membre de jury"})
+        
+
+        if user not in jury.membreJury.all() : 
+            return Response({"errors": "l'utilisateur ne fait pas partie de ce jury"})
+        
+        jury.leader = user
+        jury.save()
+        return Response({'success' : "vous êtes maitenant le leader du jury"})

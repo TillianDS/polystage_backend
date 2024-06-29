@@ -122,7 +122,7 @@ class Jury(ActiveModel):
     #models.models.URLField(_(""), max_length=200)
     num_jury = models.IntegerField()
 
-    #leader = models.ForeignKey(membreJury, on_delete=models.CASCADE)
+    leader = models.ForeignKey(MembreJury, on_delete=models.CASCADE, related_name='leader')
 
 class Filiere(ActiveModel):
     nom = models.CharField(max_length = 100, unique=True)
