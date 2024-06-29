@@ -86,10 +86,10 @@ class UserList(APIView):
         password_length = 7
         
         if serializer.is_valid(): 
-            """
+            
             password1 = request.data["password1"]
             password2 = request.data["password2"]
-
+            """
             if password1 != password2:
                 return Response({"error": "Les mots de passe ne correspondent pas"}, status=status.HTTP_400_BAD_REQUEST)
             if len(password1) < password_length:
@@ -102,7 +102,7 @@ class UserList(APIView):
                 return Response({"error": "Le mot de passe doit contenir au moins un caractère spécial"}, status=status.HTTP_400_BAD_REQUEST)
             """
             user = serializer.save()
-
+            #user.set_password(password1)
             if profile == 'ETU':
                 user:Etudiant
                 user.promo = self.getPromo(pk=request.data['promo'])

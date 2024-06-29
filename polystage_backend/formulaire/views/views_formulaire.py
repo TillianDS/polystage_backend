@@ -73,8 +73,9 @@ class retrieveFormulaire (APIView):
     def post (self, request, format =None):
         id_etudiant = request.data["id_etudiant"]
 
+        profile = request.data["profile"]
         etudiant = Etudiant.objects.get(pk=id_etudiant)
 
-        formulaire = etudiant.promo.filiere.formulaire_set
+        formulaire = etudiant.promo.filiere.formulaire_set.filter(profile=profile)
 
         return Response(FormulaireAllSerializer(formulaire, many = True).data)

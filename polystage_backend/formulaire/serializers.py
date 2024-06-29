@@ -33,20 +33,20 @@ class CheckboxSerializer (serializers.ModelSerializer):
 class CheckboxAllSerializer (serializers.ModelSerializer):
     class Meta :
         model = CheckBox
-        fields = ['id', 'titre']
+        fields = ['id', 'title']
 
 class QuestionAllSerializer (serializers.ModelSerializer):
     checkbox = CheckboxAllSerializer(many = True)
     class Meta :
         model = Question
-        fields = ['id', 'titre', 'type', 'checkbox']
+        fields = ['id', 'title', 'type', 'checkbox']
 
 class FormulaireAllSerializer (serializers.ModelSerializer):
     question = QuestionAllSerializer(many = True)
 
     class Meta :
         model = Formulaire
-        fields = ['id', 'titre', 'profile', 'description', 'question']
+        fields = "__all__"
     
     def create(self, validated_data):
         question_data = validated_data.pop('question')
