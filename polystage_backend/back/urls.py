@@ -12,7 +12,8 @@ urlpatterns = [
     path('userList/', views_users.UserList.as_view()),
 
     #test_cas
-    path('profile/', test_cas.user_profile, name='user_profile'),
+    path('  /', test_cas.user_profile, name='user_profile'),
+    path('ticket/', test_cas.getTicket.as_view(), name='user_profile'),
 
     #views_login
     path('changePassword/', views_login.ChangePassword.as_view()),

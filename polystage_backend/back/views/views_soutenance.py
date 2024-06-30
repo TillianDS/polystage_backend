@@ -5,6 +5,8 @@ from ..models import Soutenance, CustomUser, MembreJury, Jury
 from ..serializers import SoutenanceSerializer, JurySerializer, SoutenanceEtudiantSerializer
 from rest_framework.authentication import TokenAuthentication
 from .views_list_details import List, Details
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 class SoutenanceList(List):
     def __init__(self, *args, **kwargs):
@@ -58,6 +60,7 @@ class setNote(APIView):
         soutenance.save()
         return Response({'success' :"la note a bien été enregistré"})
 
+@method_decorator(csrf_exempt, name='dispatch')
 class getSoutenanceJury(APIView):
     def post(self,request, format= None):
 

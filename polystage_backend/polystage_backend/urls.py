@@ -17,12 +17,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 import django_cas_ng.views as cas_views
-
+from back.views import views_login
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('back.urls')),
     path('', include('formulaire.urls')),
     path('', include('mail.urls')),
+
+    path('login/', views_login.CostumLogin.as_view(), name='login'),
 
     path('accounts/login/', cas_views.LoginView.as_view(), name='cas_ng_login'),
     path('accounts/logout/', cas_views.LogoutView.as_view(), name='cas_ng_logout'),

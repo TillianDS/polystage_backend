@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'mail',
     'formulaire',
     'corsheaders',
-
+    #'back.apps.BackConfig',
     'django_cas_ng',
     
 ]
@@ -154,17 +154,17 @@ AUTHENTICATION_BACKENDS = (
 CAS_SERVER_URL = 'https://ident.univ-amu.fr/cas/'
 CAS_VERSION : 3
 CAS_LOGOUT_URL_NAME = 'https://ident.univ-amu.fr/cas/logout/'
-
+CAS_REDIRECT_URL = "/ticket/"
 LOGIN_URL = '/accounts/login/'
 LOGOUT_URL = '/accounts/logout/'
-LOGIN_REDIRECT_URL = '/filiereList/'
+LOGIN_REDIRECT_URL = '/ticket/'
 
 
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
-        #'django_ng_cas.authentication.CASAuthentication',
         #'rest_framework.authentication.TokenAuthentication', 
     ],
     'DEFAULT_PERMISSION_CLASSES': [
