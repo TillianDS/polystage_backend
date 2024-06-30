@@ -9,14 +9,14 @@ urlpatterns = [
     path('test/', views_test.test.as_view()),
     #views_Users
     path('userDetails/<int:pk>/', views_users.UserDetails.as_view()),
-    path('userList/', views_users.UserList.as_view()),
+    path('userList/', views_users.UserList.as_view(), name = 'userList'),
 
     #test_cas
     path('profile/', test_cas.user_profile, name='user_profile'),
 
     #views_login
     path('changePassword/', views_login.ChangePassword.as_view()),
-    path('login/', views_login.CostumLogin.as_view()),
+    path('login/', views_login.CostumLogin.as_view(), name = 'login'),
     path('codeReset/', views_login.SendCodeEmail.as_view()),
     path('code/', views_login.gestionCode.as_view()),
 

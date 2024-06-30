@@ -4,10 +4,11 @@ from rest_framework import status
 from ..models import Filiere, Promo, Etudiant
 from ..serializers import FiliereSerializer, PromoSerializer, PromoFiliereSerializer
 from rest_framework.authentication import TokenAuthentication
-
+from polystage_backend.permissions import *
 
 class FiliereList(APIView):
-    
+    permission_classes = [RedirectUnauthenticated]
+
     def get (self, request, format = None):
         filiere = Filiere.objects.all()
         serializer = FiliereSerializer(filiere, many = True)

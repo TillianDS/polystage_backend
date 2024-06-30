@@ -164,6 +164,8 @@ LOGIN_REDIRECT_URL = '/filiereList/'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.BasicAuthentication',
+        #'rest_framework.authentication.Session',
+
         #'django_ng_cas.authentication.CASAuthentication',
         #'rest_framework.authentication.TokenAuthentication', 
     ],
