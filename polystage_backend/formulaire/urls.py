@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import views_formulaire, views_response
+from .views import views_formulaire, views_response, views_gestionForm
 
 urlpatterns = [
      #views_formulaire
@@ -30,6 +30,9 @@ urlpatterns = [
 
     path('createFormulaireAll/', views_formulaire.CreateFormulaireAll.as_view()),
     path('getFormulaireAll/<str:pk>/', views_formulaire.GetFormulaireAll.as_view()),
+
+    #views gestionForm
+    path('validateFormulaire/', views_gestionForm.validateFormulaire.as_view()),
 
     ]
 

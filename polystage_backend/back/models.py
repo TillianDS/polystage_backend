@@ -113,17 +113,6 @@ class Professionnel(MembreJury):
     class Meta : 
         verbose_name = 'Professionnel'
 
-class Jury(ActiveModel):
-    membreJury = models.ManyToManyField(MembreJury)
-    salle = models.CharField(max_length=100, null = True)
-    batiment = models.CharField(max_length=100, null = True)
-    campus = models.CharField(max_length=200, null = True)
-    zoom = models.CharField(max_length=300, null = True )
-    #models.models.URLField(_(""), max_length=200)
-    num_jury = models.IntegerField()
-
-    leader = models.ForeignKey(MembreJury, on_delete=models.CASCADE, related_name='leader', default=None)
-
 class Filiere(ActiveModel):
     nom = models.CharField(max_length = 100, unique=True)
 
@@ -138,6 +127,17 @@ class Promo(ActiveModel):
     def __str__(self):
         return self.filiere.nom + " " + str(self.annee)
 
+
+class Jury(ActiveModel):
+    membreJury = models.ManyToManyField(MembreJury)
+    salle = models.CharField(max_length=100, null = True)
+    batiment = models.CharField(max_length=100, null = True)
+    campus = models.CharField(max_length=200, null = True)
+    zoom = models.CharField(max_length=300, null = True )
+    #models.models.URLField(_(""), max_length=200)
+    num_jury = models.IntegerField()
+    #promo = models.ForeignKey(Promo, on_delete=models.CASCADE)
+    leader = models.ForeignKey(MembreJury, on_delete=models.CASCADE, related_name='leader', default=None)
 
 class Etudiant (CustomUser):
     num_etudiant = models.CharField(max_length= 20, unique= True)
