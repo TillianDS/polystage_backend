@@ -1,8 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from ..models import CustomUser, Enseignant, Tuteur, Admin, Professionnel, Etudiant, Promo
-from ..serializers import UserSerializer, EnseignantSerializer, TuteurSerializer, ProfessionnelSerializer, AdminSerializer, EtudiantSerializer, PromoSerializer
+from ..models import CustomUser, Enseignant, Tuteur, Admin, Professionnel, Etudiant, Session
+from ..serializers import UserSerializer, EnseignantSerializer, TuteurSerializer, ProfessionnelSerializer, AdminSerializer, EtudiantSerializer, SessionSerializer
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import AllowAny
 
@@ -61,8 +61,8 @@ class UserList(APIView):
     """
     définie les fonction sur l'enseignant
     """
-    def getPromo(self, pk):
-        return Promo.objects.get(pk=pk)
+    def getSession(self, pk):
+        return Session.objects.get(pk=pk)
     
     def get(self, request, format=None):
         profile = request.data['profile']
@@ -78,7 +78,7 @@ class UserList(APIView):
         data = request.data
         if profile == 'ETU' :
             data = data.copy()
-            data['promo'] = Promo.objects.get(pk=request.data['promo']).pk
+            data['sessions'] = Session.objects.get(pk=request.data['sessions']).pk
 
         serializer = self.choice_deserializer(profile, data, False)
         
@@ -105,7 +105,7 @@ class UserList(APIView):
             #user.set_password(password1)
             if profile == 'ETU':
                 user:Etudiant
-                user.promo = self.getPromo(pk=request.data['promo'])
+                user.sessions = self.getSession(pk=request.data['promo'])
             user.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
                             

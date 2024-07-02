@@ -1,10 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from ..models import Filiere, Promo, Etudiant
-from ..serializers import FiliereSerializer, PromoSerializer, PromoFiliereSerializer
+from ..models import Filiere, Session, Etudiant
+from ..serializers import FiliereSerializer, SessionSerializer, SessionFiliereSerializer
 from rest_framework.authentication import TokenAuthentication
 from polystage_backend.permissions import *
+
 
 class FiliereList(APIView):
     permission_classes = [RedirectUnauthenticated]
@@ -87,7 +88,7 @@ class PromoFiliere(APIView) :
         serializer = PromoFiliereSerializer(promo, many= True)
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
     
-    """"
+    ""
     def post (self, request, format = None) : 
         data = Filiere.objects.filter(nom = request.data['nom'])
 
@@ -110,7 +111,7 @@ class PromoFiliere(APIView) :
         data['filiere']= 'filiere'
         #serializer = PromoSerializer(data = request.data)
         return Response({'error' : 'error'})
-    """
+    ""
 
 class getPromoOfFiliere(APIView):
     def post(self, request, format = None):

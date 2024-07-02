@@ -4,8 +4,8 @@ from rest_framework import status
 from ..models import Jury
 from ..serializers import JurySerializer
 from rest_framework.authentication import TokenAuthentication
-from ..models import CustomUser, Enseignant, Tuteur, Admin, Professionnel, Etudiant, Promo, Soutenance
-from ..serializers import UserSerializer, EnseignantSerializer, TuteurSerializer, ProfessionnelSerializer, AdminSerializer, EtudiantSerializer, PromoSerializer, StageSerializer, SoutenanceSerializer, JurySerializer
+from ..models import CustomUser, Enseignant, Tuteur, Admin, Professionnel, Etudiant, Session, Soutenance
+from ..serializers import UserSerializer, EnseignantSerializer, TuteurSerializer, ProfessionnelSerializer, AdminSerializer, EtudiantSerializer, SessionSerializer, StageSerializer, SoutenanceSerializer, JurySerializer
 
 
 class importUser (APIView):

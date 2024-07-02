@@ -9,15 +9,15 @@ class FiliereSerializer (serializers.ModelSerializer) :
         model = Filiere
         fields = ['id', 'nom']
 
-class PromoSerializer (serializers.ModelSerializer) :
+class SessionSerializer (serializers.ModelSerializer) :
     class Meta :
-        model = Promo
-        fields = ['id', 'annee', 'filiere']
+        model = Session
+        fields = ['id', 'nom', 'filiere']
 
-class PromoFiliereSerializer (serializers.ModelSerializer) :
+class SessionFiliereSerializer (serializers.ModelSerializer) :
     filiere = FiliereSerializer(read_only = True)
     class Meta :
-        model = Promo
+        model = Session
         fields = ['id', 'annee', 'filiere']
         
 class UserSerializer(serializers.ModelSerializer):
@@ -36,11 +36,11 @@ class UserSerializer(serializers.ModelSerializer):
 class EtudiantSerializer(UserSerializer):
     num_etudiant = serializers.CharField()
     profile = serializers.ChoiceField(choices=UserSerializer.PROFILE_CHOICES, default='ETU')
-    promo = serializers.PrimaryKeyRelatedField(queryset = Promo.objects.all())
+    sessions = serializers.PrimaryKeyRelatedField(queryset = Session.objects.all())
 
     class Meta:
         model = Etudiant
-        fields = UserSerializer.Meta.fields + ['num_etudiant', 'promo']
+        fields = UserSerializer.Meta.fields + ['num_etudiant', 'sessions']
 
 class TuteurSerializer (UserSerializer) :
     profile = serializers.ChoiceField(choices=UserSerializer.PROFILE_CHOICES, default='TUT')
@@ -149,11 +149,11 @@ class StageAllSerializer (serializers.ModelSerializer) :
 
 class EtudiantAllSeralizer (UserSerializer) :
     num_etudiant = serializers.CharField()
-    promo = PromoFiliereSerializer()
+    sessions = SessionFiliereSerializer()
     stage = StageAllSerializer(many =True)
     soutenance = SoutenanceSerializer(many = True)
 
     class Meta:
         model = Etudiant
-        fields = UserSerializer.Meta.fields + ['num_etudiant', 'promo', 'stage', 'soutenance']
+        fields = UserSerializer.Meta.fields + ['num_etudiant', 'sessions', 'stage', 'soutenance']
 

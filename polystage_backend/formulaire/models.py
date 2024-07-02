@@ -1,6 +1,6 @@
 from django.db import models
 
-from back.models import Etudiant, Filiere, CustomUser
+from back.models import Etudiant, Session, CustomUser
 
 #gestion droits lectur ecriture
 class Formulaire (models.Model):
@@ -8,7 +8,7 @@ class Formulaire (models.Model):
     id = models.CharField(max_length=200, primary_key=True)
     titre = models.CharField(max_length=200)
     description = models.CharField(max_length=400, blank= True, null= True)
-    filiere =  models.ForeignKey(Filiere, on_delete=models.CASCADE)
+    session =  models.ForeignKey(Session, on_delete=models.CASCADE, null = True)
     PROFILE_CHOICES = [
         ('TUT', 'Tuteur'),
         ('ETU', 'Etudiant'),

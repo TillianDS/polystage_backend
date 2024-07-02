@@ -120,8 +120,8 @@ class Filiere(ActiveModel):
         return self.nom
 
 
-class Promo(ActiveModel):
-    annee = models.IntegerField(default = -1)
+class Session(ActiveModel):
+    nom = models.CharField(max_length=100)
     filiere =  models.ForeignKey(Filiere, on_delete= models.CASCADE)
 
     def __str__(self):
@@ -136,12 +136,11 @@ class Jury(ActiveModel):
     zoom = models.CharField(max_length=300, null = True )
     #models.models.URLField(_(""), max_length=200)
     num_jury = models.IntegerField()
-    #promo = models.ForeignKey(Promo, on_delete=models.CASCADE)
     leader = models.ForeignKey(MembreJury, on_delete=models.CASCADE, related_name='leader', default=None)
 
 class Etudiant (CustomUser):
     num_etudiant = models.CharField(max_length= 20, unique= True)
-    promo = models.ForeignKey(Promo, on_delete=models.CASCADE , blank=True, null=True)
+    sessions = models.ManyToManyField(Session)
 
     class Meta : 
         verbose_name = 'Etudiant'
