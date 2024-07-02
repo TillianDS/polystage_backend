@@ -9,3 +9,5 @@ env2/
 __pycache__/
 *.log
 *.swp
+
+.gitconfig
