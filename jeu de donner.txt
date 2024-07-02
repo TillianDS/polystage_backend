@@ -1,4 +1,18 @@
-enseignant 
+Enseignant:
 
 ben3@po.fr
+Password*
+
+Etudiant :
+
+etudiant@po.fr
+Password*
+
+Tuteur :
+
+tuteur20@po.fr
+Password*
+
+Admin:
+MP@po.fr
 Password*

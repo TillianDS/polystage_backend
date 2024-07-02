@@ -95,3 +95,26 @@ class becomeLeader(APIView):
         jury.leader = user
         jury.save()
         return Response({'success' : "vous êtes maitenant le leader du jury"})
+    
+class isLeader(APIView):
+    def post(self, request, format= None):
+        id_membre = request.data.get('id_membreJury')
+        id_jury = request.data.get('id_jury')
+
+        if (not id_membre) | (not id_jury):
+            return Response({'error' : "il manque l'id du membreJury ou du Jury"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try : 
+            membreJury = MembreJury.objects.get(pk = id_membre)
+        except MembreJury.DoesNotExist : 
+            return Response({'error' : f"le membreJury {id_membre} n'existe pas"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try : 
+            jury = Jury.objects.get(pk = id_membre)
+        except Jury.DoesNotExist : 
+            return Response({'error' : f"le jury {id_jury}n'existe pas"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+        return Response(JurySerializer(jury).data)
+        return Response ({'leader' : jury.leader == membreJury})

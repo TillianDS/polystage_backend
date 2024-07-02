@@ -29,15 +29,15 @@ urlpatterns = [
     path('setAllInactive/', views_admin.SetAllInactive.as_view()),
 
     #views_promo_filiere
-    path('promoDetails/<int:pk>/', views_promo_filiere.PromoDetails.as_view()),
-    path('promoList/', views_promo_filiere.PromoList.as_view()),
+    path('sessionDetails/<int:pk>/', views_promo_filiere.SessionDetails.as_view()),
+    path('sessionList/', views_promo_filiere.SessionList.as_view()),
 
     path('filiereList/', views_promo_filiere.FiliereList.as_view()),
     path('filiereDetails/<int:pk>/', views_promo_filiere.FiliereDetails.as_view()),
 
-    path('promoFiliere/', views_promo_filiere.PromoFiliere.as_view()),
+    path('sessionFiliere/', views_promo_filiere.SessionFiliere.as_view()),
 
-    path('getPromoOfFiliere/', views_promo_filiere.getPromoOfFiliere.as_view()),
+    path('getSessionfFiliere/', views_promo_filiere.getSessionfFiliere.as_view()),
     
     #views_stage
     path('stageList/', views_stage.StageList.as_view()),

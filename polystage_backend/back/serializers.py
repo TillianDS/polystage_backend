@@ -14,11 +14,16 @@ class SessionSerializer (serializers.ModelSerializer) :
         model = Session
         fields = ['id', 'nom', 'filiere']
 
-class SessionFiliereSerializer (serializers.ModelSerializer) :
-    filiere = FiliereSerializer(read_only = True)
-    class Meta :
-        model = Session
-        fields = ['id', 'annee', 'filiere']
+class SessionFiliereSerializer(serializers.ModelSerializer):
+    sessions = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Filiere
+        fields = ['id', 'nom', 'sessions']
+
+    def get_sessions(self, obj):
+        sessions = Session.objects.filter(filiere=obj)
+        return SessionSerializer(sessions, many=True).data
         
 class UserSerializer(serializers.ModelSerializer):
     PROFILE_CHOICES = [
@@ -36,8 +41,7 @@ class UserSerializer(serializers.ModelSerializer):
 class EtudiantSerializer(UserSerializer):
     num_etudiant = serializers.CharField()
     profile = serializers.ChoiceField(choices=UserSerializer.PROFILE_CHOICES, default='ETU')
-    sessions = serializers.PrimaryKeyRelatedField(queryset = Session.objects.all())
-
+    sessions = serializers.PrimaryKeyRelatedField(queryset=Session.objects.all(), many=True, allow_empty=True)
     class Meta:
         model = Etudiant
         fields = UserSerializer.Meta.fields + ['num_etudiant', 'sessions']
@@ -149,11 +153,18 @@ class StageAllSerializer (serializers.ModelSerializer) :
 
 class EtudiantAllSeralizer (UserSerializer) :
     num_etudiant = serializers.CharField()
-    sessions = SessionFiliereSerializer()
-    stage = StageAllSerializer(many =True)
-    soutenance = SoutenanceSerializer(many = True)
+    sessions = SessionFiliereSerializer(many = True)
+    stage = serializers.SerializerMethodField()
+    soutenance = serializers.SerializerMethodField()
 
     class Meta:
         model = Etudiant
-        fields = UserSerializer.Meta.fields + ['num_etudiant', 'sessions', 'stage', 'soutenance']
-
+        fields = UserSerializer.Meta.fields + ['num_etudiant', 'sessions', 'soutenance', 'stage']
+    
+    def get_soutenance(self, obj):
+        soutenance = Soutenance.objects.filter(etudiant=obj)
+        return SoutenanceSerializer(soutenance, many=True).data
+    
+    def get_stage(self, obj):
+        stage = Stage.objects.filter(etudiant=obj)
+        return StageAllSerializer(stage, many=True).data
