@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import views_login, views_users, views_admin, views_promo_filiere, views_stage, views_soutenance, views_jury, views_csv, views_import, views_etudiant, views_export, cas, test_cas, views_test
+from .views import views_login, views_users, views_admin, views_promo_filiere, views_stage, views_soutenance, views_jury, views_csv, views_import, views_etudiant, views_export, cas, test_cas, views_test, views_session
 
 urlpatterns = [
     #views_test
@@ -37,8 +37,11 @@ urlpatterns = [
 
     path('sessionFiliere/', views_promo_filiere.SessionFiliere.as_view()),
 
-    path('getSessionfFiliere/', views_promo_filiere.getSessionfFiliere.as_view()),
+    path('getSessionfFiliere/', views_promo_filiere.getSessionFiliere.as_view()),
     
+    #views_session
+    path('sessionEtudiant/<int:pk>/', views_session.getEtudiantSession.as_view()),
+
     #views_stage
     path('stageList/', views_stage.StageList.as_view()),
     path('stageDetails/<int:pk>/', views_stage.StageDetails.as_view()),
@@ -54,6 +57,7 @@ urlpatterns = [
     path('juryDetails/<int:pk>/', views_jury.JuryDetails.as_view()),
     path('isJury/', views_jury.isJury.as_view()),
     path('becomeLeader/', views_jury.becomeLeader.as_view()),
+    path('isLeader/', views_jury.isLeader.as_view()),
 
     #views_etudiant
     path('etudiantAll/<int:pk>/', views_etudiant.EtudiantAll.as_view()),

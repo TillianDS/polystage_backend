@@ -168,3 +168,13 @@ class EtudiantAllSeralizer (UserSerializer) :
     def get_stage(self, obj):
         stage = Stage.objects.filter(etudiant=obj)
         return StageAllSerializer(stage, many=True).data
+
+class SessionEtudiantSerializer (serializers.ModelSerializer):
+    etudiants = serializers.SerializerMethodField()
+    class Meta :
+        model = Session
+        fields = ['id', 'nom', 'etudiants']
+
+    def get_etudiants(self, obj):
+        etudiants = Etudiant.objects.filter(sessions = obj)
+        return EtudiantSerializer(etudiants, many= True).data

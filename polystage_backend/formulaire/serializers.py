@@ -100,4 +100,4 @@ class FormulaireResponseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Formulaire
-        fields = ['id', 'titre', 'description', 'filiere', 'profile', 'langue', 'question']   
+        fields = ['id', 'titre', 'description', 'session', 'profile', 'langue', 'question']   

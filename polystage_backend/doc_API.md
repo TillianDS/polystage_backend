@@ -184,18 +184,18 @@ http://127.0.0.1:8000/userDetails/<int>/
 }
 ```
 
-# Promo
+# Session
 
-## Informations d'une promo
+## Informations d'une session
 
 - id (int): id de la promo
-- annee (int) : annee de la promo
+- nom (string) : nom de la session
 - filiere (int) : id de la filiere à laquelle appartient la promo
 
 ```json
 {
     "id": 4,
-    "annee": 2027,
+    "nom": "info 3A 2024",
     "filiere": 2
 }
 ```
@@ -205,9 +205,9 @@ http://127.0.0.1:8000/userDetails/<int>/
 ### URL
 
 ```url
-http://127.0.0.1:8000/promoList/
+http://127.0.0.1:8000/sessionList/
 
-http://127.0.0.1:8000/promoDetails/<int>/
+http://127.0.0.1:8000/sessionDetails/<int>/
 ```
 
 # PromoFiliere
@@ -287,6 +287,43 @@ toutes les promos associées
         "filiere": 2
     }
 ]
+```
+
+## sessionEtudiant
+
+renvoie tous les etudiants d'un session
+
+méthode : GET
+
+```url
+sessionEtudiant/<int:id_session>
+```
+
+arguement url : l'id de la session
+
+### Données reçues
+
+toutes les étud assocudiants de la session
+
+```json
+{
+    "id": 2,
+    "nom": "info 3A 2024",
+    "etudiants": [
+        {
+            "id": 50,
+            "email": "etu1@po.fr",
+            "first_name": "etu1",
+            "last_name": "etu1",
+            "first_connection": false,
+            "profile": "ETU",
+            "num_etudiant": "d000001",
+            "sessions": [
+                2
+            ]
+        }
+    ]
+}
 ```
 
 # Stage
@@ -446,7 +483,7 @@ http://127.0.0.1:8000/getSoutenanceJury/
             "first_connection": false,
             "profile": "ETU",
             "num_etudiant": "d00001",
-            "promo": 7
+            "sessions": [2]
         },
         "is_active": true,
         "note": 20.0,
@@ -481,7 +518,7 @@ http://127.0.0.1:8000/getSoutenanceJury/
 {
     "errors":"cause de l'erreur"
 }
-``
+```
 
 # Jury
 
@@ -584,6 +621,45 @@ http://127.0.0.1:8000/becomeLeader/
 ```json
 {
     {"errors":"cause de l'erreur"}
+}
+```
+
+## isLeader
+
+permet de savoir si le membreJury est le leader du Jury
+
+### URL
+
+Méthode : POST
+
+```url
+http://127.0.0.1:8000/isLeader/
+```
+
+### informations envoyées
+
+```json
+{
+    "id_membreJury" : "id du membreJury",
+    "id_jury" : "id du jury"
+}
+```
+
+### informations reçues
+
+#### sucess
+
+```json
+{
+    "leader": true
+}
+```
+
+#### non success
+
+```json
+{
+    "leader": false
 }
 ```
 

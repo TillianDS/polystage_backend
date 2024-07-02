@@ -8,7 +8,7 @@ class Formulaire (models.Model):
     id = models.CharField(max_length=200, primary_key=True)
     titre = models.CharField(max_length=200)
     description = models.CharField(max_length=400, blank= True, null= True)
-    session =  models.ForeignKey(Session, on_delete=models.CASCADE, null = True)
+    session =  models.ForeignKey(Session, on_delete=models.CASCADE)
     PROFILE_CHOICES = [
         ('TUT', 'Tuteur'),
         ('ETU', 'Etudiant'),

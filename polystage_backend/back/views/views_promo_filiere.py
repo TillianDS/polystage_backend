@@ -113,7 +113,7 @@ class SessionFiliere(APIView) :
         return Response({'error' : 'error'})
     """
 
-class getSessionfFiliere(APIView):
+class getSessionFiliere(APIView):
     def post(self, request, format = None):
         try :
             id_filiere = request.data["id_filiere"]

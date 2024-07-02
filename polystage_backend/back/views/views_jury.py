@@ -110,11 +110,10 @@ class isLeader(APIView):
             return Response({'error' : f"le membreJury {id_membre} n'existe pas"}, status=status.HTTP_400_BAD_REQUEST)
 
         try : 
-            jury = Jury.objects.get(pk = id_membre)
+            jury = Jury.objects.get(pk = id_jury)
         except Jury.DoesNotExist : 
-            return Response({'error' : f"le jury {id_jury}n'existe pas"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error' : f"le jury {id_jury} n'existe pas"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-        return Response(JurySerializer(jury).data)
+        #return Response(JurySerializer(jury).data)
         return Response ({'leader' : jury.leader == membreJury})
