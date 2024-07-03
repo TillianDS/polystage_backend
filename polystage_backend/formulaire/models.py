@@ -56,7 +56,7 @@ class CheckBox (models.Model):
 class ResponseCheckbox(models.Model):
     checkbox = models.ForeignKey(CheckBox, on_delete=models.CASCADE)
     id_etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE)
-    #valeur = models.
+    valeur = models.BooleanField(default=False)
 
 class statusFormulaire(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -66,7 +66,7 @@ class statusFormulaire(models.Model):
         ('sauvegarde', 'sauvegarde'),
         ('rendu', 'rendu'),
         ]
-    status = models.CharField(max_length=15, choices = STATUS_CHOICES, default= "envoie")
+    statusForm = models.CharField(max_length=15, choices = STATUS_CHOICES, default= "envoie")
 
     class Meta:
         # Spécifie que la combinaison de 'nom' et 'filiere' doit être unique

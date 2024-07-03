@@ -17,7 +17,7 @@ class QuestionSerializer (serializers.ModelSerializer):
 class ResponseCheckboxSerializer (serializers.ModelSerializer):
     class Meta:
         model = ResponseCheckbox
-        fields = ['id', 'id_etudiant', 'checkbox']
+        fields = ['id', 'id_etudiant', 'checkbox', 'valeur']
         
 class ResponseSerializer (serializers.ModelSerializer):
     id_etudiant = serializers.PrimaryKeyRelatedField(queryset = Etudiant.objects.all())
@@ -71,6 +71,10 @@ class FormulaireAllSerializer (serializers.ModelSerializer):
     
 
 # création des serializer adapaté à l'affichage des réponse du formulaire
+class ResponseCheckboxAllSerializer (serializers.ModelSerializer):
+    class Meta:
+        model = ResponseCheckbox
+        fields = ['id', 'id_etudiant', 'valeur']
 
 class ResSerializer (serializers.ModelSerializer):
     id_etudiant = serializers.PrimaryKeyRelatedField(queryset = Etudiant.objects.all())
@@ -79,26 +83,27 @@ class ResSerializer (serializers.ModelSerializer):
         fields = ["id", "id_etudiant", "content"]
 
 class CheckboxReSerializer(serializers.ModelSerializer):
-    responses = ResponseCheckboxSerializer(many=True, read_only=True)
+    response = serializers.SerializerMethodField()    
     class Meta:
         model = CheckBox
-        fields = ['id', 'titre', 'responses']
+        fields = ['id', 'titre', 'response']
+    
+    def get_response (self, obj) :
+        user_id = self.context.get('user_id')
+        reponses = ResponseCheckbox.objects.filter(id_etudiant_id=user_id, checkbox=obj)
+        return ResponseCheckboxAllSerializer(reponses, many=True).data
 
 class QuestionResponseSerializer(serializers.ModelSerializer):
     responses = serializers.SerializerMethodField()
-    checkbox = CheckboxAllSerializer(many=True, read_only=True)
+    checkbox = CheckboxReSerializer(many=True, read_only=True)
     class Meta:
         model = Question
         fields = ['id', 'titre', 'type', 'responses', 'checkbox']
 
     def get_responses(self, obj):
         user_id = self.context.get('user_id')
-        if obj.type == 'checkbox':
-            reponses = ResponseCheckbox.objects.filter(id_etudiant_id=user_id, checkbox__question=obj)
-            return ResponseCheckboxSerializer(reponses, many=True).data
-        else:
-            reponses = ResponseForm.objects.filter(id_etudiant_id=user_id, question=obj)
-            return ResSerializer(reponses, many=True).data
+        reponses = ResponseForm.objects.filter(id_etudiant_id=user_id, question=obj)
+        return ResSerializer(reponses, many=True).data
 
 class FormulaireResponseSerializer(serializers.ModelSerializer):
     question = QuestionResponseSerializer(many=True, read_only=True)

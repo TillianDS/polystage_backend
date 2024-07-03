@@ -1,7 +1,7 @@
 from .views_list_details import *
-from ..models import Formulaire, CheckBox, Question, ResponseForm,  statusFormulaire
+from ..models import Formulaire, CheckBox, Question, ResponseForm,  statusFormulaire, ResponseCheckbox
 from back.models import Etudiant
-from ..serializers import FormulaireSerializer, CheckboxSerializer, FormulaireAllSerializer, QuestionSerializer, ResponseSerializer
+from ..serializers import FormulaireSerializer, CheckboxSerializer, FormulaireAllSerializer, QuestionSerializer, ResponseSerializer, StatusFormulaireSerializer, ResponseCheckboxSerializer
 from rest_framework.response import Response
 from django.db.models import Q
 
@@ -10,6 +10,9 @@ class validateFormulaire(APIView):
     def post (self, request, format = None):
         # on cherche les questions du formulaire
         questions_data = request.data['formulaire']['question']
+        id_etudiant = request.data['id_etudiant']
+        id_session = request.data['formulaire']['session']
+
         errors = []
 
         #pour chaque question on va traiter sa réponse ...
@@ -17,8 +20,36 @@ class validateFormulaire(APIView):
 
             # ... si la question esr checkbox
             if question['type'] == 'checkbox':
-                for response in question['response']:
-                    pass
+
+                # pour chaque checkbox de la question
+                for checkbox in question['checkbox']:
+                    id_checkbox = checkbox['id']
+
+                    try :
+                        responseCheckbox = checkbox['response'][0]
+                    except :
+                        errors.append({"question" : question, "error" : "la question n'a pas de réponse"})
+                        continue
+
+                    #on ajoute l'id de la checkbox dans la réponse
+                    responseCheckbox['checkbox'] = id_checkbox
+
+                    id_checkbox = responseCheckbox.get('id')
+                    if id_checkbox :
+                        try :
+                            responseSave = ResponseCheckbox.objects.get(pk=id_response)
+                        except ResponseCheckbox.DoesNotExist:
+                            errors.append({"question" : question, 'checkbox' : checkbox,  "error" : "la reponse checkbox ayant cet id n'existe pas"})
+                            continue
+                        serializer = ResponseCheckboxSerializer(responseSave, data = responseCheckbox)
+                    else :
+                        serializer = ResponseCheckboxSerializer(data = responseCheckbox)
+
+                    if serializer.is_valid():
+                        serializer.save()
+                    else :
+                        errors.append({"error" : serializer.errors, 'reponse' : responseCheckbox})
+            
             
             # ... si la question est d'un autre type
             else :
@@ -51,8 +82,10 @@ class validateFormulaire(APIView):
         
         if errors:
             return Response({"error" : errors, "message" : "ces questions ont recontrés des erreurs et n'ont pas été enregistré"})
-        
-        return Response({"sucess" :"tout a été enregistré avec succès"}, status=status.HTTP_200_OK)
+
+        status = {'etudiant' : id_etudiant, "session" : id_session, 'statutsForm' : 'rendu'}
+        serializer = StatusFormulaireSerializer
+        return Response({"sucess" :"tout a été enregistré avec succès"})
     
 class saveFormulaire (APIView):
     def post (self, request, format = None):
