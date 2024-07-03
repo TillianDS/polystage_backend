@@ -49,6 +49,7 @@ class ResponseForm (models.Model):
 class CheckBox (models.Model):
     titre = models.CharField(max_length=200)
     question = models.ForeignKey(Question, related_name = 'checkbox', on_delete= models.CASCADE )
+    content =models.BooleanField(default=False)
     def __str__ (self) :
         return str(self.question) + " " + str(self.title)
 
@@ -66,3 +67,7 @@ class statusFormulaire(models.Model):
         ('rendu', 'rendu'),
         ]
     status = models.CharField(max_length=15, choices = STATUS_CHOICES, default= "envoie")
+
+    class Meta:
+        # Spécifie que la combinaison de 'nom' et 'filiere' doit être unique
+        unique_together = ['formulaire', 'user']

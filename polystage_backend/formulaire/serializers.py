@@ -32,6 +32,11 @@ class CheckboxSerializer (serializers.ModelSerializer):
         model = CheckBox
         fields = ['id', 'titre', 'question']
 
+class StatusFormulaireSerializer (serializers.ModelSerializer):
+    class Meta :
+        model = statusFormulaire
+        fields = "__all__"
+
 
 # serializer pour l'affichage et l'enregistrement de tout un formulaire, question et checbox
 
