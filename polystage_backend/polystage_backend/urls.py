@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-import django_cas_ng.views as cas_views
+#import django_cas_ng.views as cas_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,7 +27,7 @@ urlpatterns = [
     #path('accounts/login/', cas_views.LoginView.as_view(), name='cas_ng_login'),
     #path('accounts/logout/', cas_views.LogoutView.as_view(), name='cas_ng_logout'),
     
-    path('api-auth/', include('rest_framework.urls')),
+    #path('api-auth/', include('rest_framework.urls')),
 
 
 ]

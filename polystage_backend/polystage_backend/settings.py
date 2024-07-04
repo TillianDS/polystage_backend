@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'formulaire',
     'corsheaders',
 
-    'django_cas_ng',
+    #'django_cas_ng',
     
 ]
 
@@ -60,10 +60,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_cas_ng.middleware.CASMiddleware',
+    #'django_cas_ng.middleware.CASMiddleware',
 ]
-
-#CSRF_COOKIE_SECURE = False
  
 ROOT_URLCONF = 'polystage_backend.urls'
 
@@ -145,7 +143,7 @@ REST_AUTH_SERIALIZERS = {
 }
 
 AUTHENTICATION_BACKENDS = (
-    'django_cas_ng.backends.CASBackend',
+    #'django_cas_ng.backends.CASBackend',
     'django.contrib.auth.backends.ModelBackend',
 
 )
@@ -155,32 +153,38 @@ CAS_SERVER_URL = 'https://ident.univ-amu.fr/cas/'
 CAS_VERSION : 3
 CAS_LOGOUT_URL_NAME = 'https://ident.univ-amu.fr/cas/logout/'
 
-LOGIN_URL = '/accounts/login/'
-LOGOUT_URL = '/accounts/logout/'
-LOGIN_REDIRECT_URL = '/filiereList/'
+#LOGIN_URL = '/accounts/login/'
+#LOGOUT_URL = '/accounts/logout/'
+#LOGIN_REDIRECT_URL = '/filiereList/'
 
 
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        #'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-
-        #'django_ng_cas.authentication.CASAuthentication',
         #'rest_framework.authentication.TokenAuthentication', 
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        #'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticated',
     ]
 }
 
 SITE_ID = 1
 
+# sécurité
 CORS_ALLOW_ALL_ORIGINS = True  # Autoriser tous les domaines
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5050",  # Autoriser les requêtes depuis ce domaine
 ]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5050",
+    
+        ]
+
+
+# Mail
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'

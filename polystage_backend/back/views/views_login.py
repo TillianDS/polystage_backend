@@ -11,6 +11,7 @@ from django.contrib.auth import login, authenticate
 from django.core.mail import send_mail
 from django.conf import settings
 from rest_framework.permissions import AllowAny
+from django.contrib.auth import logout
 
 class CostumLogin(APIView):
     """
@@ -35,15 +36,22 @@ class CostumLogin(APIView):
         email = request.data['email']
         password = request.data['password']
         user : CustomUser = authenticate (request, email= email, password = password, backend='django.contrib.auth.backends.ModelBackend')
+        return Response(UserSerializer(user).data)
+        
+        
         if user :
             if not user.first_connection: 
                 login(request, user, backend='django.contrib.auth.backends.ModelBackend') 
 
                 serializer = UserSerializer(user)
-                token, create = Token.objects.get_or_create(user = user)
-                return Response({'token' : token.key, 'user_id' : serializer.data["id"], 'profile' : serializer.data['profile']}, status=status.HTTP_202_ACCEPTED) 
+                return Response({'user_id' : serializer.data["id"], 'profile' : serializer.data['profile']}, status=status.HTTP_202_ACCEPTED) 
             return Response({"first_connection" : True})
         return Response({'error' : "password or email are not correct"}, status=status.HTTP_401_UNAUTHORIZED)
+
+class Logout(APIView):
+    def get(self, request):
+        logout(request)
+        return Response({'message': 'Déconnexion réussie'}, status=status.HTTP_200_OK)
 
 class ChangePassword (APIView) :
     permission_classes = [AllowAny]
@@ -115,7 +123,7 @@ class gestionCode(APIView):
         return code
  
     
-    def get(self, request) :
+    def post(self, request) :
         user = CustomUser.objects.get(email = 'tdhume@laposte.net')
         return Response({'code': self.generate_code(user)})
     

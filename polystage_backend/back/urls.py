@@ -7,6 +7,9 @@ from .views import views_login, views_users, views_admin, views_promo_filiere, v
 urlpatterns = [
     #views_test
     path('test/', views_test.test.as_view()),
+    path('get-token/', views_test.get_csrf_token, name='get_csrf_token'),
+
+
     #views_Users
     path('userDetails/<int:pk>/', views_users.UserDetails.as_view()),
     path('userList/', views_users.UserList.as_view(), name = 'userList'),
@@ -19,6 +22,7 @@ urlpatterns = [
     path('login/', views_login.CostumLogin.as_view(), name = 'login'),
     path('codeReset/', views_login.SendCodeEmail.as_view()),
     path('code/', views_login.gestionCode.as_view()),
+    path('logout/', views_login.Logout.as_view(), name='custom_logout'),
 
     #views_admin
     path('userSearchAllChamp/', views_admin.userSearchAllChamp.as_view()),
