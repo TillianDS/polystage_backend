@@ -194,3 +194,8 @@ class UserAllList(APIView):
         return Response(serializer.data) 
         return Response({"error" : "le profile n'est pas bon"}, status=status.HTTP_400_BAD_REQUEST)
     
+class SetMdp (APIView):
+    def post (self, request, format = None):
+        user = CustomUser.objects.get(email = request.data['email'])
+        user.set_password(request.data['password'])
+        user.save()
