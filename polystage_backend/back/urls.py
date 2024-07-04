@@ -13,6 +13,7 @@ urlpatterns = [
     #views_Users
     path('userDetails/<int:pk>/', views_users.UserDetails.as_view()),
     path('userList/', views_users.UserList.as_view(), name = 'userList'),
+    path('setMdp/', views_users.SetMdp.as_view(), name = 'setMdp'),
 
     #test_cas
     path('profile/', test_cas.user_profile, name='user_profile'),

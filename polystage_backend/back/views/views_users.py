@@ -194,3 +194,4 @@ class SetMdp (APIView):
         user = CustomUser.objects.get(email = request.data['email'])
         user.set_password(request.data['password'])
         user.save()
+        return Response()

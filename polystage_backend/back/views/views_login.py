@@ -35,9 +35,7 @@ class CostumLogin(APIView):
     def post(self, request, format=None):
         email = request.data['email']
         password = request.data['password']
-        user : CustomUser = authenticate (request, email= email, password = password, backend='django.contrib.auth.backends.ModelBackend')
-        return Response(UserSerializer(user).data)
-        
+        user : CustomUser = authenticate (request, email= email, password = password, backend='django.contrib.auth.backends.ModelBackend')        
         
         if user :
             if not user.first_connection: 

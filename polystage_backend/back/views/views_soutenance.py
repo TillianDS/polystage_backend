@@ -5,6 +5,7 @@ from ..models import Soutenance, CustomUser, MembreJury, Jury
 from ..serializers import SoutenanceSerializer, JurySerializer, SoutenanceEtudiantSerializer
 from rest_framework.authentication import TokenAuthentication
 from .views_list_details import List, Details
+from polystage_backend.permissions import *
 
 class SoutenanceList(List):
     def __init__(self, *args, **kwargs):
@@ -17,6 +18,7 @@ class SoutenanceDetails(Details):
         self.set_attribute(Soutenance, SoutenanceSerializer, "Soutenance")
 
 class setNote(APIView):
+    permission_classes = [AdminJuryPermission]
     def post(self, request, format = None):
         id_user = request.data['id_user']
         id_soutenance = request.data['id_soutenance']

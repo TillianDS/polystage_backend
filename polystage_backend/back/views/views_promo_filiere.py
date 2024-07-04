@@ -14,6 +14,7 @@ class FiliereList(APIView):
         serializer = FiliereSerializer(filiere, many = True)
         return Response(serializer.data, status= status.HTTP_200_OK)
 
+    
     def post (self, request, format = None) :
         serializer = FiliereSerializer(data= request.data)
         if serializer.is_valid():
