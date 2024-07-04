@@ -4,10 +4,11 @@ from rest_framework.views import APIView
 from ..models import *
 from ..serializers import *
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 class test(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, format=None ):
-        users = CustomUser.objects.filter(profile = "profile")
-        for user in users:
-            user.hard_delete()
-        return Response({"delete": "delete"})
+        user = request.user
+        return Response({"message": UserSerializer(user).data})
