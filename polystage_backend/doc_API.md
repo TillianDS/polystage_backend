@@ -856,7 +856,7 @@ renvoie le formulaire, les questions et checkbox associés en fonction de l'étu
 http://127.0.0.1:8000/responseFormulaire/
 ```
 
-### Données envoyées
+### Données envoyées
 
 ```json
 {
@@ -871,7 +871,7 @@ http://127.0.0.1:8000/responseFormulaire/
 
 getFormulaireAll permet de récupérer l'ensemble des informations d'un formulaire : l'entité formulaire avec les questions et les checkbox 
 
-### URL
+### URL
 
 methode : GET
 
@@ -982,7 +982,6 @@ http://127.0.0.1:8000/createFormulaireAll/
 }
 ```
 
-
 ## retrieveFormulaire
 
 retrouve un formulaire
@@ -1028,6 +1027,118 @@ http://127.0.0.1:8000/retrieveFormulaire/
     "filiere": 6
 }
 ```
+
+
+## validateFormulaire
+
+valider un formulaire en enregistrant toutes les réponse et en passant la statut de l'utilisateur lié à ce formulaire en "rendu"
+
+### URL
+
+methode : POST
+
+```url
+http://127.0.0.1:8000/validateFormulaire/
+```
+
+### données envoyées
+
+- toutes les informations du formulaire avec les questions et réponse. Si la réponse existe déjà on la renvoie avec son id, sinon on renvoie sans id (et la réponse est créer). 
+
+- l'id de l'étudiant à qui est déstiné le formulaire (sera inclu automatiquement dans les nouvelles réponse)
+
+```json
+{ "formulaire": 
+    {
+        "id": "id",
+        "titre": "Avis du tuteur",
+        "description": "formulaire pour l'evaluation de Louise",
+        "session": 2,
+        "profile": "ETU",
+        "langue": "FR",
+        "question": [
+            {
+                "id": 4,
+                "titre": "qu'avez vous pensé de votre stage ?",
+                "type": "text",
+                "responses": [
+                    {
+                        "id": 4,
+                        "id_etudiant": 50,
+                        "content": "le stage s'est très bien passé"
+                    }
+                ],
+                "checkbox": []
+            },
+            {
+                "id": 6,
+                "titre": "vous êtes vous ennuyé ?",
+                "type": "checkbox",
+                "responses": [],
+                "checkbox": [
+                    {
+                        "id": 1,
+                        "titre": "Oui",
+                        "response": [
+                            {
+                                "id": 2,
+                                "id_etudiant": 50,
+                                "valeur": false
+                            }
+                        ]
+                    },
+                    {
+                        "id": 2,
+                        "titre": "non",
+                        "response": [
+                            {
+                                "id": 5,
+                                "id_etudiant": 50,
+                                "valeur": false
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "id_etudiant" : 50
+}
+```
+### données recues 
+
+#### sucess
+
+
+```json
+{
+    "sucess": "tout a été enregistré avec succès"
+}
+```
+
+#### error 
+
+si le systeme rencontre une erreur, les données réponse qui ne sont pas en erreur sont enregistré et les autres sont renvoyé
+
+- s'il manque une réponse, renvoie la question à laquelle il manque une réponse
+
+- si l'id passé d'une réponse ne correspond à aucun réponse enregistré*
+
+- s'il y'a un probleme lors de l'enregistrement du serialieseur
+
+```json
+{
+    "error": [
+        {
+            "question": "question en erreur",
+
+            "error": "raison de l'erreur"
+        }
+    ],
+    "message": "ces questions ont recontrés des erreurs et n'ont pas été enregistré"
+}
+```
+
 
 # Import des données
 
