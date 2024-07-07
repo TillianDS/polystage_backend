@@ -166,3 +166,15 @@ class CheckCode (APIView) :
         if (code != codePassword) :
             return Response({"success" : True})
         return Response({"success" : True})
+    
+class SetPassword (APIView):
+    def post (self, request, format = None):
+        email = request.data['email']
+        password = request.data['password']
+
+        user = CustomUser.objects.get(email=email)
+
+        user.set_password(password)
+        user.save()
+
+        return Response()

@@ -20,6 +20,7 @@ urlpatterns = [
     path('login/', views_login.CostumLogin.as_view(), name = 'login'),
     path('codeReset/', views_login.SendCodeEmail.as_view()),
     path('code/', views_login.gestionCode.as_view()),
+    path('setPassword/', views_login.SetPassword.as_view()),
 
     #views_admin
     path('userSearchAllChamp/', views_admin.userSearchAllChamp.as_view()),
