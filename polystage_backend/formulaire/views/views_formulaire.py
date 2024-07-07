@@ -1,6 +1,8 @@
 from .views_list_details import *
 from ..models import Formulaire, CheckBox, Question
 from back.models import Etudiant
+from back.serializers import SoutenanceSerializer
+
 from ..serializers import FormulaireSerializer, CheckboxSerializer, FormulaireAllSerializer, QuestionSerializer
 from rest_framework.response import Response
 from django.db.models import Q
@@ -86,3 +88,17 @@ class retrieveFormulaire (APIView):
 
         return Response(FormulaireSerializer(formulaire, many = True).data)
 
+
+class SelfFormulaire (APIView):
+
+    def post (self, request, Format = None):
+        user  = Etudiant.objects.get(email = request.user.email)
+        profile = request.user.profile
+        #soutenance = request.data['soutenance_id']
+        
+        #num_etudiant = user.num_etudiant
+
+        soutenance = user.soutenance_set
+        return Response(SoutenanceSerializer(soutenance, many = True).data)
+        
+        

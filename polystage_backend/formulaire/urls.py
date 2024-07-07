@@ -17,6 +17,7 @@ urlpatterns = [
 
     path('formulaireSearch/', views_formulaire.FormulaireSearch.as_view()),
     path('retrieveFormulaire/', views_formulaire.retrieveFormulaire.as_view()),
+    path('selfFormulaire/', views_formulaire.SelfFormulaire.as_view()),
 
 
 

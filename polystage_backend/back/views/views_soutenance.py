@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from ..models import Soutenance, CustomUser, MembreJury, Jury
+from ..models import Soutenance, CustomUser, MembreJury, Jury, Etudiant, Tuteur
 from ..serializers import SoutenanceSerializer, JurySerializer, SoutenanceEtudiantSerializer
 from rest_framework.authentication import TokenAuthentication
 from .views_list_details import List, Details
@@ -73,5 +73,18 @@ class getSoutenanceJury(APIView):
         soutenance = jury.soutenance_set.all()
     
         serializer = SoutenanceEtudiantSerializer(soutenance, many = True)
+
+        return Response(serializer.data)
+    
+class getSoutenanceEtudiantTuteur(APIView):
+
+    def get (self, request, format = None):
+        if request.user.profile == 'ETU':
+            user = Etudiant.objects.get(pk= request.user.pk)
+            serializer = SoutenanceSerializer(user.soutenance_set, many = True)
+
+        elif request.user.profile == 'TUT':
+            user = Tuteur.objects.get(pk= request.user.pk)
+            serializer = SoutenanceEtudiantSerializer(user.soutenance_set, many = True)
 
         return Response(serializer.data)

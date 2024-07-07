@@ -35,7 +35,7 @@ class CostumLogin(APIView):
     def post(self, request, format=None):
         email = request.data['email']
         password = request.data['password']
-        user : CustomUser = authenticate (request, email= email, password = password, backend='django.contrib.auth.backends.ModelBackend')        
+        user : CustomUser = authenticate (request, email= email, password = password, backend='django.contrib.auth.backends.ModelBackend',)        
         
         if user :
             if not user.first_connection: 
@@ -172,3 +172,16 @@ class CheckCode (APIView) :
         if (code != codePassword) :
             return Response({"success" : True})
         return Response({"success" : True})
+    
+class SetPassword (APIView):
+    def post (self, request, format = None):
+        email = request.data['email']
+        password = request.data['password']
+
+        user = CustomUser.objects.get(email=email)
+
+        user.set_password(password)
+        user.save()
+
+        return Response()
+

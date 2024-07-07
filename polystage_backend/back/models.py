@@ -125,7 +125,7 @@ class Session(ActiveModel):
     filiere =  models.ForeignKey(Filiere, on_delete= models.CASCADE)
 
     def __str__(self):
-        return self.filiere.nom + " " + str(self.annee)
+        return self.nom
 
 
 class Jury(ActiveModel):
@@ -168,3 +168,4 @@ class Soutenance(ActiveModel):
     jury =  models.ForeignKey(Jury, on_delete=models.CASCADE, null= True )
     note = models.FloatField(validators=[MaxValueValidator(20.0)], null = True)
     etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE )
+    soutenu = models.BooleanField(default=False)

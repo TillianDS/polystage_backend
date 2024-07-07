@@ -485,7 +485,6 @@ http://127.0.0.1:8000/getSoutenanceJury/
             "num_etudiant": "d00001",
             "sessions": [2]
         },
-        "is_active": true,
         "note": 20.0,
         "jury": 8
     },
@@ -503,7 +502,6 @@ http://127.0.0.1:8000/getSoutenanceJury/
             "num_etudiant": "d00002",
             "promo": 7
         },
-        "is_active": true,
         "note": null,
         "jury": 8
     }
@@ -518,6 +516,82 @@ http://127.0.0.1:8000/getSoutenanceJury/
 {
     "errors":"cause de l'erreur"
 }
+```
+
+## getSoutenanceEtudiantTuteur
+
+permet d'obtenir les soutenances et étudiants, associés au jury
+
+### URL
+
+Méthode : GET
+
+```url
+http://127.0.0.1:8000/getSoutenanceEtudiantTuteur/
+```
+
+### Permissions
+
+Etudiant, Tuteur
+
+### informations reçues
+
+#### sucess : Etudiant
+
+```json
+[
+    {
+        "id": 3,
+        "date_soutenance": "30-06-2024",
+        "heure_soutenance": "11:00",
+        "is_active": true,
+        "note": 20.0,
+        "soutenu": false,
+        "jury": 8,
+        "etudiant": 50
+    }
+]
+```
+
+#### sucess : Tuteur
+
+```json
+[
+    {
+        "id": 3,
+        "date_soutenance": "30-06-2024",
+        "heure_soutenance": "11:00",
+        "etudiant": {
+            "id": 50,
+            "email": "etu1@po.fr",
+            "first_name": "etu1",
+            "last_name": "etu1",
+            "first_connection": false,
+            "profile": "ETU",
+            "num_etudiant": "d00001",
+            "sessions": [2]
+        },
+        "note": 20.0,
+        "jury": 8
+    },
+    {
+        "id": 4,
+        "date_soutenance": "30-06-2024",
+        "heure_soutenance": "12:00",
+        "etudiant": {
+            "id": 51,
+            "email": "etu2@po.fr",
+            "first_name": "etu2",
+            "last_name": "etu2",
+            "first_connection": false,
+            "profile": "ETU",
+            "num_etudiant": "d00002",
+            "promo": 7
+        },
+        "note": null,
+        "jury": 8
+    }
+]
 ```
 
 # Jury

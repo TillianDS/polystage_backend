@@ -24,6 +24,7 @@ urlpatterns = [
     path('codeReset/', views_login.SendCodeEmail.as_view()),
     path('code/', views_login.gestionCode.as_view()),
     path('logout/', views_login.Logout.as_view(), name='custom_logout'),
+    path('setPassword/', views_login.SetPassword.as_view(), name='setPassword'),
 
     #views_admin
     path('userSearchAllChamp/', views_admin.userSearchAllChamp.as_view()),
@@ -41,7 +42,6 @@ urlpatterns = [
     path('filiereDetails/<int:pk>/', views_promo_filiere.FiliereDetails.as_view()),
 
     path('sessionFiliere/', views_promo_filiere.SessionFiliere.as_view()),
-
     path('getSessionfFiliere/', views_promo_filiere.getSessionFiliere.as_view()),
     
     #views_session
@@ -56,6 +56,7 @@ urlpatterns = [
     path('soutenanceDetails/<int:pk>/', views_soutenance.SoutenanceDetails.as_view()),
     path('setNote/', views_soutenance.setNote.as_view()),
     path('getSoutenanceJury/', views_soutenance.getSoutenanceJury.as_view()),
+    path('getSoutenanceEtudiantTuteur/', views_soutenance.getSoutenanceEtudiantTuteur.as_view()),
   
     #views_jury
     path('juryList/', views_jury.JuryList.as_view()),
