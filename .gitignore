@@ -11,3 +11,22 @@ __pycache__/
 *.swp
 
 .gitconfig
+
+
+
+# Ignore les fichiers spécifiques à Django
+local_settings.py
+
+# Ignore les fichiers générés lors de la distribution ou du packaging
+*.egg-info/
+*.egg
+dist/
+build/
+
+# Ignore les fichiers de couverture de test
+.coverage
+.coverage.*
+
+# Ignore les fichiers spécifiques à certains éditeurs
+.vscode/
+.idea/
