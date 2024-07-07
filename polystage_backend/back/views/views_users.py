@@ -102,16 +102,10 @@ class UserList(APIView):
             if not any(char in r'[()[\]{}|\\`~!@#$%^&*_\-+=;:\'",<>./?]' for char in password1):
                 return Response({"error": "Le mot de passe doit contenir au moins un caractère spécial"}, status=status.HTTP_400_BAD_REQUEST)
             
-            #user = serializer.save()
-            #user.set_password(password1)
-            """
-            if profile == 'ETU':
-                user:Etudiant
-                session = request.data.get('id_session')
-                if session
-                user.sessions = self.getSession(pk=session)
+            user = serializer.save()
+            user.set_password(password1)
             user.save()
-            """
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
                             
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -194,8 +188,10 @@ class UserAllList(APIView):
         return Response(serializer.data) 
         return Response({"error" : "le profile n'est pas bon"}, status=status.HTTP_400_BAD_REQUEST)
     
+
 class SetMdp (APIView):
     def post (self, request, format = None):
         user = CustomUser.objects.get(email = request.data['email'])
         user.set_password(request.data['password'])
         user.save()
+        return Response()
