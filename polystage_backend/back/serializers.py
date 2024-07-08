@@ -154,19 +154,23 @@ class StageAllSerializer (activeSerializer) :
 
 class EtudiantAllSeralizer (UserSerializer) :
     num_etudiant = serializers.CharField()
-    sessions = SessionFiliereSerializer(many = True)
+    filiere = serializers.SerializerMethodField()
     stage = serializers.SerializerMethodField()
     soutenance = serializers.SerializerMethodField()
 
     class Meta:
         model = Etudiant
-        fields = UserSerializer.Meta.fields + ['num_etudiant', 'sessions', 'soutenance', 'stage']
+        fields = UserSerializer.Meta.fields + ['num_etudiant', 'filiere', 'soutenance', 'stage']
     
     def get_soutenance(self, obj):
         soutenance = Soutenance.objects.filter(etudiant=obj)
         return SoutenanceSerializer(soutenance, many=True).data
     
     def get_stage(self, obj):
+        stage = Stage.objects.filter(etudiant=obj)
+        return StageAllSerializer(stage, many=True).data
+    
+    def get_filiere(self, obj):
         stage = Stage.objects.filter(etudiant=obj)
         return StageAllSerializer(stage, many=True).data
 
