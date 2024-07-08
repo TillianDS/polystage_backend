@@ -1,20 +1,23 @@
-
 from rest_framework import serializers
 from back.models import * 
 
 #fichier de définition des différents serialiseurs pour chaque model
+class activeSerializer (serializers.ModelSerializer):
+    is_active = serializers.BooleanField(default = True)
+    class Meta :
+        read_only_fields = ['is_active'] 
 
-class FiliereSerializer (serializers.ModelSerializer) :
+class FiliereSerializer (activeSerializer) :
     class Meta :
         model = Filiere
         fields = ['id', 'nom']
 
-class SessionSerializer (serializers.ModelSerializer) :
+class SessionSerializer (activeSerializer) :
     class Meta :
         model = Session
         fields = ['id', 'nom', 'filiere']
 
-class SessionFiliereSerializer(serializers.ModelSerializer):
+class SessionFiliereSerializer(activeSerializer):
     sessions = serializers.SerializerMethodField()
 
     class Meta:
@@ -33,10 +36,12 @@ class UserSerializer(serializers.ModelSerializer):
         ('PRO', 'Professionnel'),
         ('TUT', 'Tuteur'),
     ]
+    is_active = serializers.BooleanField(default = True)
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'email', 'first_name', 'last_name', 'first_connection', 'profile']
+        fields = ['id', 'email', 'first_name', 'last_name', 'first_connection', 'profile', 'is_active']
+        read_only_fields = ['is_active']  
 
 class EtudiantSerializer(UserSerializer):
     num_etudiant = serializers.CharField()
@@ -74,13 +79,13 @@ class AdminSerializer (UserSerializer) :
         model = Admin
         fields = UserSerializer.Meta.fields
 
-class StageSerializer (serializers.ModelSerializer) :
+class StageSerializer (activeSerializer) :
     tuteur = serializers.PrimaryKeyRelatedField(queryset = Tuteur.objects.all())
     class Meta : 
         model = Stage
         fields = "__all__"
 
-class JurySerializer (serializers.ModelSerializer) : 
+class JurySerializer (activeSerializer) : 
     #membr = serializers.PrimaryKeyRelatedField(queryset=Professionnel.objects.all(), many=True)
     
     class Meta : 
@@ -114,7 +119,7 @@ class JuryAffichageSerializer (serializers.ModelSerializer) :
         model = Jury
         fields = "__all__"
     
-class SoutenanceSerializer (serializers.ModelSerializer) :
+class SoutenanceSerializer (activeSerializer) :
     date_soutenance = serializers.DateField(format='%d-%m-%Y', input_formats=['%d-%m-%Y'], required=False, allow_null=True)
     heure_soutenance = serializers.TimeField(format= '%H:%M', input_formats=['%H:%M'], required=False, allow_null=True)
 
@@ -122,7 +127,7 @@ class SoutenanceSerializer (serializers.ModelSerializer) :
         model = Soutenance
         fields = "__all__"
 
-class SoutenanceEtudiantSerializer (serializers.ModelSerializer) :
+class SoutenanceEtudiantSerializer (activeSerializer) :
     date_soutenance = serializers.DateField(format='%d-%m-%Y', input_formats=['%d-%m-%Y'], required=False, allow_null=True)
     heure_soutenance = serializers.TimeField(format= '%H:%M', input_formats=['%H:%M'], required=False, allow_null=True)
     etudiant = EtudiantSerializer()
@@ -130,12 +135,9 @@ class SoutenanceEtudiantSerializer (serializers.ModelSerializer) :
         model = Soutenance
         fields = "__all__"
 
-class FileSerializer (serializers.ModelSerializer):
-    file = serializers.FileField(use_url=False)
-
 
 # serializer d'importation
-class StageAllSerializer (serializers.ModelSerializer) :
+class StageAllSerializer (activeSerializer) :
     tuteur = TuteurSerializer()
     class Meta : 
         model = Stage
@@ -169,8 +171,9 @@ class EtudiantAllSeralizer (UserSerializer) :
         stage = Stage.objects.filter(etudiant=obj)
         return StageAllSerializer(stage, many=True).data
 
-class SessionEtudiantSerializer (serializers.ModelSerializer):
+class SessionEtudiantSerializer (activeSerializer):
     etudiants = serializers.SerializerMethodField()
+    jury =serializers.SerializerMethodField()
     class Meta :
         model = Session
         fields = ['id', 'nom', 'etudiants']
@@ -178,3 +181,9 @@ class SessionEtudiantSerializer (serializers.ModelSerializer):
     def get_etudiants(self, obj):
         etudiants = Etudiant.objects.filter(sessions = obj)
         return EtudiantSerializer(etudiants, many= True).data
+    
+    def get_jury (self, obj):
+        #jury = 
+        etudiants = Etudiant.objects.filter(sessions = obj)
+        for etudiant in etudiants :
+            soutenance = etudiant.soutenance_set

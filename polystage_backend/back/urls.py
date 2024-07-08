@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import views_login, views_users, views_admin, views_promo_filiere, views_stage, views_soutenance, views_jury, views_csv, views_import, views_etudiant, views_export, cas, test_cas, views_test, views_session
+from .views import views_login, views_users, views_admin, views_promo_filiere, views_stage, views_soutenance, views_jury, views_import, views_etudiant, views_export, cas, test_cas, views_test, views_session
 
 urlpatterns = [
     #views_test
@@ -45,7 +45,7 @@ urlpatterns = [
     path('getSessionfFiliere/', views_promo_filiere.getSessionFiliere.as_view()),
     
     #views_session
-    path('sessionEtudiant/<int:pk>/', views_session.getEtudiantSession.as_view()),
+    path('getInfoSession/<int:pk>/', views_session.getInfoSession.as_view()),
 
     #views_stage
     path('stageList/', views_stage.StageList.as_view()),
