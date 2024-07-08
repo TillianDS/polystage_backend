@@ -136,7 +136,7 @@ class Jury(ActiveModel):
     zoom = models.CharField(max_length=300, null = True )
     #models.models.URLField(_(""), max_length=200)
     num_jury = models.IntegerField()
-    leader = models.ForeignKey(MembreJury, on_delete=models.CASCADE, related_name='leader', default=None)
+    leader = models.ForeignKey(MembreJury, on_delete=models.CASCADE, related_name='leader', default=None, null= True)
 
 class Etudiant (CustomUser):
     num_etudiant = models.CharField(max_length= 20, unique= True)

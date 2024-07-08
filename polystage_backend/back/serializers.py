@@ -86,8 +86,7 @@ class StageSerializer (activeSerializer) :
         fields = "__all__"
 
 class JurySerializer (activeSerializer) : 
-    #membr = serializers.PrimaryKeyRelatedField(queryset=Professionnel.objects.all(), many=True)
-    
+    #leader = serializers.PrimaryKeyRelatedField(queryset = MembreJury.objects.all(), default = None)
     class Meta : 
         model = Jury
         fields = "__all__"
@@ -173,17 +172,19 @@ class EtudiantAllSeralizer (UserSerializer) :
 
 class SessionEtudiantSerializer (activeSerializer):
     etudiants = serializers.SerializerMethodField()
-    jury =serializers.SerializerMethodField()
+    jurys = serializers.SerializerMethodField()
+
     class Meta :
         model = Session
-        fields = ['id', 'nom', 'etudiants']
+        fields = ['id', 'nom', 'etudiants', 'jurys']
 
     def get_etudiants(self, obj):
         etudiants = Etudiant.objects.filter(sessions = obj)
         return EtudiantSerializer(etudiants, many= True).data
     
-    def get_jury (self, obj):
-        #jury = 
-        etudiants = Etudiant.objects.filter(sessions = obj)
-        for etudiant in etudiants :
-            soutenance = etudiant.soutenance_set
+    def get_jurys (self, obj):
+        session = Session.objects.get(pk=obj.pk)
+        juries = Jury.objects.filter(
+            soutenance__etudiant__sessions=session
+        ).distinct()
+        return JurySerializer(juries, many=True).data

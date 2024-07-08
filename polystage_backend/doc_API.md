@@ -210,11 +210,94 @@ http://127.0.0.1:8000/sessionList/
 http://127.0.0.1:8000/sessionDetails/<int>/
 ```
 
-# PromoFiliere
+## getInfoSession
+
+affiche toutes les promos avec la filiere associé
+
+### URL
+
+méthode : GET
+
+```url
+http://127.0.0.1:8000/getInfoSession/<int>/
+```
+
+données url : l'id de la session
+
+### Données reçues
+
+les informations de la session, les étudiants qui font partie de cette session ainsi que les jurys de la session
+
+```json
+{
+    "id": 2,
+    "nom": "info 3A 2024",
+    "etudiants": [
+        {
+            "id": 50,
+            "email": "etu1@po.fr",
+            "first_name": "etu1",
+            "last_name": "etu1",
+            "first_connection": false,
+            "profile": "ETU",
+            "is_active": true,
+            "num_etudiant": "d000001",
+            "sessions": [
+                2
+            ]
+        },
+        {
+            "id": 51,
+            "email": "etu2@po.fr",
+            "first_name": "etu2",
+            "last_name": "etu2",
+            "first_connection": false,
+            "profile": "ETU",
+            "is_active": true,
+            "num_etudiant": "d000002",
+            "sessions": [
+                2
+            ]
+        },
+        {
+            "id": 52,
+            "email": "etu3@po.fr",
+            "first_name": "etu3",
+            "last_name": "etu3",
+            "first_connection": false,
+            "profile": "ETU",
+            "is_active": true,
+            "num_etudiant": "d000003",
+            "sessions": [
+                2
+            ]
+        }
+    ],
+    "jurys": [
+        {
+            "id": 8,
+            "is_active": true,
+            "salle": "A130",
+            "batiment": "A",
+            "campus": "Luminy",
+            "zoom": "http://",
+            "num_jury": 2,
+            "leader": 49,
+            "membreJury": [
+                49,
+                53,
+                54
+            ]
+        }
+    ]
+}
+```
+
+# SessionFiliere
 
 vues liées à la prom oet à la filière en même temps
 
-## promoFiliere
+## SessionFiliere
 
 méthode : GET
 
