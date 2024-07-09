@@ -3,9 +3,27 @@ ben3@po.fr
 Password*
 
 Etudiant :
+{
 etu1@po.fr
 Password*
+id : 50
+stage : 6
+soutenance : 3
+jurys : 
+}
 
+{
+etu2@po.fr
+Password*
+id : 51
+stage : 7
+soutenance : 4
+jurys : 
+}
+
+
+jurys : 
+id : 8, 9
 Tuteur :
 tuteur20@po.fr
 Password*

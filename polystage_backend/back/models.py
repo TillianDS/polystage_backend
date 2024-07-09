@@ -119,14 +119,12 @@ class Filiere(ActiveModel):
     def __str__(self):
         return self.nom
 
-
 class Session(ActiveModel):
     nom = models.CharField(max_length=100)
     filiere =  models.ForeignKey(Filiere, on_delete= models.CASCADE)
 
     def __str__(self):
         return self.nom
-
 
 class Jury(ActiveModel):
     membreJury = models.ManyToManyField(MembreJury)
@@ -137,10 +135,10 @@ class Jury(ActiveModel):
     #models.models.URLField(_(""), max_length=200)
     num_jury = models.IntegerField()
     leader = models.ForeignKey(MembreJury, on_delete=models.CASCADE, related_name='leader', default=None, null= True)
+    session =  models.ForeignKey(Session, on_delete=models.CASCADE)
 
 class Etudiant (CustomUser):
     num_etudiant = models.CharField(max_length= 20, unique= True)
-    sessions = models.ManyToManyField(Session)
 
     class Meta : 
         verbose_name = 'Etudiant'
@@ -149,7 +147,6 @@ class Etudiant (CustomUser):
         ]
 
 class Stage(ActiveModel):
-    
     sujet = models.TextField()
     confidentiel = models.BooleanField(default= False)
     date_debut = models.DateField()
@@ -161,11 +158,10 @@ class Stage(ActiveModel):
     def __str__(self):
         return self.sujet
 
-
 class Soutenance(ActiveModel):
     date_soutenance = models.DateField(blank= True, null = True)
     heure_soutenance = models.TimeField(blank = True, null = True)
     jury =  models.ForeignKey(Jury, on_delete=models.CASCADE, null= True )
     note = models.FloatField(validators=[MaxValueValidator(20.0)], null = True)
-    etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE )
+    stage = models.ForeignKey(Stage, on_delete=models.CASCADE )
     soutenu = models.BooleanField(default=False)

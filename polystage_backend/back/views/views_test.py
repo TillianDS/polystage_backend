@@ -5,13 +5,18 @@ from ..models import *
 from ..serializers import *
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny
 
 class test(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
-    def get(self, request, format=None ):
-        user = request.user
-        return Response({"message": UserSerializer(user).data})
+    def post(self, request, format=None ):
+        pk = request.data['session']
+        session = Session.objects.get(pk=pk)
+        soutenance = Soutenance.objects.filter(jury__session = session)
+        etudiants = Etudiant.objects.filter(stage__soutenance__in = soutenance)
+        serializer = EtudiantSerializer(etudiants, many=True)
+        return Response(serializer.data)
     
 
 from django.http import JsonResponse

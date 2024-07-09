@@ -458,7 +458,6 @@ http://127.0.0.1:8000/soutenanceDetails/<int>/
 ### Informations d'une soutenance
 
 - id : id de la soutenance
-- etudiant: id de l'étudiant
 - jury: id du jury
 - stage: id du stage
 - date_soutenance: date du déroulement de la soutenance
@@ -468,7 +467,6 @@ http://127.0.0.1:8000/soutenanceDetails/<int>/
 ```json
 {
     "id" : 1,
-    "etudiant": 32,
     "jury": 1,
     "stage": 2,
     "date_soutenance": "03-09-2024",
