@@ -8,9 +8,10 @@ from .views_list_details import List, Details
 
 class EtudiantAll(APIView):
     def get (self, request, pk, format = None):
-        etudiant = Etudiant.objects.get(pk=pk)
+        try : 
+            etudiant = Etudiant.objects.get(pk=pk)
+        except Etudiant.DoesNotExist :
+            return Response({"error" : "l'utilisateur n'existe pas"})
         serializer = EtudiantAllSeralizer(etudiant)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-class SoutenanceDetails(APIView):
-    pass

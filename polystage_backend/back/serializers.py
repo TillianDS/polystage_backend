@@ -124,16 +124,8 @@ class SoutenanceSerializer (activeSerializer) :
         model = Soutenance
         fields = "__all__"
 
-class SoutenanceEtudiantSerializer (activeSerializer) :
-    date_soutenance = serializers.DateField(format='%d-%m-%Y', input_formats=['%d-%m-%Y'], required=False, allow_null=True)
-    heure_soutenance = serializers.TimeField(format= '%H:%M', input_formats=['%H:%M'], required=False, allow_null=True)
-    #etudiant = EtudiantSerializer()
-    class Meta : 
-        model = Soutenance
-        fields = "__all__"
 
-
-# serializer d'importation
+#  ----------------- serializer d'importation -----------------------------------
 class StageAllSerializer (activeSerializer) :
     tuteur = TuteurSerializer()
     #soutenance = SoutenanceSerializer()
@@ -141,30 +133,42 @@ class StageAllSerializer (activeSerializer) :
         model = Stage
         exclude = ['etudiant']
 
-# afficher toutes les informations de l'étudiant
+
+# --------------- afficher toutes les informations de l'étudiant -----------------
+
+class SoutenanceEtudiantAllSeralizer(activeSerializer):
+    sessions = serializers.SerializerMethodField()
+    class Meta : 
+        model = Soutenance
+        exclude = ['stage']
+
+    def get_sessions(self, obj):
+        return SessionSerializer(obj.jury.session).data
+    
 class StageEtudiantAllSeralizer(activeSerializer):
+    soutenance = serializers.SerializerMethodField()
+
     class Meta : 
         model = Stage
         exclude = ['etudiant']
 
-    def get_stage(self, obj):
+    def get_soutenance(self, obj):
         soutenance = Soutenance.objects.filter(stage=obj)
-        return SoutenanceSerializer(soutenance, many=True).data
+        return SoutenanceEtudiantAllSeralizer(soutenance, many=True).data
 
 class EtudiantAllSeralizer (UserSerializer) :
     stage = serializers.SerializerMethodField()
 
     class Meta:
         model = Etudiant
-        fields = UserSerializer.Meta.fields + ['num_etudiant', 'soutenance', 'stage']
+        fields = UserSerializer.Meta.fields + ['num_etudiant', 'stage']
     
     def get_stage(self, obj):
         stage = Stage.objects.filter(etudiant=obj)
         return StageEtudiantAllSeralizer(stage, many=True).data
-    
-    def get_session(self, obj):
-        stage = Session.objects.filter(etudiant=obj)
-        return SessionSerializer(stage, many=True).data
+
+
+# ----------------------- Affiche touts les informations de la sessions -----------------------------
 
 class SessionAllSerializer (activeSerializer):
     etudiants = serializers.SerializerMethodField()

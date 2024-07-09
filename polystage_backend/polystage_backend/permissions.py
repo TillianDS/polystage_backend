@@ -35,3 +35,8 @@ class AdminJuryPermission(BasePermission):
         pro = request.user.profile == 'PRO'
         admin = request.user.profile == 'ADM'
         return ens or pro or admin
+    
+class TuteurPermission(BasePermission):
+    def has_permission(self, request, view):
+        tut = request.user.profile == 'TUT'
+        return tut

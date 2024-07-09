@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from ..models import Soutenance, CustomUser, MembreJury, Jury, Etudiant, Tuteur
-from ..serializers import SoutenanceSerializer, JurySerializer, SoutenanceEtudiantSerializer
+from ..serializers import SoutenanceSerializer, JurySerializer
 from rest_framework.authentication import TokenAuthentication
 from .views_list_details import List, Details
 from polystage_backend.permissions import *
@@ -79,15 +79,11 @@ class getSoutenanceJury(APIView):
 
         return Response(serializer.data)
     
-class getSoutenanceEtudiantTuteur(APIView):
+class getSoutenanceTuteur(APIView):
+    permission_classes = [TuteurPermission]
 
     def get (self, request, format = None):
-        if request.user.profile == 'ETU':
-            user = Etudiant.objects.get(pk= request.user.pk)
-            serializer = SoutenanceSerializer(user.soutenance_set, many = True)
-
-        elif request.user.profile == 'TUT':
-            user = Tuteur.objects.get(pk= request.user.pk)
-            serializer = SoutenanceEtudiantSerializer(user.soutenance_set, many = True)
+        user = Tuteur.objects.get(pk= request.user.pk)
+        serializer = SoutenanceSerializer(user.soutenance_set, many = True)
 
         return Response(serializer.data)

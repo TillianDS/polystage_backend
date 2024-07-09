@@ -55,7 +55,7 @@ urlpatterns = [
     path('soutenanceDetails/<int:pk>/', views_soutenance.SoutenanceDetails.as_view()),
     path('setNote/', views_soutenance.setNote.as_view()),
     path('getSoutenanceJury/', views_soutenance.getSoutenanceJury.as_view()),
-    path('getSoutenanceEtudiantTuteur/', views_soutenance.getSoutenanceEtudiantTuteur.as_view()),
+    path('getSoutenanceTuteur/', views_soutenance.getSoutenanceTuteur.as_view()),
   
     #views_jury
     path('juryList/', views_jury.JuryList.as_view()),

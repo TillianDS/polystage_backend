@@ -159,6 +159,89 @@ http://127.0.0.1:8000/userList/ENS/
     }
 ```
 
+## etudiantAll
+
+renvoie l'tulisateur avec toutes tous ses stages, soutenances, et session associés
+
+### URL
+
+```url
+http://127.0.0.1:8000/etudiantAll/<int:idEtudiant>/
+```
+
+méthode : GET
+
+arguement url : id de l'étudiant
+
+### données reçues
+
+```json
+{
+    "id": 50,
+    "email": "etu1@po.fr",
+    "first_name": "etu1",
+    "last_name": "etu1",
+    "first_connection": false,
+    "profile": "ETU",
+    "is_active": true,
+    "num_etudiant": "d000001",
+    "stage": [
+        {
+            "id": 6,
+            "is_active": true,
+            "soutenance": [
+                {
+                    "id": 3,
+                    "is_active": true,
+                    "sessions": {
+                        "id": 2,
+                        "nom": "info 3A 2024",
+                        "filiere": 5
+                    },
+                    "date_soutenance": "2024-06-30",
+                    "heure_soutenance": "11:00:00",
+                    "note": 20.0,
+                    "soutenu": false,
+                    "jury": 8
+                }
+            ],
+            "sujet": "gestion du Run",
+            "confidentiel": true,
+            "date_debut": "2024-01-18",
+            "date_fin": "2024-08-18",
+            "nom_entreprise": "April",
+            "tuteur": 30
+        },
+        {
+            "id": 9,
+            "is_active": true,
+            "soutenance": [
+                {
+                    "id": 6,
+                    "is_active": true,
+                    "sessions": {
+                        "id": 2,
+                        "nom": "info 3A 2024",
+                        "filiere": 5
+                    },
+                    "date_soutenance": "2024-06-30",
+                    "heure_soutenance": "13:00:00",
+                    "note": 15.0,
+                    "soutenu": false,
+                    "jury": 9
+                }
+            ],
+            "sujet": "Sécurité",
+            "confidentiel": false,
+            "date_debut": "2024-01-10",
+            "date_fin": "2024-08-18",
+            "nom_entreprise": "Atos",
+            "tuteur": 3
+        }
+    ]
+}
+```
+
 # Filiere
 
 ## CRUD
@@ -855,57 +938,6 @@ si les identifiants sont correctes:
 
 - success : message de succès
 
-## utilisateur avec toutes les infos stage, promo, filiere et soutenance
-
-```url
-http://127.0.0.1:8000/etudiantAll/<int:idEtudiant>/
-```
-
-###  envoie
-
-on passe l'id de l'utilisateur dans l'url
-
-### retour
-
-renvoie les informations de l'utilisateur avec son stage, sa promo, sa filière et sa soutenance
-
-```json
-{
-    "id": 34,
-    "email": "tiit@po.fr",
-    "first_name": "tillian",
-    "last_name": "dhume",
-    "first_connection": false,
-    "profile": "ETU",
-    "num_etudiant": "d2201421",
-    "promo": {
-        "id": 4,
-        "annee": 2027,
-        "filiere": {
-            "id": 2,
-            "nom": "Genie Biologique"
-        }
-    },
-    "stage": [
-        {
-            "id": 2,
-            "tuteur": {
-                "id": 30,
-                "email": "tuteur2@po.fr",
-                "first_name": "tuteur",
-                "last_name": "tuteur",
-                "first_connection": false,
-                "profile": "TUT"
-            },
-            "sujet": "Optimisation des cultures de bactéries",
-            "confidentiel": false,
-            "date_debut": "2024-01-10",
-            "date_fin": "2024-08-18",
-            "nom_entreprise": "Biomérieux"
-        }
-    ]
-}
-```
 
 # export
 
