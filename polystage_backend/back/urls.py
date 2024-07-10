@@ -49,13 +49,13 @@ urlpatterns = [
     #views_stage
     path('stageList/', views_stage.StageList.as_view()),
     path('stageDetails/<int:pk>/', views_stage.StageDetails.as_view()),
-    
+        path('getStageTuteur/', views_stage.getStageTuteur.as_view()),
+
     #views_soutenance
     path('soutenanceList/', views_soutenance.SoutenanceList.as_view()),
     path('soutenanceDetails/<int:pk>/', views_soutenance.SoutenanceDetails.as_view()),
     path('setNote/', views_soutenance.setNote.as_view()),
     path('getSoutenanceJury/', views_soutenance.getSoutenanceJury.as_view()),
-    path('getSoutenanceTuteur/', views_soutenance.getSoutenanceTuteur.as_view()),
   
     #views_jury
     path('juryList/', views_jury.JuryList.as_view()),

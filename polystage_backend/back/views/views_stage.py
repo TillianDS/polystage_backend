@@ -1,9 +1,10 @@
 from datetime import datetime
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from ..models import Stage
-from ..serializers import StageSerializer
+from ..models import Stage, Tuteur
+from ..serializers import StageSerializer, StageTuteurSerializer
 from rest_framework import status
+from polystage_backend.permissions import *
 
 class StageList(APIView):
     """
@@ -62,4 +63,15 @@ class StageDetails (APIView):
         stage = Stage.objects.get(pk=pk)
         stage.delete()
         return Response({"success" : "stage supprimé avec succés"}, status = status.HTTP_200_OK)
-    
+
+"""
+retourne les stages et leur étudiants, soutenance, session suivis par tuteur connecté 
+""" 
+class getStageTuteur(APIView):
+    permission_classes = [TuteurPermission]
+
+    def get (self, request, format = None):
+        user = Tuteur.objects.get(pk= request.user.pk)
+        serializer = StageTuteurSerializer(user.stage_set, many = True)
+
+        return Response(serializer.data)

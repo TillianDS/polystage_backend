@@ -136,14 +136,22 @@ class StageAllSerializer (activeSerializer) :
 
 # --------------- afficher toutes les informations de l'étudiant -----------------
 
+class JuryEtudiantAllSeralizer(activeSerializer):
+    jury = serializers.SerializerMethodField()
+    class Meta : 
+        model = Jury
+        fields = '__all__' 
+    def get_jury(self, obj):
+        return SessionSerializer(obj.session).data
+    
 class SoutenanceEtudiantAllSeralizer(activeSerializer):
-    sessions = serializers.SerializerMethodField()
+    jury = serializers.SerializerMethodField()
     class Meta : 
         model = Soutenance
         exclude = ['stage']
 
-    def get_sessions(self, obj):
-        return SessionSerializer(obj.jury.session).data
+    def get_jury(self, obj):
+        return JuryEtudiantAllSeralizer(obj.jury).data
     
 class StageEtudiantAllSeralizer(activeSerializer):
     soutenance = serializers.SerializerMethodField()
@@ -186,3 +194,58 @@ class SessionAllSerializer (activeSerializer):
     
     def get_jurys (self, obj):
         return JurySerializer(obj.jury_set, many=True).data
+
+# -------------------- affiche l'étudiant et la soutenance lié à un stage ---------------------
+
+class StageTuteurSerializer (activeSerializer) :
+    etudiant = EtudiantSerializer()
+    soutenance = serializers.SerializerMethodField()
+    class Meta : 
+        model = Stage
+        exclude = ['tuteur']
+
+    def get_soutenance (self, obj):
+        soutenance = Soutenance.objects.get(stage = obj)
+        return SoutenanceEtudiantAllSeralizer(soutenance).data
+
+
+# ------------- affiche les soutenances d'un jury ----------------y
+
+class JuryEtudiantAllSeralizer(activeSerializer):
+    jury = serializers.SerializerMethodField()
+    class Meta : 
+        model = Jury
+        fields = '__all__' 
+    def get_jury(self, obj):
+        return SessionSerializer(obj.session).data
+    
+class SoutenanceEtudiantAllSeralizer(activeSerializer):
+    jury = serializers.SerializerMethodField()
+    class Meta : 
+        model = Soutenance
+        exclude = ['stage']
+
+    def get_jury(self, obj):
+        return JuryEtudiantAllSeralizer(obj.jury).data
+    
+class StageEtudiantAllSeralizer(activeSerializer):
+    soutenance = serializers.SerializerMethodField()
+
+    class Meta : 
+        model = Stage
+        exclude = ['etudiant']
+
+    def get_soutenance(self, obj):
+        soutenance = Soutenance.objects.filter(stage=obj)
+        return SoutenanceEtudiantAllSeralizer(soutenance, many=True).data
+
+class JuryAllSeralizer (UserSerializer) :
+    soutenance = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Jury
+        fields = JuryAffichageSerializer.fields + ['soutenance'] 
+
+    def get_soutenance(self, obj):
+        soutenance = Soutenance.objects.filter(jury=obj)
+        return SoutenanceEtudiantAllSeralizer(soutenance, many=True).data

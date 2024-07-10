@@ -161,7 +161,7 @@ http://127.0.0.1:8000/userList/ENS/
 
 ## etudiantAll
 
-renvoie l'tulisateur avec toutes tous ses stages, soutenances, et session associés
+renvoie l'tulisateur avec toutes tous ses stages, soutenances, jury et session associés
 
 ### URL
 
@@ -193,16 +193,31 @@ arguement url : id de l'étudiant
                 {
                     "id": 3,
                     "is_active": true,
-                    "sessions": {
-                        "id": 2,
-                        "nom": "info 3A 2024",
-                        "filiere": 5
+                    "jury": {
+                        "id": 8,
+                        "is_active": true,
+                        "jury": {
+                            "id": 2,
+                            "nom": "info 3A 2024",
+                            "filiere": 5
+                        },
+                        "salle": "A130",
+                        "batiment": "A",
+                        "campus": "Luminy",
+                        "zoom": "http://",
+                        "num_jury": 2,
+                        "leader": 49,
+                        "session": 2,
+                        "membreJury": [
+                            49,
+                            53,
+                            54
+                        ]
                     },
                     "date_soutenance": "2024-06-30",
                     "heure_soutenance": "11:00:00",
                     "note": 20.0,
-                    "soutenu": false,
-                    "jury": 8
+                    "soutenu": false
                 }
             ],
             "sujet": "gestion du Run",
@@ -219,16 +234,30 @@ arguement url : id de l'étudiant
                 {
                     "id": 6,
                     "is_active": true,
-                    "sessions": {
-                        "id": 2,
-                        "nom": "info 3A 2024",
-                        "filiere": 5
+                    "jury": {
+                        "id": 9,
+                        "is_active": true,
+                        "jury": {
+                            "id": 2,
+                            "nom": "info 3A 2024",
+                            "filiere": 5
+                        },
+                        "salle": "B115",
+                        "batiment": "B",
+                        "campus": "Luminy",
+                        "zoom": "http://",
+                        "num_jury": 3,
+                        "leader": null,
+                        "session": 2,
+                        "membreJury": [
+                            49,
+                            54
+                        ]
                     },
                     "date_soutenance": "2024-06-30",
                     "heure_soutenance": "13:00:00",
                     "note": 15.0,
-                    "soutenu": false,
-                    "jury": 9
+                    "soutenu": false
                 }
             ],
             "sujet": "Sécurité",
@@ -526,6 +555,97 @@ http://127.0.0.1:8000/stageList/
 http://127.0.0.1:8000/stageDetails/<int>/
 ```
 
+## getStageTuteur
+
+permet d'obtenir les toutes infos associés aux stages suivis par le Tuteur connecté
+
+### URL
+
+Méthode : GET
+
+```url
+http://127.0.0.1:8000/getStageTuteur/
+```
+
+### Permissions
+
+Tuteur
+
+### informations reçues
+
+#### success
+
+```json
+[
+    {
+        "id": 6,
+        "is_active": true,
+        "etudiant": {
+            "id": 50,
+            "email": "etu1@po.fr",
+            "first_name": "etu1",
+            "last_name": "etu1",
+            "first_connection": false,
+            "profile": "ETU",
+            "is_active": true,
+            "num_etudiant": "d000001"
+        },
+        "soutenance": {
+            "id": 3,
+            "is_active": true,
+            "sessions": {
+                "id": 2,
+                "nom": "info 3A 2024",
+                "filiere": 5
+            },
+            "date_soutenance": "2024-06-30",
+            "heure_soutenance": "11:00:00",
+            "note": 20.0,
+            "soutenu": false,
+            "jury": 8
+        },
+        "sujet": "gestion du Run",
+        "confidentiel": true,
+        "date_debut": "2024-01-18",
+        "date_fin": "2024-08-18",
+        "nom_entreprise": "April"
+    },
+    {
+        "id": 8,
+        "is_active": true,
+        "etudiant": {
+            "id": 51,
+            "email": "etu2@po.fr",
+            "first_name": "etu2",
+            "last_name": "etu2",
+            "first_connection": false,
+            "profile": "ETU",
+            "is_active": true,
+            "num_etudiant": "d000002"
+        },
+        "soutenance": {
+            "id": 4,
+            "is_active": true,
+            "sessions": {
+                "id": 2,
+                "nom": "info 3A 2024",
+                "filiere": 5
+            },
+            "date_soutenance": "2024-09-03",
+            "heure_soutenance": "12:00:00",
+            "note": 15.0,
+            "soutenu": false,
+            "jury": 1
+        },
+        "sujet": "dev d'une API",
+        "confidentiel": true,
+        "date_debut": "2024-01-18",
+        "date_fin": "2024-08-18",
+        "nom_entreprise": "Biomérieux"
+    }
+]
+```
+
 # Soutenance
 
 ## CRUD
@@ -682,81 +802,6 @@ http://127.0.0.1:8000/getSoutenanceJury/
 }
 ```
 
-## getSoutenanceEtudiantTuteur
-
-permet d'obtenir les soutenances et étudiants, associés au jury
-
-### URL
-
-Méthode : GET
-
-```url
-http://127.0.0.1:8000/getSoutenanceEtudiantTuteur/
-```
-
-### Permissions
-
-Etudiant, Tuteur
-
-### informations reçues
-
-#### sucess : Etudiant
-
-```json
-[
-    {
-        "id": 3,
-        "date_soutenance": "30-06-2024",
-        "heure_soutenance": "11:00",
-        "is_active": true,
-        "note": 20.0,
-        "soutenu": false,
-        "jury": 8,
-        "etudiant": 50
-    }
-]
-```
-
-#### sucess : Tuteur
-
-```json
-[
-    {
-        "id": 3,
-        "date_soutenance": "30-06-2024",
-        "heure_soutenance": "11:00",
-        "etudiant": {
-            "id": 50,
-            "email": "etu1@po.fr",
-            "first_name": "etu1",
-            "last_name": "etu1",
-            "first_connection": false,
-            "profile": "ETU",
-            "num_etudiant": "d00001",
-            "sessions": [2]
-        },
-        "note": 20.0,
-        "jury": 8
-    },
-    {
-        "id": 4,
-        "date_soutenance": "30-06-2024",
-        "heure_soutenance": "12:00",
-        "etudiant": {
-            "id": 51,
-            "email": "etu2@po.fr",
-            "first_name": "etu2",
-            "last_name": "etu2",
-            "first_connection": false,
-            "profile": "ETU",
-            "num_etudiant": "d00002",
-            "promo": 7
-        },
-        "note": null,
-        "jury": 8
-    }
-]
-```
 
 # Jury
 
