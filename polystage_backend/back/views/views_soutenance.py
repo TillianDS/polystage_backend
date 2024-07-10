@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from ..models import Soutenance, CustomUser, MembreJury, Jury, Etudiant, Tuteur
-from ..serializers import SoutenanceSerializer, JurySerializer, StageSerializer
+from ..serializers import SoutenanceSerializer, JuryAllSerializer
 from rest_framework.authentication import TokenAuthentication
 from .views_list_details import List, Details
 from polystage_backend.permissions import *
@@ -60,18 +60,5 @@ class setNote(APIView):
         soutenance.save()
         return Response({'success' :"la note a bien été enregistré"})
 
-"""
-retourne les soutenance liées à un jury
-"""
-class getSoutenanceJury(APIView):
-    def post(self,request, pk, format= None):        
-        try : 
-            jury = Jury.objects.get(pk=pk)
-        except Jury.DoesNotExist:
-            return Response({"error" :"le jury n'existe pas"})
-        soutenance = jury.soutenance_set.all()
-    
-        serializer = SoutenanceEtudiantSerializer(soutenance, many = True)
 
-        return Response(serializer.data)
     

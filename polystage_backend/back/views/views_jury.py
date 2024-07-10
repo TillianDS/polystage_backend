@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from ..models import Jury, CustomUser, MembreJury
-from ..serializers import JurySerializer, JuryAffichageSerializer, MembreJurySerializer
+from ..serializers import JurySerializer, JuryAffichageSerializer, MembreJurySerializer, JuryAllSerializer
 from rest_framework.authentication import TokenAuthentication
 
 class JuryList(APIView):
@@ -117,3 +117,17 @@ class isLeader(APIView):
 
         #return Response(JurySerializer(jury).data)
         return Response ({'leader' : jury.leader == membreJury})
+
+"""
+retourne les soutenance liées à un jury
+"""
+class juryAll(APIView):
+    def get(self,request, pk, format= None):        
+        try : 
+            jury = Jury.objects.get(pk=pk)
+        except Jury.DoesNotExist:
+            return Response({"error" :"le jury n'existe pas"})
+    
+        serializer = JuryAllSerializer(jury)
+
+        return Response(serializer.data)

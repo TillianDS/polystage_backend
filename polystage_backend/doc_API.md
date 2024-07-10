@@ -1,3 +1,10 @@
+# dernier ajout
+- [juryAll](#juryall)
+- [entudiantAll](#etudiantall) 
+- [getStageTuteur](#getstagetuteur) 
+- [getInfoSession](#getinfosession) 
+
+
 
 # commandes bash pour le serveur
 
@@ -729,68 +736,6 @@ http://127.0.0.1:8000/setNote/
 ```
 
 
-## getSoutenanceJury
-
-permet d'obtenir les soutenances et étudiants, associés au jury
-
-### URL
-
-Méthode : POST
-
-```url
-http://127.0.0.1:8000/getSoutenanceJury/
-```
-
-### informations envoyées
-
-```json
-{
-    "id_jury" : "id du jury",
-}
-```
-
-### informations reçues
-
-#### sucess
-
-```json
-[
-    {
-        "id": 3,
-        "date_soutenance": "30-06-2024",
-        "heure_soutenance": "11:00",
-        "etudiant": {
-            "id": 50,
-            "email": "etu1@po.fr",
-            "first_name": "etu1",
-            "last_name": "etu1",
-            "first_connection": false,
-            "profile": "ETU",
-            "num_etudiant": "d00001",
-            "sessions": [2]
-        },
-        "note": 20.0,
-        "jury": 8
-    },
-    {
-        "id": 4,
-        "date_soutenance": "30-06-2024",
-        "heure_soutenance": "12:00",
-        "etudiant": {
-            "id": 51,
-            "email": "etu2@po.fr",
-            "first_name": "etu2",
-            "last_name": "etu2",
-            "first_connection": false,
-            "profile": "ETU",
-            "num_etudiant": "d00002",
-            "promo": 7
-        },
-        "note": null,
-        "jury": 8
-    }
-]
-```
 
 #### non success
 
@@ -832,7 +777,7 @@ Méthode : POST
 http://127.0.0.1:8000/isJury/
 ```
 
-### informations envoyées
+### informations envoyées
 
 ```json
 {
@@ -919,7 +864,7 @@ Méthode : POST
 http://127.0.0.1:8000/isLeader/
 ```
 
-### informations envoyées
+### informations envoyées
 
 ```json
 {
@@ -943,6 +888,74 @@ http://127.0.0.1:8000/isLeader/
 ```json
 {
     "leader": false
+}
+```
+
+
+## juryAll
+
+permet d'obtenir toutes les soutenances, stages, étudiants associés à un jury
+
+### URL
+
+Méthode : GET
+
+```url
+http://127.0.0.1:8000/juryAll/<int:id_jury>
+```
+
+argument requête : l'id du jury
+
+### informations reçues
+
+#### sucess
+
+```json
+{
+    "id": 8,
+    "is_active": true,
+    "soutenance": [
+        {
+            "id": 3,
+            "is_active": true,
+            "stage": {
+                "id": 6,
+                "is_active": true,
+                "etudiant": {
+                    "id": 50,
+                    "email": "etu1@po.fr",
+                    "first_name": "etu1",
+                    "last_name": "etu1",
+                    "first_connection": false,
+                    "profile": "ETU",
+                    "is_active": true,
+                    "num_etudiant": "d000001"
+                },
+                "sujet": "gestion du Run",
+                "confidentiel": true,
+                "date_debut": "2024-01-18",
+                "date_fin": "2024-08-18",
+                "nom_entreprise": "April",
+                "tuteur": 30
+            },
+            "date_soutenance": "2024-06-30",
+            "heure_soutenance": "11:00:00",
+            "note": 20.0,
+            "soutenu": false
+        }
+    ],
+    "salle": "A130",
+    "batiment": "A",
+    "campus": "Luminy",
+    "zoom": "http://",
+    "num_jury": 2,
+    "leader": 49,
+    "session": 2,
+    "membreJury": [
+        49,
+        53,
+        54
+    ]
 }
 ```
 

@@ -9,7 +9,6 @@ urlpatterns = [
     path('test/', views_test.test.as_view()),
     path('get-token/', views_test.get_csrf_token, name='get_csrf_token'),
 
-
     #views_Users
     path('userDetails/<int:pk>/', views_users.UserDetails.as_view()),
     path('userList/', views_users.UserList.as_view(), name = 'userList'),
@@ -49,13 +48,12 @@ urlpatterns = [
     #views_stage
     path('stageList/', views_stage.StageList.as_view()),
     path('stageDetails/<int:pk>/', views_stage.StageDetails.as_view()),
-        path('getStageTuteur/', views_stage.getStageTuteur.as_view()),
+    path('getStageTuteur/', views_stage.getStageTuteur.as_view()),
 
     #views_soutenance
     path('soutenanceList/', views_soutenance.SoutenanceList.as_view()),
     path('soutenanceDetails/<int:pk>/', views_soutenance.SoutenanceDetails.as_view()),
     path('setNote/', views_soutenance.setNote.as_view()),
-    path('getSoutenanceJury/', views_soutenance.getSoutenanceJury.as_view()),
   
     #views_jury
     path('juryList/', views_jury.JuryList.as_view()),
@@ -63,6 +61,7 @@ urlpatterns = [
     path('isJury/', views_jury.isJury.as_view()),
     path('becomeLeader/', views_jury.becomeLeader.as_view()),
     path('isLeader/', views_jury.isLeader.as_view()),
+    path('juryAll/<int:pk>/', views_jury.juryAll.as_view()),
 
     #views_etudiant
     path('etudiantAll/<int:pk>/', views_etudiant.EtudiantAll.as_view()),
