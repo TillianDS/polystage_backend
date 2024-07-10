@@ -38,9 +38,8 @@ class CostumLogin(APIView):
         user : CustomUser = authenticate (request, email= email, password = password, backend='django.contrib.auth.backends.ModelBackend',)        
         
         if user :
-            if not user.first_connection: 
+            if not user.first_connection:
                 login(request, user, backend='django.contrib.auth.backends.ModelBackend') 
-
                 serializer = UserSerializer(user)
                 return Response({'user_id' : serializer.data["id"], 'profile' : serializer.data['profile']}, status=status.HTTP_202_ACCEPTED) 
             return Response({"first_connection" : True})

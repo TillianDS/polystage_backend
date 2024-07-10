@@ -44,6 +44,7 @@ urlpatterns = [
     
     #views_session
     path('getInfoSession/<int:pk>/', views_session.getInfoSession.as_view()),
+    path('getUserSession/', views_session.getUserSession.as_view()),
 
     #views_stage
     path('stageList/', views_stage.StageList.as_view()),

@@ -1,10 +1,9 @@
 # dernier ajout
+
 - [juryAll](#juryall)
-- [entudiantAll](#etudiantall) 
-- [getStageTuteur](#getstagetuteur) 
-- [getInfoSession](#getinfosession) 
-
-
+- [entudiantAll](#etudiantall)
+- [getStageTuteur](#getstagetuteur)
+- [getInfoSession](#getinfosession)
 
 # commandes bash pour le serveur
 
