@@ -19,18 +19,19 @@ urlpatterns = [
     path('retrieveFormulaire/', views_formulaire.retrieveFormulaire.as_view()),
     path('selfFormulaire/', views_formulaire.SelfFormulaire.as_view()),
 
-
+    path('createFormulaireAll/', views_formulaire.CreateFormulaireAll.as_view()),
+    path('getFormulaireAll/<str:pk>/', views_formulaire.GetFormulaireAll.as_view()),
 
     #views_response
     path('responseList/', views_response.ResponseList.as_view()),
     path('responseDetails/<int:pk>/', views_response.ResponseDetails.as_view()),
 
     path('responseCheckboxList/', views_response.ResponseCheckboxList.as_view()),
-    path('responseCheckbocDetails/<int:pk>/', views_response.ResponseCheckboxDetails.as_view()),
+    path('responseCheckboxDetails/<int:pk>/', views_response.ResponseCheckboxDetails.as_view()),
     path('responseFormulaire/', views_response.responseFormulaire.as_view()),
 
-    path('createFormulaireAll/', views_formulaire.CreateFormulaireAll.as_view()),
-    path('getFormulaireAll/<str:pk>/', views_formulaire.GetFormulaireAll.as_view()),
+
+    path('formUser/', views_response.formUser.as_view()),
 
     #views gestionForm
     path('validateFormulaire/', views_gestionForm.validateFormulaire.as_view()),

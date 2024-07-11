@@ -1,6 +1,6 @@
 from django.db import models
 
-from back.models import Etudiant, Session, CustomUser
+from back.models import Etudiant, Session, CustomUser, Stage
 
 #gestion droits lectur ecriture
 class Formulaire (models.Model):
@@ -43,7 +43,7 @@ class Question (models.Model):
 class ResponseForm (models.Model):
     content = models.CharField(max_length=1000)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    id_etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name = "etudiant")
+    stage = models.ForeignKey(Stage, on_delete=models.CASCADE, related_name = "stage")
     def __str__ (self) :
         return str(self.user) + " : " + str(self.content)
 
@@ -56,11 +56,12 @@ class CheckBox (models.Model):
 
 class ResponseCheckbox(models.Model):
     checkbox = models.ForeignKey(CheckBox, on_delete=models.CASCADE)
-    id_etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE)
+    stage = models.ForeignKey(Stage, on_delete=models.CASCADE)
     valeur = models.BooleanField(default=False)
 
 class statusFormulaire(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    stage = models.ForeignKey(Stage, on_delete=models.CASCADE)
     formulaire = models.ForeignKey(Formulaire, on_delete=models.CASCADE)
     STATUS_CHOICES = [
         ('envoie', 'envoie'),

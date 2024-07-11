@@ -154,9 +154,19 @@ class Stage(ActiveModel):
     tuteur =  models.ForeignKey(Tuteur, on_delete=models.CASCADE)
     nom_entreprise = models.CharField(max_length= 400)
     etudiant = models.ForeignKey(Etudiant, related_name ='stage', on_delete=models.CASCADE )
+    soutenu = models.BooleanField(default=False)
 
     def __str__(self):
         return self.sujet
+    
+    @property
+    def StageSession(self):
+        soutenances = self.soutenance_set
+        if not soutenances:
+            return None
+        soutenance = soutenances.first()
+        session = soutenance.jury.session if soutenance.jury else None
+        return session
 
 class Soutenance(ActiveModel):
     date_soutenance = models.DateField(blank= True, null = True)

@@ -1,9 +1,16 @@
-# dernier ajout
+# dernier ajout*
+- [formUser ](#formuser):  renvoie toutes les informations d'un formulaire avec les réponses enregistré en fonction de l'utilisateur connecté et du stage passé en paramètre
 
-- [juryAll](#juryall)
-- [entudiantAll](#etudiantall)
-- [getStageTuteur](#getstagetuteur)
-- [getInfoSession](#getinfosession)
+- changement sur les reponse au formulaire : demande maitenant du stage et non plus de l'étudiant
+- [getJury ](#getjury): renvoie les jurys et leur session, lié au membre jury connecté
+
+- [getSessionFiliere ](#getsessionfiliere): renvoie les sessions d'une filiere
+
+- [juryAll ](#juryall) : renvoie toutes les informations du jury : ses étudiant, soutenances, stages
+- [entudiantAll ](#etudiantall) : obtenir toutes les informations lié a étudiant
+- [getStageTuteur](#getstagetuteur): obtenir les stages suivis par le tuteur
+- [getInfoSession](#getinfosession) : toutes les informations d'un session
+- [responseFormulaire ](#responseformulaire): renvoie le formulaire et toutes ses réponses associé à un stage
 
 # commandes bash pour le serveur
 
@@ -448,46 +455,42 @@ affiche toutes les promos avec la filiere associé
 ]
 ```
 
-## getPromoOfFiliere
+## getSessionFiliere
 
-renvoie les promos d'une filiere
+renvoie els informationsd'une filiere ainsi que toutes ses sessions
 
-méthode : POST
+### URL 
+
+méthode : GET
 
 ```url
-getPromoOfFiliere/
+getSessionFiliere/<int:id_filiere>
 ```
-
-### Données à envoyer
-
-```json
-{
-    "id_filiere" :  "id de la filiere"
-}
-```
+argument URL : l'id de la filiere dont on veut obtenir les sessions 
 
 ### Données reçues
 
 toutes les promos associées
 
 ```json
-[
-    {
-        "id": 4,
-        "annee": 2027,
-        "filiere": 2
+{
+    "filiere": {
+        "id": 2,
+        "nom": "Genie Biologique"
     },
-    {
-        "id": 5,
-        "annee": 2028,
-        "filiere": 2
-    },
-    {
-        "id": 6,
-        "annee": 2029,
-        "filiere": 2
-    }
-]
+    "sessions": [
+        {
+            "id": 1,
+            "nom": "GBMA 3A 2024",
+            "filiere": 2
+        }
+        {
+            "id": 2,
+            "nom": "GBMA 4A 2024",
+            "filiere": 2
+        }
+    ]
+}
 ```
 
 ## sessionEtudiant
@@ -958,6 +961,69 @@ argument requête : l'id du jury
 }
 ```
 
+
+## getJury
+
+renvoie les jurys et leur sessions, associés au membreJury connecté
+
+### URL
+
+Méthode : GET
+
+```url
+http://127.0.0.1:8000/getJury/
+```
+### permissions
+MembreJury : Enseignant, Professionnel
+
+### informations reçues
+
+#### sucess
+
+```json
+[
+    {
+        "id": 8,
+        "is_active": true,
+        "session": {
+            "id": 2,
+            "nom": "info 3A 2024",
+            "filiere": 5
+        },
+        "salle": "A130",
+        "batiment": "A",
+        "campus": "Luminy",
+        "zoom": "http://",
+        "num_jury": 2,
+        "leader": 49,
+        "membreJury": [
+            49,
+            53,
+            54
+        ]
+    },
+    {
+        "id": 9,
+        "is_active": true,
+        "session": {
+            "id": 2,
+            "nom": "info 3A 2024",
+            "filiere": 5
+        },
+        "salle": "B115",
+        "batiment": "B",
+        "campus": "Luminy",
+        "zoom": "http://",
+        "num_jury": 3,
+        "leader": null,
+        "membreJury": [
+            49,
+            54
+        ]
+    }
+]
+```
+
 # Authentification
 
 ### login
@@ -1062,7 +1128,7 @@ Un formulaire peut avoir plusieurs questions, si la question est de type checkbo
 ## CRUD
 
 
-## Response
+# Response
 
 ### Informations d'un réponse
 
@@ -1090,9 +1156,133 @@ http://127.0.0.1:8000/responseList/
 http://127.0.0.1:8000/responseDetails/<int>/
 ```
 
+
+## formUser
+
+renvoie toutes les informations d'un formulaire avec les réponses enregistré en fonction de l'utilisateur connecté et du stage passé en paramètre
+
+### URL
+
+```url
+http://127.0.0.1:8000/formUser/
+```
+
+### Données envoyées
+
+```json
+{
+    "id_stage" : "id du stage associé",
+}
+```
+
+### Données reçues
+
+```json
+[
+    {
+        "id": "id",
+        "titre": "Avis du tuteur",
+        "description": "formulaire pour l'evaluation de Louise",
+        "session": 2,
+        "profile": "ETU",
+        "langue": "FR",
+        "question": [
+            {
+                "id": 4,
+                "titre": "qu'avez vous pensé de votre stage ?",
+                "type": "text",
+                "responses": [
+                    {
+                        "id": 3,
+                        "stage": 6,
+                        "content": "le stage s'est bien passé"
+                    }
+                ],
+                "checkbox": []
+            },
+            {
+                "id": 6,
+                "titre": "vous êtes vous ennuyé ?",
+                "type": "checkbox",
+                "responses": [],
+                "checkbox": [
+                    {
+                        "id": 1,
+                        "titre": "Oui",
+                        "response": [
+                            {
+                                "id": 2,
+                                "stage": 6,
+                                "valeur": false
+                            }
+                        ]
+                    },
+                    {
+                        "id": 2,
+                        "titre": "non",
+                        "response": [
+                            {
+                                "id": 5,
+                                "stage": 6,
+                                "valeur": false
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": 7,
+                "titre": "qu'avez vous pensé du stagiaire ?",
+                "type": "text",
+                "responses": [],
+                "checkbox": []
+            },
+            {
+                "id": 8,
+                "titre": "qu'avez vous pensé du stagiaire ?",
+                "type": "text",
+                "responses": [],
+                "checkbox": []
+            },
+            {
+                "id": 9,
+                "titre": "qu'avez vous pensé du stagiaire ?",
+                "type": "text",
+                "responses": [],
+                "checkbox": []
+            }
+        ]
+    },
+    {
+        "id": "formulaire",
+        "titre": "soutenance de stage",
+        "description": "evaluation du jury",
+        "session": 2,
+        "profile": "ETU",
+        "langue": "FR",
+        "question": [
+            {
+                "id": 10,
+                "titre": "votre avis sur la soutenance",
+                "type": "checkbox",
+                "responses": [],
+                "checkbox": []
+            },
+            {
+                "id": 11,
+                "titre": "qu'avez vous pensé du stagiaire ?",
+                "type": "text",
+                "responses": [],
+                "checkbox": []
+            }
+        ]
+    }
+]
+```
+
 ## ResponseFormulaire
 
-renvoie le formulaire, les questions et checkbox associés en fonction de l'étudiant concerné
+renvoie le formulaire, les questions et checkbox associés en fonction du stage concerné
 
 ### URL
 
@@ -1104,8 +1294,73 @@ http://127.0.0.1:8000/responseFormulaire/
 
 ```json
 {
-    "etudiant_id" : "id de l'étudiant associé",
+    "id_stage" : "id du stage associé",
     "id_formulaire" : "id du formulaire souhaité"
+}
+```
+
+### Données reçues
+
+```json
+{
+    "id": "id",
+    "titre": "Avis du tuteur",
+    "description": "formulaire pour l'evaluation de Louise",
+    "session": 2,
+    "profile": "ETU",
+    "langue": "FR",
+    "question": [
+        {
+            "id": 4,
+            "titre": "qu'avez vous pensé de votre stage ?",
+            "type": "text",
+            "responses": [
+                {
+                    "id": 3,
+                    "stage": 6,
+                    "content": "le stage s'est bien passé"
+                }
+            ],
+            "checkbox": []
+        },
+        {
+            "id": 6,
+            "titre": "vous êtes vous ennuyé ?",
+            "type": "checkbox",
+            "responses": [],
+            "checkbox": [
+                {
+                    "id": 1,
+                    "titre": "Oui",
+                    "response": [
+                        {
+                            "id": 2,
+                            "stage": 6,
+                            "valeur": false
+                        }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "titre": "non",
+                    "response": [
+                        {
+                            "id": 5,
+                            "stage": 6,
+                            "valeur": false
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": 7,
+            "titre": "qu'avez vous pensé du stagiaire ?",
+            "type": "text",
+            "responses": [],
+            "checkbox": []
+        }
+    ]
 }
 ```
 

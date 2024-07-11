@@ -250,3 +250,12 @@ class JuryAllSerializer (UserSerializer) :
     def get_soutenance(self, obj):
         soutenance = Soutenance.objects.filter(jury=obj)
         return SoutenanceJuryAllSeralizer(soutenance, many=True).data
+
+# ----------------- renvoie les jurys et leur sessions ----------------------
+
+class JurysUserSerializer (UserSerializer) :
+    session = SessionSerializer()
+
+    class Meta:
+        model = Jury
+        fields = '__all__'

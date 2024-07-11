@@ -40,7 +40,7 @@ urlpatterns = [
     path('filiereDetails/<int:pk>/', views_promo_filiere.FiliereDetails.as_view()),
 
     path('sessionFiliere/', views_promo_filiere.SessionFiliere.as_view()),
-    path('getSessionfFiliere/', views_promo_filiere.getSessionFiliere.as_view()),
+    path('getSessionFiliere/<int:pk>/', views_promo_filiere.getSessionFiliere.as_view()),
     
     #views_session
     path('getInfoSession/<int:pk>/', views_session.getInfoSession.as_view()),
@@ -63,6 +63,7 @@ urlpatterns = [
     path('becomeLeader/', views_jury.becomeLeader.as_view()),
     path('isLeader/', views_jury.isLeader.as_view()),
     path('juryAll/<int:pk>/', views_jury.juryAll.as_view()),
+    path('getJury/', views_jury.getJury.as_view()),
 
     #views_etudiant
     path('etudiantAll/<int:pk>/', views_etudiant.EtudiantAll.as_view()),

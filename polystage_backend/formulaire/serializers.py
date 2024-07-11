@@ -1,12 +1,10 @@
 from rest_framework import serializers
 from formulaire.models import *
-from back.models import CustomUser
 
 class FormulaireSerializer (serializers.ModelSerializer):
     class Meta :
         model = Formulaire
         fields = "__all__"
-
 
 class QuestionSerializer (serializers.ModelSerializer):
     formulaire = serializers.PrimaryKeyRelatedField(queryset=Formulaire.objects.all())
@@ -17,11 +15,11 @@ class QuestionSerializer (serializers.ModelSerializer):
 class ResponseCheckboxSerializer (serializers.ModelSerializer):
     class Meta:
         model = ResponseCheckbox
-        fields = ['id', 'id_etudiant', 'checkbox', 'valeur']
+        fields = ['id', 'stage', 'checkbox', 'valeur']
         
 class ResponseSerializer (serializers.ModelSerializer):
-    id_etudiant = serializers.PrimaryKeyRelatedField(queryset = Etudiant.objects.all())
-    question = serializers.PrimaryKeyRelatedField(queryset = Question.objects.all())
+    #id_stage = serializers.PrimaryKeyRelatedField(queryset = Stage.objects.all())
+    #question = serializers.PrimaryKeyRelatedField(queryset = Question.objects.all())
     class Meta :
         model = ResponseForm
         fields = "__all__"
@@ -74,13 +72,13 @@ class FormulaireAllSerializer (serializers.ModelSerializer):
 class ResponseCheckboxAllSerializer (serializers.ModelSerializer):
     class Meta:
         model = ResponseCheckbox
-        fields = ['id', 'id_etudiant', 'valeur']
+        fields = ['id', 'stage', 'valeur']
 
 class ResSerializer (serializers.ModelSerializer):
-    id_etudiant = serializers.PrimaryKeyRelatedField(queryset = Etudiant.objects.all())
+    #stage = serializers.PrimaryKeyRelatedField(queryset = Etudiant.objects.all())
     class Meta :
         model = ResponseForm
-        fields = ["id", "id_etudiant", "content"]
+        fields = ["id", "stage", "content"]
 
 class CheckboxReSerializer(serializers.ModelSerializer):
     response = serializers.SerializerMethodField()    
@@ -89,8 +87,8 @@ class CheckboxReSerializer(serializers.ModelSerializer):
         fields = ['id', 'titre', 'response']
     
     def get_response (self, obj) :
-        user_id = self.context.get('user_id')
-        reponses = ResponseCheckbox.objects.filter(id_etudiant_id=user_id, checkbox=obj)
+        id_stage = self.context.get('id_stage')
+        reponses = ResponseCheckbox.objects.filter(stage=id_stage, checkbox=obj)
         return ResponseCheckboxAllSerializer(reponses, many=True).data
 
 class QuestionResponseSerializer(serializers.ModelSerializer):
@@ -101,8 +99,8 @@ class QuestionResponseSerializer(serializers.ModelSerializer):
         fields = ['id', 'titre', 'type', 'responses', 'checkbox']
 
     def get_responses(self, obj):
-        user_id = self.context.get('user_id')
-        reponses = ResponseForm.objects.filter(id_etudiant_id=user_id, question=obj)
+        id_stage = self.context.get('id_stage')
+        reponses = ResponseForm.objects.filter(stage=id_stage, question=obj)
         return ResSerializer(reponses, many=True).data
 
 class FormulaireResponseSerializer(serializers.ModelSerializer):

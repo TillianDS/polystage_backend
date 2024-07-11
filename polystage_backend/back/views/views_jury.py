@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from ..models import Jury, CustomUser, MembreJury
-from ..serializers import JurySerializer, JuryAffichageSerializer, MembreJurySerializer, JuryAllSerializer
+from ..serializers import JurySerializer, JuryAffichageSerializer, MembreJurySerializer, JuryAllSerializer, JurysUserSerializer
 from rest_framework.authentication import TokenAuthentication
 from polystage_backend.permissions import *
 
@@ -66,7 +66,6 @@ class isJury(APIView):
             jury_id.append(jury.id)
         return Response({"is_jury": True, 'jury' :jury_id})
     
-
 class becomeLeader(APIView):
     def post(self, request, format = None):
         try:
@@ -135,3 +134,8 @@ class juryAll(APIView):
 
         return Response(serializer.data)
     
+class getJury(APIView):
+    permission_classes = [JuryPermission]
+
+    def get (self, request, format = None):
+        return Response(JurysUserSerializer(request.user.jury_set, many = True).data)

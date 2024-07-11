@@ -12,6 +12,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import logout
+from django.utils.deprecation import MiddlewareMixin
 
 class CostumLogin(APIView):
     """
@@ -44,6 +45,21 @@ class CostumLogin(APIView):
                 return Response({'user_id' : serializer.data["id"], 'profile' : serializer.data['profile']}, status=status.HTTP_202_ACCEPTED) 
             return Response({"first_connection" : True})
         return Response({'error' : "password or email are not correct"}, status=status.HTTP_401_UNAUTHORIZED)
+
+class UserProfileMiddleware(MiddlewareMixin):
+    def process_request(self, request):
+        if request.user.is_authenticated:
+            user = request.user
+            if user.profile == 'ENS':
+                request.user = Enseignant.objects.get(pk=user.pk)
+            elif user.profile == 'ETU':
+                request.user = Etudiant.objects.get(pk=user.pk)
+            elif user.profile == 'ADM':
+                request.user = Admin.objects.get(pk=user.pk)
+            elif user.profile == 'PRO':
+                request.user = Professionnel.objects.get(pk=user.pk)
+            elif user.profile == 'TUT':
+                request.user = Tuteur.objects.get(pk=user.pk)
 
 class Logout(APIView):
     def get(self, request):

@@ -16,11 +16,19 @@ jurys :
 etu2@po.fr
 Password*
 id : 51
-stage : 7
+stage : 8
 soutenance : 4
 jurys : 
 }
 
+{
+etu3@po.fr
+Password*
+id : 52
+stage : 10
+soutenance : 
+jurys : 
+}
 
 jurys : 
 id : 8, 9

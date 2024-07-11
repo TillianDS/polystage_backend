@@ -166,7 +166,6 @@ class saveFormulaire (APIView):
         serializer = StatusFormulaireSerializer
         return Response({"sucess" :"tout a été enregistré avec succès"})
     
-    
 class getStatusFormulaire(APIView):
     def post (self, request, format = None):
         id_user = request.data['id_user']
