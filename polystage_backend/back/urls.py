@@ -12,6 +12,7 @@ urlpatterns = [
     #views_Users
     path('userDetails/<int:pk>/', views_users.UserDetails.as_view()),
     path('userList/', views_users.UserList.as_view(), name = 'userList'),
+    path('stageTuteur/', views_users.stageTuteur.as_view(), name = 'stageTuteur'),
 
     #test_cas
     path('profile/', test_cas.user_profile, name='user_profile'),
@@ -66,7 +67,7 @@ urlpatterns = [
     path('getJury/', views_jury.getJury.as_view()),
 
     #views_etudiant
-    path('etudiantAll/<int:pk>/', views_etudiant.EtudiantAll.as_view()),
+    path('etudiantAll/', views_etudiant.EtudiantAll.as_view()),
 
     #views_import 
     path('importUser/',views_import.importUser.as_view()),

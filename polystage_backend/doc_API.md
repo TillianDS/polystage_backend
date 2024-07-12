@@ -1,5 +1,7 @@
-# dernier ajout*
-- [formUser ](#formuser):  renvoie toutes les informations d'un formulaire avec les réponses enregistré en fonction de l'utilisateur connecté et du stage passé en paramètre
+# dernier ajout
+- 
+- [formUser ](#formuser): renvoie les tages et étudiants suivis par le tuteur connecté
+- [formTuteurEtu ](#formtuteuretu):  renvoie toutes les informations d'un formulaire avec les réponses enregistré en fonction de l'utilisateur connecté et du stage passé en paramètre
 
 - changement sur les reponse au formulaire : demande maitenant du stage et non plus de l'étudiant
 - [getJury ](#getjury): renvoie les jurys et leur session, lié au membre jury connecté
@@ -7,11 +9,13 @@
 - [getSessionFiliere ](#getsessionfiliere): renvoie les sessions d'une filiere
 
 - [juryAll ](#juryall) : renvoie toutes les informations du jury : ses étudiant, soutenances, stages
-- [entudiantAll ](#etudiantall) : obtenir toutes les informations lié a étudiant
+- [entudiantAll ](#etudiantall) : obtenir toutes les informations lié a étudiant connecté
 - [getStageTuteur](#getstagetuteur): obtenir les stages suivis par le tuteur
 - [getInfoSession](#getinfosession) : toutes les informations d'un session
 - [responseFormulaire ](#responseformulaire): renvoie le formulaire et toutes ses réponses associé à un stage
-
+- [isLeader ](#isleader) : l'utilisateur connecté est il leader du jury
+- [becomeLeader ](#becomeleader) : devenir leader du jury
+- [isJury](#isjury) : l'utilisateur connecté fait il partie d'un jury
 # commandes bash pour le serveur
 
 ## lancer le serveur
@@ -174,17 +178,19 @@ http://127.0.0.1:8000/userList/ENS/
 
 ## etudiantAll
 
-renvoie l'tulisateur avec toutes tous ses stages, soutenances, jury et session associés
+renvoie l'etudiant connecté avec toutes tous ses stages, soutenances, jury et session associés
 
 ### URL
 
 ```url
-http://127.0.0.1:8000/etudiantAll/<int:idEtudiant>/
+http://127.0.0.1:8000/etudiantAll/
 ```
 
 méthode : GET
 
-arguement url : id de l'étudiant
+### Permissions 
+
+Etudiants 
 
 ### données reçues
 
@@ -282,6 +288,70 @@ arguement url : id de l'étudiant
         }
     ]
 }
+```
+
+
+## stageTuteur
+
+renvoie les stages et étudiants encadré par le tuteur connecté
+
+### URL
+
+```url
+http://127.0.0.1:8000/stageTuteur/
+```
+
+méthode : GET
+
+### Permissions 
+
+Tuteurs 
+
+### données reçues
+
+```json
+[
+    {
+        "id": 6,
+        "is_active": true,
+        "etudiant": {
+            "id": 50,
+            "email": "etu1@po.fr",
+            "first_name": "etu1",
+            "last_name": "etu1",
+            "first_connection": false,
+            "profile": "ETU",
+            "is_active": true,
+            "num_etudiant": "d000001"
+        },
+        "sujet": "gestion du Run",
+        "confidentiel": true,
+        "date_debut": "2024-01-18",
+        "date_fin": "2024-08-18",
+        "nom_entreprise": "April",
+        "soutenu": false
+    },
+    {
+        "id": 8,
+        "is_active": true,
+        "etudiant": {
+            "id": 51,
+            "email": "etu2@po.fr",
+            "first_name": "etu2",
+            "last_name": "etu2",
+            "first_connection": false,
+            "profile": "ETU",
+            "is_active": true,
+            "num_etudiant": "d000002"
+        },
+        "sujet": "dev d'une API",
+        "confidentiel": true,
+        "date_debut": "2024-01-18",
+        "date_fin": "2024-08-18",
+        "nom_entreprise": "Biomérieux",
+        "soutenu": false
+    }
+]
 ```
 
 # Filiere
@@ -706,7 +776,6 @@ http://127.0.0.1:8000/setNote/
 
 ```json
 {
-    "id_user" : "id de l'utilisateur",
     "id_soutenance" : "soutenance à laquelle on veut définir la note",
     "id_jury" : "id du jury",
     "note" : "la note à définir"
@@ -738,16 +807,6 @@ http://127.0.0.1:8000/setNote/
 ```
 
 
-
-#### non success
-
-- le jury n'existe pas
-
-```json
-{
-    "errors":"cause de l'erreur"
-}
-```
 
 
 # Jury
@@ -1159,13 +1218,21 @@ http://127.0.0.1:8000/responseDetails/<int>/
 
 ## formUser
 
-renvoie toutes les informations d'un formulaire avec les réponses enregistré en fonction de l'utilisateur connecté et du stage passé en paramètre
+tuteur ou étudiant : si le stage est soutenu, renvoie tous les formulaire lié à la session du stage, sinon renvoie juste les formulaires lié à son role
+
+jury: renvoie tous les formulaires lié à la session
 
 ### URL
 
 ```url
 http://127.0.0.1:8000/formUser/
 ```
+
+méthode : POST
+
+### permissions
+
+Tuteurs, Etudiants
 
 ### Données envoyées
 
@@ -1183,106 +1250,40 @@ http://127.0.0.1:8000/formUser/
         "id": "id",
         "titre": "Avis du tuteur",
         "description": "formulaire pour l'evaluation de Louise",
-        "session": 2,
         "profile": "ETU",
         "langue": "FR",
-        "question": [
-            {
-                "id": 4,
-                "titre": "qu'avez vous pensé de votre stage ?",
-                "type": "text",
-                "responses": [
-                    {
-                        "id": 3,
-                        "stage": 6,
-                        "content": "le stage s'est bien passé"
-                    }
-                ],
-                "checkbox": []
-            },
-            {
-                "id": 6,
-                "titre": "vous êtes vous ennuyé ?",
-                "type": "checkbox",
-                "responses": [],
-                "checkbox": [
-                    {
-                        "id": 1,
-                        "titre": "Oui",
-                        "response": [
-                            {
-                                "id": 2,
-                                "stage": 6,
-                                "valeur": false
-                            }
-                        ]
-                    },
-                    {
-                        "id": 2,
-                        "titre": "non",
-                        "response": [
-                            {
-                                "id": 5,
-                                "stage": 6,
-                                "valeur": false
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                "id": 7,
-                "titre": "qu'avez vous pensé du stagiaire ?",
-                "type": "text",
-                "responses": [],
-                "checkbox": []
-            },
-            {
-                "id": 8,
-                "titre": "qu'avez vous pensé du stagiaire ?",
-                "type": "text",
-                "responses": [],
-                "checkbox": []
-            },
-            {
-                "id": 9,
-                "titre": "qu'avez vous pensé du stagiaire ?",
-                "type": "text",
-                "responses": [],
-                "checkbox": []
-            }
-        ]
+        "session": 2
     },
     {
         "id": "formulaire",
         "titre": "soutenance de stage",
         "description": "evaluation du jury",
-        "session": 2,
         "profile": "ETU",
         "langue": "FR",
-        "question": [
-            {
-                "id": 10,
-                "titre": "votre avis sur la soutenance",
-                "type": "checkbox",
-                "responses": [],
-                "checkbox": []
-            },
-            {
-                "id": 11,
-                "titre": "qu'avez vous pensé du stagiaire ?",
-                "type": "text",
-                "responses": [],
-                "checkbox": []
-            }
-        ]
+        "session": 2
+    },
+    {
+        "id": "formulaire_checkbox",
+        "titre": "soutenance de stage",
+        "description": "evaluation du jury",
+        "profile": "ETU",
+        "langue": "FR",
+        "session": 2
+    },
+    {
+        "id": "formu",
+        "titre": "soutenance de stage",
+        "description": "evaluation du jury",
+        "profile": "ETU",
+        "langue": "FR",
+        "session": 2
     }
 ]
 ```
 
 ## ResponseFormulaire
 
-renvoie le formulaire, les questions et checkbox associés en fonction du stage concerné
+renvoie le formulaire, les questions et checkbox associés en fonction du stage concerné et de l'utilisateur connecté
 
 ### URL
 
@@ -1363,6 +1364,11 @@ http://127.0.0.1:8000/responseFormulaire/
     ]
 }
 ```
+### non success 
+- le formulaire n'existe pas
+- le stage n'existe pas
+- l'utilisateur (etudiant, tuteur) ne sont pas associés à ce stage 
+- le formulaire n'est pas encre accessible à l'etudiant ou le tuteur
 
 # Autres endpoints formulaire
 

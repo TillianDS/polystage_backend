@@ -78,7 +78,9 @@ class AdminSerializer (UserSerializer) :
         fields = UserSerializer.Meta.fields
 
 class StageSerializer (activeSerializer) :
-    tuteur = serializers.PrimaryKeyRelatedField(queryset = Tuteur.objects.all())
+    date_debut = serializers.DateField(format='%d-%m-%Y', input_formats=['%d-%m-%Y'])
+    date_fin = serializers.DateField(format='%d-%m-%Y', input_formats=['%d-%m-%Y'])
+
     class Meta : 
         model = Stage
         fields = "__all__"
@@ -259,3 +261,13 @@ class JurysUserSerializer (UserSerializer) :
     class Meta:
         model = Jury
         fields = '__all__'
+
+
+# -------------- renvoie les stage et etudiant encadré par le tuteur --------------------------
+
+class StageTuteurSerializer (activeSerializer) :
+    etudiant = EtudiantSerializer()
+
+    class Meta:
+        model = Stage
+        exclude = ['tuteur']

@@ -47,7 +47,7 @@ class JuryDetails (APIView):
 permet de savoir si un utilisateur fait partie d'un jury ou non
 """
 class isJury(APIView):
-
+    permission_classes = [JuryPermission]
     def post (self, request, format = None):
         try:
             id_user = request.data['id_user']
@@ -67,6 +67,8 @@ class isJury(APIView):
         return Response({"is_jury": True, 'jury' :jury_id})
     
 class becomeLeader(APIView):
+    permission_classes = [JuryPermission]
+
     def post(self, request, format = None):
         try:
             id_user = request.data['id_user']
@@ -97,6 +99,7 @@ class becomeLeader(APIView):
         return Response({'success' : "vous êtes maitenant le leader du jury"})
     
 class isLeader(APIView):
+    permission_classes = [JuryPermission]
     def post(self, request, format= None):
         id_membre = request.data.get('id_membreJury')
         id_jury = request.data.get('id_jury')
@@ -121,7 +124,6 @@ class isLeader(APIView):
 """
 retourne les soutenance liées à un jury
 """
-
 class juryAll(APIView):
     permission_classes = [AdminJuryPermission]
     def get(self,request, pk, format= None):        
@@ -134,6 +136,7 @@ class juryAll(APIView):
 
         return Response(serializer.data)
     
+"""renvoie les jurys à l'utilisateur (membreJury) connecté"""
 class getJury(APIView):
     permission_classes = [JuryPermission]
 

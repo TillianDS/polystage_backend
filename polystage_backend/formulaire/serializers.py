@@ -68,7 +68,7 @@ class FormulaireAllSerializer (serializers.ModelSerializer):
         return formulaire
     
 
-# création des serializer adapaté à l'affichage des réponse du formulaire
+# ----------- serializer adapaté à l'affichage des réponse du formulaire----------------
 class ResponseCheckboxAllSerializer (serializers.ModelSerializer):
     class Meta:
         model = ResponseCheckbox

@@ -30,7 +30,6 @@ urlpatterns = [
     path('responseCheckboxDetails/<int:pk>/', views_response.ResponseCheckboxDetails.as_view()),
     path('responseFormulaire/', views_response.responseFormulaire.as_view()),
 
-
     path('formUser/', views_response.formUser.as_view()),
 
     #views gestionForm

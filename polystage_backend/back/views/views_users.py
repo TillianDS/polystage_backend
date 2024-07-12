@@ -2,9 +2,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from ..models import CustomUser, Enseignant, Tuteur, Admin, Professionnel, Etudiant, Session
-from ..serializers import UserSerializer, EnseignantSerializer, TuteurSerializer, ProfessionnelSerializer, AdminSerializer, EtudiantSerializer, SessionSerializer
+from ..serializers import UserSerializer, EnseignantSerializer, TuteurSerializer, ProfessionnelSerializer, AdminSerializer, EtudiantSerializer, StageTuteurSerializer
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import AllowAny
+
+from polystage_backend.permissions import *
 
 class UserList(APIView):
     """
@@ -187,4 +189,12 @@ class UserAllList(APIView):
         serializer = EtudiantSerializer(user, many = True)
         return Response(serializer.data) 
         return Response({"error" : "le profile n'est pas bon"}, status=status.HTTP_400_BAD_REQUEST)
-    
+
+"""
+renvoie les stages suivis par un tuteur
+"""    
+class stageTuteur(APIView):
+    permission_classes = [TuteurPermission]
+
+    def get (self, request, format = None):
+        return Response(StageTuteurSerializer(request.user.stage_set, many = True).data)

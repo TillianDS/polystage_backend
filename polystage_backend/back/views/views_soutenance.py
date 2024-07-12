@@ -20,7 +20,6 @@ class SoutenanceDetails(Details):
 class setNote(APIView):
     permission_classes = [AdminJuryPermission]
     def post(self, request, format = None):
-        id_user = request.data['id_user']
         id_soutenance = request.data['id_soutenance']
         id_jury = request.data['id_jury']
         
@@ -45,15 +44,12 @@ class setNote(APIView):
  
         user = CustomUser.objects.get(pk=id_user)
 
-        if (user.profile == 'ENS') | (user.profile == 'PRO'):
-            jury = Jury.objects.get(pk = id_jury)
-            user = MembreJury.objects.get(pk=id_user)
+        jury = Jury.objects.get(pk = id_jury)
 
-            if jury.leader != user :
-                return Response({'error' :"vous n'êtes pas leader du jury"})
-        
-        else :
-            return Response({'error' :"vous n'êtes pas autorisé"})
+        if jury.leader != user :
+            return Response({'error' :"vous n'êtes pas leader du jury"})
+        elif request.user.profile == 'ADM':
+            pass
 
         soutenance = Soutenance.objects.get(pk=id_soutenance)
         soutenance.note= note

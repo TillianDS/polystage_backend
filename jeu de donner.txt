@@ -39,3 +39,6 @@ Password*
 Admin:
 admin@po.fr
 Password*
+
+Tuteur
+tuteur2@po.fr

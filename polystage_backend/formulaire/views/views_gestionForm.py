@@ -7,11 +7,14 @@ from django.db.models import Q
 
 
 class validateFormulaire(APIView):
+    def verifyStage(self, request, id_stage):
+        return
+    
     def post (self, request, format = None):
         # on cherche les questions du formulaire
         questions_data = request.data['formulaire']['question']
-        id_etudiant = request.data['id_etudiant']
-        id_session = request.data['formulaire']['session']
+        id_stage = request.data['id_stage']
+        id_formulaire = request.data['formulaire']['session']
 
         errors = []
 
@@ -24,11 +27,13 @@ class validateFormulaire(APIView):
                 # pour chaque checkbox de la question
                 for checkbox in question['checkbox']:
                     id_checkbox = checkbox['id']
-
+                    question_save = Question.objects.get(question['id'])
+                    
                     try :
                         responseCheckbox = checkbox['response'][0]
                     except :
-                        errors.append({"question" : question, "error" : "la question n'a pas de réponse"})
+                        if question_save.obligatoire :
+                            errors.append({"question" : question, "error" : "la question n'a pas de réponse"})
                         continue
 
                     #on ajoute l'id de la checkbox dans la réponse
@@ -55,10 +60,13 @@ class validateFormulaire(APIView):
             else :
                 id_question = question['id']
 
+                question_save = Question.objects.get(id_question)
+
                 try :
                     responseForm = question['responses'][0]
                 except :
-                    errors.append({"question" : question, "error" : "la question n'a pas de réponse"})
+                    if question_save.obligatoire :
+                        errors.append({"question" : question, "error" : "la question n'a pas de réponse"})
                     continue
 
                 #on ajoute l'id de la question dans la réponse
@@ -83,7 +91,7 @@ class validateFormulaire(APIView):
         if errors:
             return Response({"error" : errors, "message" : "ces questions ont recontrés des erreurs et n'ont pas été enregistré"})
 
-        status = {'etudiant' : id_etudiant, "session" : id_session, 'statutsForm' : 'rendu'}
+        status = {'stage' : id_stage, "formulaire" : id_formulaire, 'statutsForm' : 'rendu'}
         serializer = StatusFormulaireSerializer
         return Response({"sucess" :"tout a été enregistré avec succès"})
     

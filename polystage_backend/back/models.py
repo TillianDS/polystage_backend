@@ -73,7 +73,13 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.email
 
-
+    def verify_stage(self, id_stage):
+        if self.profile == 'ETU':
+            return self.stage.filter(pk=id_stage).exists()  # Assurez-vous que le related_name est 'stages' pour Etudiant
+        elif self.profile == 'TUT':
+            return self.stage_set.filter(pk=id_stage).exists()  # Assurez-vous que le related_name est correct pour Tuteur
+        return True
+    
 class ActiveModel(models.Model):
     is_active = models.BooleanField(default=True)
 

@@ -5,13 +5,11 @@ from ..models import Etudiant
 from ..serializers import EtudiantAllSeralizer
 from rest_framework.authentication import TokenAuthentication
 from .views_list_details import List, Details
+from polystage_backend.permissions import *
 
 class EtudiantAll(APIView):
-    def get (self, request, pk, format = None):
-        try : 
-            etudiant = Etudiant.objects.get(pk=pk)
-        except Etudiant.DoesNotExist :
-            return Response({"error" : "l'utilisateur n'existe pas"})
-        serializer = EtudiantAllSeralizer(etudiant)
+    permission_classes = [EtuPermission]
+    def get (self, request, format = None):
+        serializer = EtudiantAllSeralizer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
