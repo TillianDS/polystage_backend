@@ -73,3 +73,9 @@ class statusFormulaire(models.Model):
     class Meta:
         # Spécifie que la combinaison de 'nom' et 'filiere' doit être unique
         unique_together = ['formulaire', 'user']
+
+    @property
+    def is_rendu(self):
+        if self.statusForm == 'rendu':
+            return True
+        return False

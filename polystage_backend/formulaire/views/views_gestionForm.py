@@ -1,23 +1,50 @@
+from rest_framework import status
 from .views_list_details import *
 from ..models import Formulaire, CheckBox, Question, ResponseForm,  statusFormulaire, ResponseCheckbox
-from back.models import Etudiant
+from back.models import Etudiant, Stage
 from ..serializers import FormulaireSerializer, CheckboxSerializer, FormulaireAllSerializer, QuestionSerializer, ResponseSerializer, StatusFormulaireSerializer, ResponseCheckboxSerializer
 from rest_framework.response import Response
 from django.db.models import Q
 
+def verifyFormulaire (request, id_stage):
+        id_formulaire = request.data['formulaire']['id']
+
+        try:
+            stage = Stage.objects.get(pk=id_stage)
+        except Stage.DoesNotExist:
+            return Response({"error": "le stage n'existe pas"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not request.user.verify_stage(id_stage) :
+            return Response({"error": "Vous n'avez pas accès à ce stage"}, status=status.HTTP_403_FORBIDDEN)
+        
+        try:
+            formulaire = Formulaire.objects.get(pk=id_formulaire)
+        except Formulaire.DoesNotExist:
+            return Response({"error": "le formulaire n'existe pas"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if formulaire.profile != request.user.profile :
+            return Response({"error": "Vous ne pouvez pas répondre à ce formulaire"})
+
+        statusForm = statusFormulaire.objects.get(stage = stage, user = request.user, formulaire = id_formulaire)
+
+        if statusForm.is_rendu:
+            return Response({'error' : "le formulaire a déjà été rendu"}, status=status.HTTP_403_FORBIDDEN)
+        
+        return True
 
 class validateFormulaire(APIView):
-    def verifyStage(self, request, id_stage):
-        return
     
     def post (self, request, format = None):
         # on cherche les questions du formulaire
         questions_data = request.data['formulaire']['question']
         id_stage = request.data['id_stage']
-        id_formulaire = request.data['formulaire']['session']
-
+        id_session = request.data['formulaire']['session']
         errors = []
 
+        verify = verifyFormulaire(request, id_stage=id_stage)
+        if verify != True :
+            return verify
+        
         #pour chaque question on va traiter sa réponse ...
         for question in questions_data:
 
@@ -91,19 +118,26 @@ class validateFormulaire(APIView):
         if errors:
             return Response({"error" : errors, "message" : "ces questions ont recontrés des erreurs et n'ont pas été enregistré"})
 
-        status = {'stage' : id_stage, "formulaire" : id_formulaire, 'statutsForm' : 'rendu'}
-        serializer = StatusFormulaireSerializer
-        return Response({"sucess" :"tout a été enregistré avec succès"})
+        status = {'stage' : id_stage, "session" : id_session, 'statutsForm' : 'sauvegarde'}
+        serializer = StatusFormulaireSerializer(data= status)
+        if serializer.is_valide :
+            serializer.save()
+            return Response({"sucess" :"tout a été enregistré avec succès"}) 
+        return Response(serializer.errors)
     
 class saveFormulaire (APIView):
     def post (self, request, format = None):
         # on cherche les questions du formulaire
         questions_data = request.data['formulaire']['question']
-        id_etudiant = request.data['id_etudiant']
+        id_stage = request.data['id_stage']
         id_session = request.data['formulaire']['session']
 
         errors = []
 
+        verify = verifyFormulaire(request, id_stage=id_stage)
+        if verify != True :
+            return verify
+        
         #pour chaque question on va traiter sa réponse ...
         for question in questions_data:
 
@@ -170,9 +204,12 @@ class saveFormulaire (APIView):
         if errors:
             return Response({"error" : errors, "message" : "ces questions ont recontrés des erreurs et n'ont pas été enregistré"})
 
-        status = {'etudiant' : id_etudiant, "session" : id_session, 'statutsForm' : 'sauvegarde'}
-        serializer = StatusFormulaireSerializer
-        return Response({"sucess" :"tout a été enregistré avec succès"})
+        statusForm = {'stage' : id_stage, "session" : id_session, 'statutsForm' : 'sauvegarde'}
+        serializer = StatusFormulaireSerializer(data= status)
+        if serializer.is_valide :
+            serializer.save()
+            return Response({"sucess" :"tout a été enregistré avec succès"}) 
+        return Response(serializer.errors)
     
 class getStatusFormulaire(APIView):
     def post (self, request, format = None):

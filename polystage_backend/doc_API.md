@@ -1,21 +1,25 @@
 # dernier ajout
+
 - 
-- [formUser ](#formuser): renvoie les tages et étudiants suivis par le tuteur connecté
-- [formTuteurEtu ](#formtuteuretu):  renvoie toutes les informations d'un formulaire avec les réponses enregistré en fonction de l'utilisateur connecté et du stage passé en paramètre
+- [juryall](#juryall): renvoie les tages et étudiants suivis par le tuteur connecté
+- [formUser](#formuser):  renvoie toutes les informations d'un formulaire avec les réponses enregistré en fonction de l'utilisateur connecté et du stage passé en paramètre
 
 - changement sur les reponse au formulaire : demande maitenant du stage et non plus de l'étudiant
-- [getJury ](#getjury): renvoie les jurys et leur session, lié au membre jury connecté
+- [getJury](#getjury): renvoie les jurys et leur session, lié au membre jury connecté
 
-- [getSessionFiliere ](#getsessionfiliere): renvoie les sessions d'une filiere
+- [getSessionFiliere](#getsessionfiliere): renvoie les sessions d'une filiere
 
-- [juryAll ](#juryall) : renvoie toutes les informations du jury : ses étudiant, soutenances, stages
-- [entudiantAll ](#etudiantall) : obtenir toutes les informations lié a étudiant connecté
+- [juryAll](#juryall) : renvoie toutes les informations du jury : ses étudiant, soutenances, stages
+- [entudiantAll](#etudiantall) : obtenir toutes les informations lié a étudiant connecté
 - [getStageTuteur](#getstagetuteur): obtenir les stages suivis par le tuteur
 - [getInfoSession](#getinfosession) : toutes les informations d'un session
-- [responseFormulaire ](#responseformulaire): renvoie le formulaire et toutes ses réponses associé à un stage
-- [isLeader ](#isleader) : l'utilisateur connecté est il leader du jury
-- [becomeLeader ](#becomeleader) : devenir leader du jury
+- [responseFormulaire](#responseformulaire): renvoie le formulaire et toutes ses réponses associé à un stage
+- [isLeader](#isleader) : l'utilisateur connecté est il leader du jury
+
+- [becomeLeader](#becomeleader) : devenir leader du jury
+
 - [isJury](#isjury) : l'utilisateur connecté fait il partie d'un jury
+
 # commandes bash pour le serveur
 
 ## lancer le serveur

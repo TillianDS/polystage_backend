@@ -34,6 +34,7 @@ urlpatterns = [
 
     #views gestionForm
     path('validateFormulaire/', views_gestionForm.validateFormulaire.as_view()),
+    path('saveFormulaire/', views_gestionForm.saveFormulaire.as_view()),
 
     ]
 
