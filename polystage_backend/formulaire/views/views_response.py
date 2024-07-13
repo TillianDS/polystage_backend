@@ -80,7 +80,7 @@ class formUser(APIView):
         
 
         #vérification que les utilisateurs etudiant ou tuteur accède bien à leur stage associé
-        if request.user.verify_stage(id_stage):
+        if not request.user.verify_stage(id_stage):
             return Response({"error": "Vous n'avez pas accès à ce stage"}, status=status.HTTP_403_FORBIDDEN)
         
         #on récupère la session du stage

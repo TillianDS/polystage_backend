@@ -1537,24 +1537,25 @@ http://127.0.0.1:8000/retrieveFormulaire/
 }
 ```
 
-
 ## validateFormulaire
 
-valider un formulaire en enregistrant toutes les réponse et en passant la statut de l'utilisateur lié à ce formulaire en "rendu"
+sauvegarder un formulaire en enregistrant toutes les réponse apssé en paramètre et en passant la statut du stage lié à ce formulaire en "sauvegarde"
 
 ### URL
 
 methode : POST
 
 ```url
-http://127.0.0.1:8000/validateFormulaire/
+http://127.0.0.1:8000/sauvegardeFormulaire/
 ```
 
 ### données envoyées
 
-- toutes les informations du formulaire avec les questions et réponse. Si la réponse existe déjà on la renvoie avec son id, sinon on renvoie sans id (et la réponse est créer). 
+- toutes les informations du formulaire avec les questions et réponse. Si la réponse existe déjà on la renvoie avec son id, sinon on renvoie sans id (et la réponse est créer)
 
-- l'id de l'étudiant à qui est déstiné le formulaire (sera inclu automatiquement dans les nouvelles réponse)
+- l'id du stage pour lequel sont enregistrés les reponses au formulaire (sera inclu automatiquement dans les nouvelles réponses)
+
+- si une réponse existe déjà : inclure l'id de la réponse
 
 ```json
 { "formulaire": 
@@ -1573,7 +1574,6 @@ http://127.0.0.1:8000/validateFormulaire/
                 "responses": [
                     {
                         "id": 4,
-                        "id_etudiant": 50,
                         "content": "le stage s'est très bien passé"
                     }
                 ],
@@ -1591,7 +1591,6 @@ http://127.0.0.1:8000/validateFormulaire/
                         "response": [
                             {
                                 "id": 2,
-                                "id_etudiant": 50,
                                 "valeur": false
                             }
                         ]
@@ -1602,22 +1601,119 @@ http://127.0.0.1:8000/validateFormulaire/
                         "response": [
                             {
                                 "id": 5,
-                                "id_etudiant": 50,
                                 "valeur": false
                             }
                         ]
                     }
                 ]
-            }
+            },
+            {
+            "id": 7,
+            "titre": "qu'avez vous pensé du stagiaire ?",
+            "type": "text",
+            "responses": [
+                {
+                    "content": "i a été tres entreprenant"
+                }
+            ],
+            "checkbox": []
+        }
         ]
     },
-    "id_etudiant" : 50
+    "id_stage" : 50
 }
 ```
-### données recues 
+
+## validateFormulaire
+
+valider un formulaire en enregistrant toutes les réponse et en passant la statut du stage lié à ce formulaire en "rendu"
+
+### URL
+
+methode : POST
+
+```url
+http://127.0.0.1:8000/validateFormulaire/
+```
+
+### données envoyées
+
+- toutes les informations du formulaire avec les questions et réponse. Si la réponse existe déjà on la renvoie avec son id, sinon on renvoie sans id (et la réponse est créer)
+
+- l'id du stage pour lequel sont enregistrés les reponses au formulaire (sera inclu automatiquement dans les nouvelles réponses)
+
+- si une réponse existe déjà : inclure l'id de la réponse
+
+```json
+{ "formulaire": 
+    {
+        "id": "id",
+        "titre": "Avis du tuteur",
+        "description": "formulaire pour l'evaluation de Louise",
+        "session": 2,
+        "profile": "ETU",
+        "langue": "FR",
+        "question": [
+            {
+                "id": 4,
+                "titre": "qu'avez vous pensé de votre stage ?",
+                "type": "text",
+                "responses": [
+                    {
+                        "id": 4,
+                        "content": "le stage s'est très bien passé"
+                    }
+                ],
+                "checkbox": []
+            },
+            {
+                "id": 6,
+                "titre": "vous êtes vous ennuyé ?",
+                "type": "checkbox",
+                "responses": [],
+                "checkbox": [
+                    {
+                        "id": 1,
+                        "titre": "Oui",
+                        "response": [
+                            {
+                                "id": 2,
+                                "valeur": false
+                            }
+                        ]
+                    },
+                    {
+                        "id": 2,
+                        "titre": "non",
+                        "response": [
+                            {
+                                "id": 5,
+                                "valeur": false
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+            "id": 7,
+            "titre": "qu'avez vous pensé du stagiaire ?",
+            "type": "text",
+            "responses": [
+                {
+                    "content": "i a été tres entreprenant"
+                }
+            ],
+            "checkbox": []
+        }
+        ]
+    },
+    "id_stage" : 50
+}
+```
+
+### données reçues
 
 #### sucess
-
 
 ```json
 {
@@ -1625,15 +1721,19 @@ http://127.0.0.1:8000/validateFormulaire/
 }
 ```
 
-#### error 
+#### error
 
 si le systeme rencontre une erreur, les données réponse qui ne sont pas en erreur sont enregistré et les autres sont renvoyé
 
-- s'il manque une réponse, renvoie la question à laquelle il manque une réponse
+- s'il manque une réponse et que la réponse à la question est obligatoire, renvoie la question à laquelle il manque une réponse
 
-- si l'id passé d'une réponse ne correspond à aucun réponse enregistré*
+- si l'id passé d'une réponse ne correspond à aucun réponse enregistré
 
-- s'il y'a un probleme lors de l'enregistrement du serialieseur
+- si l'utilisateur qui accède à la vue ne pas lié au stage ou au formulaire
+
+- s'il y'a un probleme lors de l'enregistrement du serialiseur
+
+- si le formulaire a déjà été rendu
 
 ```json
 {
@@ -1647,7 +1747,6 @@ si le systeme rencontre une erreur, les données réponse qui ne sont pas en err
     "message": "ces questions ont recontrés des erreurs et n'ont pas été enregistré"
 }
 ```
-
 
 # Import des données
 

@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import views_formulaire, views_response, views_gestionForm
+from .views import views_formulaire, views_response, views_gestionForm, views_statusFormulaire
 
 urlpatterns = [
      #views_formulaire
@@ -36,6 +36,10 @@ urlpatterns = [
     path('validateFormulaire/', views_gestionForm.validateFormulaire.as_view()),
     path('saveFormulaire/', views_gestionForm.saveFormulaire.as_view()),
 
+    #views_statusFormulaire
+    path('statusFormulaireList/', views_statusFormulaire.statutsFormulaireList.as_view()),
+    path('statusFormulaireDetails/<int:pk>/', views_statusFormulaire.statusFormulaireDetails.as_view()),
+ 
     ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

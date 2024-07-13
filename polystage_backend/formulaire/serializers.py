@@ -48,7 +48,7 @@ class QuestionAllSerializer (serializers.ModelSerializer):
     checkbox = CheckboxAllSerializer(many = True)
     class Meta :
         model = Question
-        fields = ['id', 'titre', 'type', 'checkbox']
+        fields = ['id', 'titre', 'type', 'checkbox', 'obligatoire']
 
 class FormulaireAllSerializer (serializers.ModelSerializer):
     question = QuestionAllSerializer(many = True)
@@ -96,7 +96,7 @@ class QuestionResponseSerializer(serializers.ModelSerializer):
     checkbox = CheckboxReSerializer(many=True, read_only=True)
     class Meta:
         model = Question
-        fields = ['id', 'titre', 'type', 'responses', 'checkbox']
+        fields = ['id', 'titre', 'type', 'obligatoire', 'responses', 'checkbox']
 
     def get_responses(self, obj):
         id_stage = self.context.get('id_stage')
