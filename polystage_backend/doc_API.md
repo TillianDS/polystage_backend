@@ -1127,6 +1127,48 @@ si les identifiants sont correctes:
 
 - success : message de succès
 
+## derogationLogin
+
+permet à un superutilisateur de s'authentifier en se dérogeant à un autre utilisateur
+
+```url
+http://127.0.0.1:8000/derogationLogin/
+```
+
+methode :  POST
+
+### Données envoyées
+
+l'email de l'utlisateur auquel on veut se déroger
+
+```json
+{
+    "email" : "email de l'utilisateur"
+}
+```
+
+### Données reçues
+
+#### success
+si le mail est correct:
+
+- "id" : identifiants utilisateurs
+- "type utilisateur" : type de l'utilisateur qui se connecte
+
+```json
+{
+    "user_id": 14,
+    "profile": "ADM"
+}
+```
+
+### non successs
+
+```json
+{
+    "error" : "l'adresse spécifié ne correspond à aucun utilisateur"
+}
+```
 
 # export
 

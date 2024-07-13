@@ -13,6 +13,7 @@ from django.conf import settings
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import logout
 from django.utils.deprecation import MiddlewareMixin
+from polystage_backend.permissions import *
 
 class CostumLogin(APIView):
     """
@@ -46,6 +47,7 @@ class CostumLogin(APIView):
             return Response({"first_connection" : True})
         return Response({'error' : "password or email are not correct"}, status=status.HTTP_401_UNAUTHORIZED)
 
+    
 class UserProfileMiddleware(MiddlewareMixin):
     def process_request(self, request):
         if request.user.is_authenticated:
@@ -66,6 +68,22 @@ class Logout(APIView):
         logout(request)
         return Response({'message': 'Déconnexion réussie'}, status=status.HTTP_200_OK)
 
+class derogationLogin (APIView):
+    permission_classes = [SuperUserPermission]
+
+    def post (self, request):
+        email = request.data['email']
+        try :
+            user = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist :
+            return Response({"error" : "l'adresse spécifié ne correspond à aucun utilisateur"})
+        
+        if not user.first_connection:
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend') 
+            serializer = UserSerializer(user)
+            return Response({'user_id' : serializer.data["id"], 'profile' : serializer.data['profile']}, status=status.HTTP_202_ACCEPTED) 
+        return Response({"first_connection" : True})
+    
 class ChangePassword (APIView) :
     permission_classes = [AllowAny]
 

@@ -1,10 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from ..models import Jury
-from ..serializers import JurySerializer
 from rest_framework.authentication import TokenAuthentication
-from ..models import CustomUser, Enseignant, Tuteur, Admin, Professionnel, Etudiant, Session, Soutenance
+from ..models import CustomUser, Enseignant, Tuteur, Admin, Professionnel, Etudiant, Session, Soutenance,Stage
 from ..serializers import UserSerializer, EnseignantSerializer, TuteurSerializer, ProfessionnelSerializer, AdminSerializer, EtudiantSerializer, SessionSerializer, StageSerializer, SoutenanceSerializer, JurySerializer
 
 
@@ -89,7 +87,7 @@ class importUser (APIView):
                 continue
 
             if serializer.is_valid() : 
-                #serializer.save()
+                serializer.save()
                 pass
             else : 
                 errors.append({"user" : user, "errors" : serializer.errors})
@@ -121,36 +119,51 @@ class importStage (APIView):
         errors = []
 
         for stage in stages_data :
-            if ('num_etudiant' not in stage) | ('email_tuteur' not in stage):
-                errors.append({"stage" : stage, "errors" : "tous les champs nécessaires n'ont pas été remplie"})
+            
+            num_convention = stage.get('num_convention')
+            if not num_convention :
+                errors.append({"stage" : stage, "errors" : "le stage doit avoir un numero de convention"})
                 continue
-            else :
-                
-                email_tuteur = stage.pop('email_tuteur')
-                num_etudiant = stage.pop('num_etudiant')
 
-                try:
-                    id_etudiant = Etudiant.objects.get(num_etudiant=num_etudiant).pk
-                except Etudiant.DoesNotExist:
-                    errors.append({"stage": stage, "errors": f"Étudiant avec numéro {num_etudiant} n'existe pas"})
-                    continue
+            email_tuteur = stage.pop('email_tuteur', None)
+            if not email_tuteur :
+                errors.append({"stage" : stage, "errors" : "le stage doit avoir un email de tuteur : email_tuteur"})
+                continue
 
-                try:
-                    id_tuteur = Tuteur.objects.get(email=email_tuteur).pk
-                except Tuteur.DoesNotExist:
-                    errors.append({"stage": stage, "errors": f"Tuteur avec email {email_tuteur} n'existe pas"})
+            num_etudiant = stage.pop('num_etudiant', None)
+            if not num_etudiant :
+                errors.append({"stage" : stage, "errors" : "le stage doit avoir un numéro étudiant : num_etudiant"})
+                continue
+
+            try:
+                id_etudiant = Etudiant.objects.get(num_etudiant=num_etudiant).pk
+            except Etudiant.DoesNotExist:
+                errors.append({"stage": stage, "errors": f"Étudiant avec numéro {num_etudiant} n'existe pas"})
+                continue
+
+            try:
+                id_tuteur = Tuteur.objects.get(email=email_tuteur).pk
+            except Tuteur.DoesNotExist:
+                errors.append({"stage": stage, "errors": f"Tuteur avec email {email_tuteur} n'existe pas"})
+                continue
+
+            stage['tuteur'] = id_tuteur
+            stage['etudiant'] = id_etudiant
+
+            try :
+                stage_save = Stage.objects.get(num_convention = num_convention)
+                if stage_save.etudiant.num_etudiant != num_etudiant :
+                    errors.append({"stage": stage, "errors": f"Un stage avec le numero de convention : {num_convention}, existe deja pour un autre etudiant"})
                     continue
-                
-                
-                stage['tuteur'] = id_tuteur
-                stage['etudiant'] = id_etudiant
-                
+    
+                serializer = StageSerializer(stage_save, data=stage )
+            except Stage.DoesNotExist :
                 serializer = StageSerializer(data=stage)
 
-                if serializer.is_valid() : 
-                    serializer.save()
-                else : 
-                    errors.append({"stage" : stage, "errors" : serializer.errors})
+            if serializer.is_valid() : 
+                serializer.save()
+                continue
+            errors.append({"stage" : stage, "errors" : serializer.errors})
            
         if errors :
             return Response({"errors" : errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -163,41 +176,40 @@ class importSoutenance(APIView):
         errors = []
 
         for soutenance in soutenances_data :
-            if ('num_etudiant' not in soutenance) | ('num_jury' not in soutenance):
-                errors.append({"stage" : soutenance, "errors" : "tous les champs nécessaires n'ont pas été remplie"})
+
+            num_convention = soutenance.get('num_convention')
+            if not num_convention :
+                errors.append({"stage" : soutenance, "errors" : "la soutenance doit avoir un numero de convention"})
                 continue
-            else :
-                num_jury = soutenance.pop('num_jury')
-                num_etudiant = soutenance.pop('num_etudiant')
 
-                try:
-                    etudiant = Etudiant.objects.get(num_etudiant=num_etudiant)
-                except Etudiant.DoesNotExist:
-                    errors.append({"soutenance": soutenance, "errors": f"Étudiant avec numéro {num_etudiant} n'existe pas"})
-                    continue
+            try:
+                stage = Stage.objects.get(num_convention = num_convention)
+            except Stage.DoesNotExist:
+                errors.append({"soutenance": soutenance, "errors": f"Stage avec num_convention : {num_convention} n'existe pas"})
+                continue
                 
+            try:
+                soutenance_exist = stage.soutenance_set
+            except Soutenance.DoesNotExist:
+                pass
 
-                try:
-                    soutenance_exist = Soutenance.objects.get(etudiant=etudiant)
-                    errors.append({"soutenance": soutenance, "errors": f"l'étudiant {num_etudiant} a déjà une soutenance active"})
-                    continue
-                except Soutenance.DoesNotExist:
-                    pass
-
-                soutenance['jury'] = num_jury
-                soutenance['etudiant'] = etudiant.pk
+            soutenance['jury'] = num_jury
                 
-                serializer = StageSerializer(data=stage)
+            serializer = StageSerializer(data=stage)
 
-                if serializer.is_valid() : 
-                    serializer.save()
-                else : 
-                    errors.append({"stage" : stage, "errors" : serializer.errors})
+            if serializer.is_valid() : 
+                serializer.save()
+            else : 
+                errors.append({"stage" : stage, "errors" : serializer.errors})
         if errors :
             return Response({"errors" : errors}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"success" : "tous les utilisateurs ont été crées avec succès"}, status= status.HTTP_201_CREATED)
 
-    
+class importSession(APIView):
+    def post(self, request, format = None):
+        return
+
+
 class importJury(APIView):
     def post (self, request, format = None):
         num_etudiant = request.data['num_etudiant']

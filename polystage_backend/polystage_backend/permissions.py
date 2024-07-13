@@ -40,3 +40,4 @@ class TuteurPermission(BasePermission):
     def has_permission(self, request, view):
         tut = request.user.profile == 'TUT'
         return tut
+    
