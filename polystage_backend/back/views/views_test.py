@@ -9,14 +9,22 @@ from rest_framework.permissions import AllowAny
 
 class test(APIView):
     permission_classes = [AllowAny]
-
-    def post(self, request, format=None ):
-        pk = request.data['session']
-        session = Session.objects.get(pk=pk)
-        soutenance = Soutenance.objects.filter(jury__session = session)
-        etudiants = Etudiant.objects.filter(stage__soutenance__in = soutenance)
-        serializer = EtudiantSerializer(etudiants, many=True)
-        return Response(serializer.data)
+    def choose_user (self, profile, email):
+        if profile == 'ENS' : 
+            return Enseignant.objects.get(email =email)
+        elif profile == 'ETU':
+            return Etudiant.objects.get(email = email)
+        elif profile == 'PRO':
+            return Professionnel.objects.get(email = email)
+        elif profile == 'TUT':
+            return Tuteur.objects.get(email = email)
+        
+    def get(self, request, format=None ):
+        try :
+            etudiant = self.choose_user('ETU', 'etudee@po.fr')
+            serializer = EtudiantSerializer(etudiant)
+        except :
+            return Response(serializer.data)
     
 
 from django.http import JsonResponse

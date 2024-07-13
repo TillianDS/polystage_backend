@@ -6,7 +6,7 @@ from back.models import Etudiant, Session, CustomUser, Stage
 class Formulaire (models.Model):
     #id_createur
     id = models.CharField(max_length=200, primary_key=True)
-    titre = models.CharField(max_length=200)
+    titre = models.TextField()
     description = models.CharField(max_length=400, blank= True, null= True)
     session =  models.ForeignKey(Session, on_delete=models.CASCADE)
     PROFILE_CHOICES = [
@@ -27,7 +27,7 @@ class Formulaire (models.Model):
         return str(self.title)
 
 class Question (models.Model):
-    titre = models.CharField(max_length=200)
+    titre = models.TextField()
     TYPE_CHOICES = [
         ('text', 'text'),
         ('paragraphe', 'paragraphe'),
@@ -41,7 +41,7 @@ class Question (models.Model):
         return str(self.id) + " " +self.title
     
 class ResponseForm (models.Model):
-    content = models.CharField(max_length=1000)
+    content = models.TextField()
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     stage = models.ForeignKey(Stage, on_delete=models.CASCADE, related_name = "stage")
     def __str__ (self) :

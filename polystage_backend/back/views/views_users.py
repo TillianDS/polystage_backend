@@ -79,11 +79,6 @@ class UserList(APIView):
         data = request.data
         profile = data['profile']
 
-        """
-        if profile == 'ETU' :
-            data = data.copy()
-            data['sessions'] = Session.objects.get(pk=request.data['sessions']).pk
-        """
         serializer = self.choice_deserializer(profile, data, False)
         
         password_length = 7
@@ -141,6 +136,8 @@ class UserDetails(APIView):
             return ProfessionnelSerializer(user,data = data, many= many)
         elif profile == 'TUT':
             return TuteurSerializer(user, data = user, many = many)
+        elif profile == 'SPR':
+            return UserSerializer(user, data = user, many = many)
         else :
             return 'error'
           
@@ -155,6 +152,8 @@ class UserDetails(APIView):
             return Professionnel.objects.get(pk=pk)
         elif profile == 'TUT':
             return Tuteur.objects.get(pk=pk)
+        elif profile == 'SPR':
+            return CustomUser.objects.get(pk=pk)
         
     def get_User(self, pk) : 
         return CustomUser.objects.get(pk = pk)

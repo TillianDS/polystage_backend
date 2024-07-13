@@ -1,8 +1,8 @@
 from rest_framework import status
 from .views_list_details import *
-from ..models import Formulaire, CheckBox, Question, ResponseForm,  statusFormulaire, ResponseCheckbox
-from back.models import Etudiant, Stage
-from ..serializers import FormulaireSerializer, CheckboxSerializer, FormulaireAllSerializer, QuestionSerializer, ResponseSerializer, StatusFormulaireSerializer, ResponseCheckboxSerializer
+from ..models import Formulaire, Question, ResponseForm,  statusFormulaire, ResponseCheckbox
+from back.models import Stage
+from ..serializers import FormulaireSerializer, ResponseSerializer, ResponseCheckboxSerializer
 from rest_framework.response import Response
 from django.db.models import Q
 
@@ -21,13 +21,17 @@ def verifyFormulaire (request, id_stage, id_formulaire):
         except Formulaire.DoesNotExist:
             return Response({"error": [{'erro': "le formulaire n'existe pas"}]}, status=status.HTTP_400_BAD_REQUEST)
         
-        if formulaire.profile != request.user.profile :
-            return Response({"error": [{'error' : "Vous ne pouvez pas répondre à ce formulaire"}]})
+        if formulaire.profile == 'JURY' :
+            if((request.profile != 'PRO') or (request.profile != 'ENS')):
+                return Response({"error": [{'error' : "Vous ne pouvez pas répondre à ce formulaire"}]})
+        else:
+            if formulaire.profile != request.user.profile :
+                return Response({"error": [{'error' : "Vous ne pouvez pas répondre à ce formulaire"}]})
 
-        statusForm = statusFormulaire.objects.get(stage = stage, user = request.user, formulaire = id_formulaire)
+            statusForm = statusFormulaire.objects.get(stage = stage, user = request.user, formulaire = id_formulaire)
 
-        if statusForm.is_rendu:
-            return Response({'error' : [{'error' : "le formulaire a déjà été rendu"}]}, status=status.HTTP_403_FORBIDDEN)
+            if statusForm.is_rendu:
+                return Response({'error' : [{'error' : "le formulaire a déjà été rendu"}]}, status=status.HTTP_403_FORBIDDEN)
         
         return True
 """
@@ -250,3 +254,17 @@ class getStatusFormulaire(APIView):
         id_formulaire = request.data['id_formulaire']
         statutForm = statusFormulaire.objects.get(formulaire = id_formulaire, user= id_user)
         return Response({"status" : statutForm.status})
+    
+"""
+permet de rechercher un formulaire selon son titre, sa description, le rôle à qui il s'adresse, sa filière
+"""  
+class FormulaireSearch (APIView):
+    def post(self, request, format = None):
+        search = request.data['search']
+
+        formulaire = Formulaire.objects.filter(Q(titre__icontains = search) |
+                                           Q(profile__icontains = search) | 
+                                           Q(description__icontains = search) | 
+                                           Q(filiere__nom__icontains = search))
+        
+        return Response(FormulaireSerializer(formulaire, many = True).data)

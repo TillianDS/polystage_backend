@@ -49,6 +49,7 @@ class CustomUser(AbstractUser):
         ('ADM', 'Admin'),
         ('PRO', 'Professionnel'),
         ('TUT', 'Tuteur'),
+        ('SPR', 'Super_user')
     ]
     profile = models.CharField(max_length=3, choices=PROFILE_CHOICES)
 
@@ -100,10 +101,6 @@ class CodePassword(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     code = models.IntegerField()
 
-class Admin(CustomUser):
-    class Meta : 
-        verbose_name = 'Admin'
-
 class Tuteur(CustomUser):
     class Meta : 
         verbose_name = 'Tuteur'
@@ -124,6 +121,11 @@ class Filiere(ActiveModel):
 
     def __str__(self):
         return self.nom
+
+class Admin(CustomUser):
+    filiere = models.ForeignKey(Filiere, on_delete=models.SET_NULL, null = True)
+    class Meta : 
+        verbose_name = 'Admin'
 
 class Session(ActiveModel):
     nom = models.CharField(max_length=100)
@@ -161,7 +163,7 @@ class Stage(ActiveModel):
     nom_entreprise = models.CharField(max_length= 400)
     etudiant = models.ForeignKey(Etudiant, related_name ='stage', on_delete=models.CASCADE )
     soutenu = models.BooleanField(default=False)
-
+    num_convention = models.IntegerField(unique=True)
     def __str__(self):
         return self.sujet
     

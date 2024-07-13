@@ -27,7 +27,7 @@ class SessionFiliereSerializer(activeSerializer):
     def get_sessions(self, obj):
         sessions = Session.objects.filter(filiere=obj)
         return SessionSerializer(sessions, many=True).data
-        
+      
 class UserSerializer(serializers.ModelSerializer):
     PROFILE_CHOICES = [
         ('ENS', 'Enseignant'),
@@ -35,6 +35,7 @@ class UserSerializer(serializers.ModelSerializer):
         ('ADM', 'Admin'),
         ('PRO', 'Professionnel'),
         ('TUT', 'Tuteur'),
+        ('SPR', 'Super User')
     ]
     is_active = serializers.BooleanField(default = True)
 

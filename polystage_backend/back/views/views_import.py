@@ -15,26 +15,36 @@ class importUser (APIView):
             return EnseignantSerializer(data =user)
         elif profile == 'ETU':
             return EtudiantSerializer(data = user)
-        elif profile == 'ADM':
-            return AdminSerializer(data =user)
         elif profile == 'PRO':
             return ProfessionnelSerializer(data = user)
         elif profile == 'TUT':
             return TuteurSerializer(data = user)
         else :
             return 'error'
-          
-    def choose_user (self, profile):
+        
+    def choice_modify_deserializer (self, profile, user, data) :
         if profile == 'ENS' : 
-            return Enseignant.objects.all()
+            return EnseignantSerializer(user,data =data)
         elif profile == 'ETU':
-            return Etudiant.objects.all()
-        elif profile == 'ADM':
-            return Admin.objects.all()
+            return EtudiantSerializer(user,data = data)
         elif profile == 'PRO':
-            return Professionnel.objects.all()
+            return ProfessionnelSerializer(user,data = data)
         elif profile == 'TUT':
-            return Tuteur.objects.all()
+            return TuteurSerializer(user, data = user)
+        else :
+            return 'error'
+          
+    def choose_user (self, profile, email):
+        if profile == 'ENS' : 
+            return Enseignant.objects.get(email =email)
+        elif profile == 'ETU':
+            return Etudiant.objects.get(email = email)
+        elif profile == 'PRO':
+            return Professionnel.objects.get(email = email)
+        elif profile == 'TUT':
+            return Tuteur.objects.get(email = email)
+        else :
+            return 'error'
 
     def post (self, request, format = None) :
 
@@ -42,16 +52,54 @@ class importUser (APIView):
 
         errors = []
         for user in users_data :
-            serializer = self.choose_deserializer(user= user, profile= user["profile"])
+            profile_accept = ['ETU', 'TUT', 'PRO', 'ENS']
+
+            profile= user.get("profile")
+            if not profile :
+                errors.append({'user' : user, 'error' : "vous devez spécifier un profile à l'utilisateur : ETU, TUT, ENS, PRO"})
+                continue
+
+            if (profile == 'ADM') or (profile == 'SPR'):
+                errors.append({'user' : user, 'error' : "vous n'êtes pas autorisé à importer des administrateurs ou des super utlisateurs"})
+                continue
+
+            elif profile not in profile_accept :
+                errors.append({'user' : user, 'error' : "le profile n'est pas bon, les profiles acceptés sont les suivants : ETU, TUT, ENS, PRO"})
+                continue
+
+            try : 
+                email = user['email']
+                user_save = CustomUser.objects.get(email =email)
+
+                if user_save.profile != user['profile'] :
+                    errors.append({"user" : user, 'error' : "un utilisateur avec cette adresse mail existe déjà sous un autre profile"})
+                    continue
+
+            except CustomUser.DoesNotExist : 
+                pass 
+            
+            try : 
+                user_save = self.choose_user(profile=profile, email=email)
+                serializer = self.choice_modify_deserializer(profile, user=user_save, data=user)
+            except :
+                serializer = self.choose_deserializer(user= user, profile= profile)
+
+            if serializer == 'error' : 
+                errors.append({"user" :user, "errors" :"le profile n'est pas valide"})
+                continue
+
             if serializer.is_valid() : 
-                serializer.save()
+                #serializer.save()
+                pass
             else : 
                 errors.append({"user" : user, "errors" : serializer.errors})
+                continue
+
         if errors :
             return Response({"errors" : errors}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"success" : "tous les utilisateurs ont été crées avec succès"}, status= status.HTTP_201_CREATED)
 
-""""
+"""       
 class importPromoFiliere(APIView) :
 
     def post (self, request, format = None):

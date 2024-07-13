@@ -1,6 +1,9 @@
 # dernier ajout
 
-- 
+- [importUser](#import-des-utilisateurs): import massif des utilisateurs
+- [validateFormulaire](#validateformulaire): valdier les informations d'un formulaire
+- [sauvegardeFormulaire](#sauvegardeformulaire): sauvegarder les réponse à un formulaire
+- [getFormulaireAll](#getformulaireall): permet à l'administrateur de visualiser un formulaire
 - [juryall](#juryall): renvoie les tages et étudiants suivis par le tuteur connecté
 - [formUser](#formuser):  renvoie toutes les informations d'un formulaire avec les réponses enregistré en fonction de l'utilisateur connecté et du stage passé en paramètre
 
@@ -1378,7 +1381,7 @@ http://127.0.0.1:8000/responseFormulaire/
 
 ## getFormulaireAll
 
-getFormulaireAll permet de récupérer l'ensemble des informations d'un formulaire : l'entité formulaire avec les questions et les checkbox 
+getFormulaireAll permet à un admin de récupérer l'ensemble des informations d'un formulaire : l'entité formulaire avec les questions et les checkbox 
 
 ### URL
 
@@ -1390,7 +1393,11 @@ http://127.0.0.1:8000/getFormulaireAll/<str:pk>/
 
 pk : la clé primaire du formulaire
 
-#### données reçues
+### Permissions :
+
+Admin
+
+### données reçues
 
 les informations de toutes le formulaire
 
@@ -1491,53 +1498,7 @@ http://127.0.0.1:8000/createFormulaireAll/
 }
 ```
 
-## retrieveFormulaire
-
-retrouve un formulaire
-
-### URL
-
-methode : POST
-
-```url
-http://127.0.0.1:8000/retrieveFormulaire/
-```
-
-### données envoyées
-
-```json
-{
-    "id": "materiau",
-    "question": [
-        {
-            "id": 10,
-            "titre": "qu'avez vous fati durantvotre stage",
-            "type": "checkbox",
-            "checkbox": []
-        },
-        {
-            "id": 11,
-            "titre": "le stage vous a t'il plue?",
-            "type": "checkbox",
-            "checkbox": [{
-                        "id": 1,
-                        "title": "Oui"
-                    },
-                    {
-                        "id": 2,
-                        "title": "non"
-                    }]
-        }
-    ],
-    "titre": "avis sur le stage",
-    "description": "avis de l'étudiant sur le déroulement de son stage",
-    "profile": "ETU",
-    "langue": "FR",
-    "filiere": 6
-}
-```
-
-## validateFormulaire
+## sauvegardeFormulaire
 
 sauvegarder un formulaire en enregistrant toutes les réponse apssé en paramètre et en passant la statut du stage lié à ce formulaire en "sauvegarde"
 
@@ -1864,9 +1825,23 @@ données des
 
 ### Données reçues
 
-```json
+#### success
 
+```json
+{
+ "success" : "tous les tulisateurs ont été importé avec succés"
+}
 ```
+
+#### non success
+
+- le profile n'est pas le bon
+- un utilisateur avec ce mail existe avec un profile différent
+- problème lors de l'enregistrement lié au format des données
+- champ non spécifié
+- unicité de l'adresse mail ou du num_etudiant
+- enregistrement de profile non autorisé (ADM, SPR)
+
 
 ## Import des Stages
 
