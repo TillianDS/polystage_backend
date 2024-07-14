@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from django.core.mail import send_mail
 from django.conf import settings
-from back.models import CustomUser, Etudiant, Tuteur
+from back.models import CustomUser, Etudiant, Tuteur, Session
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
@@ -19,60 +19,65 @@ class ChangeMail(APIView):
         
 
 
-class sendMailOpenPolystage(APIView) :
-    # envoie un mail pour l'ouverture de la plateforme AMU Stage
-    def post (self, request, format = None) :
+class BegginSession(APIView) :
+
+    def mailEtudiant (self, request, email_send, prenom, password):
+        subject = 'Ouverture de Polystage'
+        context = {
+            'prenom' : prenom ,
+            'email' : email_send,
+            'password' : password
+        }
+        html_message = render_to_string('email/openPolystageEtudiant.html', context= context)
+        plain_message = strip_tags(html_message)
+
+        from_email = settings.EMAIL_HOST_USER
+        send_mail(subject, plain_message, from_email, [email_send])
+
+    def mailTuteur(self,request, email):
+        subject = 'Ouverture de Polystage'
+        
+        html_message = render_to_string('email/openPolystageTuteur.html')
+
+        plain_message = strip_tags(html_message)
+
+        from_email = settings.EMAIL_HOST_USER
+        send_mail(subject, plain_message, from_email, [email])
+
+    # envoie un mail pour l'ouverture de la plateforme PolyStage
+    def post (self, request, pk, format = None) :
         data = request.data
 
-        if 'promo' not in data :
-            return Response({'error': "vous devez renseigner l'année d'un promotion"}, status=status.HTTP_400_BAD_REQUEST)
-        if 'filiere' not in data :
-            return Response({'error': "vous devez renseigner le nom d'une filiere"}, status=status.HTTP_400_BAD_REQUEST)
+        try : 
+            session = Session.objects.get(pk=pk)
+        except Session.DoesNotExist:
+            return Response({"error" : "la session n'existe pas"})
         
-        promo = data['promo']
-        filiere = data['filiere']
-
-        #on cherche les mail des tous les étudiants correspondant au nom de la fileire et à l'année de la promo voulu
-        email_send = getPromoFilireMail(promo, filiere)
+        if session.filiere != request.user.filiere :
+            return Response({"error" : "vous ne pouvez pas démarrer cette session"})
         
-        
-        subject = 'Ouverture de Polystage'
-        html_message = render_to_string('email/openPolystage.html')
-        plain_message = strip_tags(html_message)
+        for jury in session.jury_set :
+            for soutenance in jury.soutenance_set :
+                email_etudiant = soutenance.stage.etudiant.email
 
-        from_email = settings.EMAIL_HOST_USER
-        send_mail(subject, plain_message, from_email, email_send)
+        #return Response({'success': 'email envoyé avec succès', "mail": email_send}, status=status.HTTP_200_OK)
 
-        return Response({'success': 'email envoyé avec succès', "mail": email_send}, status=status.HTTP_200_OK)
+def confirmationForm (email_send) :
 
-class confirmationForm (APIView) :
-    def post (self, request, format = None):
-        
-        if 'email' not in request.data :
-            return Response({'error': "vous devez renseigner un mail"}, status=status.HTTP_400_BAD_REQUEST)
-       
-        email_send = request.data['email']
+    subject = 'Confirmation de validation du Formulaire'
+    html_message = render_to_string('email/confirmationForm.html')
+    plain_message = strip_tags(html_message)
 
-        subject = 'Confirmation de validation du Formulaire'
-        html_message = render_to_string('email/confirmationForm.html')
-        plain_message = strip_tags(html_message)
-
-        from_email = settings.EMAIL_HOST_USER
-        send_mail(subject, plain_message, from_email, [email_send])
-        return Response({'success': 'email envoyé avec succès'})
+    from_email = settings.EMAIL_HOST_USER
+    send_mail(subject, plain_message, from_email, [email_send])
+    return Response({'success': 'email envoyé avec succès'})
     
-class modificationForm (APIView) :
-    def post (self, request, format = None):
-        
-        if 'email' not in request.data :
-            return Response({'error': "vous devez renseigner un mail"}, status=status.HTTP_400_BAD_REQUEST)
-       
-        email_send = request.data['email']
+def modificationForm (email_send) :
 
-        subject = 'confirmation de modification'
-        html_message = render_to_string('email/modificationForm.html')
-        plain_message = strip_tags(html_message)
+    subject = 'confirmation de modification'
+    html_message = render_to_string('email/modificationForm.html')
+    plain_message = strip_tags(html_message)
 
-        from_email = settings.EMAIL_HOST_USER
-        send_mail(subject, plain_message, from_email, [email_send])
-        return Response({'success': 'email envoyé avec succès'})
+    from_email = settings.EMAIL_HOST_USER
+    send_mail(subject, plain_message, from_email, [email_send])
+    return Response({'success': 'email envoyé avec succès'})

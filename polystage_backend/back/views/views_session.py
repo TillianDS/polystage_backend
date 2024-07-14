@@ -22,3 +22,4 @@ class getUserSession(APIView):
 
     def get(self, request, format = None):
         return SessionSerializer(request.user.jury_set.session, many = True)
+

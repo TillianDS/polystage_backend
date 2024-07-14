@@ -6,11 +6,7 @@ from . import views
 
 urlpatterns = [
      #views_Users
-    path('mailOpenPolystage/', views.sendMailOpenPolystage.as_view()),
-    
-    path('confirmationForm/', views.confirmationForm.as_view()),
-    path('modificationForm/', views.modificationForm.as_view()),
-
+    path('mailOpenPolystage/', views.BegginSession.as_view()),
     ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
