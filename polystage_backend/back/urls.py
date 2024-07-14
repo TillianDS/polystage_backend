@@ -23,7 +23,6 @@ urlpatterns = [
     path('codeReset/', views_login.SendCodeEmail.as_view()),
     path('code/', views_login.gestionCode.as_view()),
     path('logout/', views_login.Logout.as_view(), name='custom_logout'),
-    path('setPassword/', views_login.SetPassword.as_view(), name='setPassword'),
 
     #views_admin
     path('userSearchAllChamp/', views_admin.userSearchAllChamp.as_view()),
@@ -74,6 +73,7 @@ urlpatterns = [
     path('importStage/', views_import.importStage.as_view()),
     path('importSoutenance/', views_import.importSoutenance.as_view()),
     path('importJury/', views_import.importJury.as_view()),
+    path('importSession/', views_import.importSession.as_view()),
 
     #views_export
     path("exportNote/", views_export.exportNote.as_view()),
@@ -81,7 +81,12 @@ urlpatterns = [
     path('', cas.user_cas.as_view()),
 
     #views_superUser
-    path('createSuperUser/', views_superUser.createSuperUser.as_view()),
+    path('superUserList/', views_superUser.superUserList.as_view()),
+    path('deleteSuperuser/<int:pk>/', views_superUser.superUserDelete.as_view()),
+    path('adminList/', views_superUser.AdminList.as_view()),
+    path('adminList/<int:pk>/', views_superUser.AdminDetails.as_view()),
+
+    path('setPassword/', views_superUser.SetPassword.as_view(), name='setPassword'),
 
     
     ]

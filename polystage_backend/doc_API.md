@@ -1,26 +1,27 @@
 # dernier ajout
 
+- [setPassword](#setpassword): changement d'un password par un superutilisateur
+- [gestion des Administrateur et des Superuser](#superuser):  gestion des admin et superuser
+- [importJury](#import-des-jurys): import massif des jurys
+- [importStage](#import-des-stages): import massif des stages
+- [importSoutenance](#import-des-soutenances): import massif des soutenances
+- [importSession](#import-des-sessions): import massif des sessions
 - [importUser](#import-des-utilisateurs): import massif des utilisateurs
 - [validateFormulaire](#validateformulaire): valdier les informations d'un formulaire
 - [sauvegardeFormulaire](#sauvegardeformulaire): sauvegarder les réponse à un formulaire
 - [getFormulaireAll](#getformulaireall): permet à l'administrateur de visualiser un formulaire
 - [juryall](#juryall): renvoie les tages et étudiants suivis par le tuteur connecté
 - [formUser](#formuser):  renvoie toutes les informations d'un formulaire avec les réponses enregistré en fonction de l'utilisateur connecté et du stage passé en paramètre
-
 - changement sur les reponse au formulaire : demande maitenant du stage et non plus de l'étudiant
 - [getJury](#getjury): renvoie les jurys et leur session, lié au membre jury connecté
-
 - [getSessionFiliere](#getsessionfiliere): renvoie les sessions d'une filiere
-
 - [juryAll](#juryall) : renvoie toutes les informations du jury : ses étudiant, soutenances, stages
 - [entudiantAll](#etudiantall) : obtenir toutes les informations lié a étudiant connecté
 - [getStageTuteur](#getstagetuteur): obtenir les stages suivis par le tuteur
 - [getInfoSession](#getinfosession) : toutes les informations d'un session
 - [responseFormulaire](#responseformulaire): renvoie le formulaire et toutes ses réponses associé à un stage
 - [isLeader](#isleader) : l'utilisateur connecté est il leader du jury
-
 - [becomeLeader](#becomeleader) : devenir leader du jury
-
 - [isJury](#isjury) : l'utilisateur connecté fait il partie d'un jury
 
 # commandes bash pour le serveur
@@ -1757,6 +1758,10 @@ si le systeme rencontre une erreur, les données réponse qui ne sont pas en err
 
 Permet d'importer des données massivement, sous format JSON. Si l'instance importé existe déjà dans la base cela modifie ses informations par rapport à celle envoyées. Si l'instance est inactive, cela la rend active.
 
+### Permissions 
+
+Administrateurs
+
 ### Données envoyées
 
 l'envoie des données se fait sous format JSON, un tableau contient chaque champ de l'instance à créer
@@ -1889,11 +1894,15 @@ données des
 
 ### URL
 
-méthode : POST
-
 ```url
 http://127.0.0.1:8000/importStage/
 ```
+
+méthode : POST
+
+### Permissions
+
+Administrateurs
 
 ### Données à envoyer
 
@@ -1913,14 +1922,56 @@ http://127.0.0.1:8000/importStage/
 
 ### Données reçues
 
-```json
+#### non sucess
+
+## Import des Sessions
+
+importe des sessions associé à la filiere de l'administreteur connecté
+
+```url
+http://127.0.0.1:8000/importSession/
 ```
+
+méthode : POST
+
+### Permissions
+
+Administrateurs
+
+### Données à envoyer
+
+```json
+[
+    {
+       
+        "nom": "info 3A 2024"
+    },
+
+    {
+       
+        "nom": "info 3A 2025"
+    }
+]
+```
+
+### Données reçues
+
+#### non success 
+
+- un session avec ce nom existe deja dans la filiere de l'administrateur
+- problème avec le format des données lors de l'enregistrement
 
 ## Import des Soutenances
 
 ```url
 http://127.0.0.1:8000/importSoutenance/
 ```
+
+méthode : POST
+
+### Permissions
+
+Administrateurs
 
 ### Données à envoyer
 
@@ -1934,19 +1985,59 @@ http://127.0.0.1:8000/importSoutenance/
 
 ## Import des Jurys
 
+import en masse des jury associés au membre qui les compose
+
 ```url
 importJury/
 ```
+méthode : POST
 
 ### Données à envoyer
 
+si certaines informations du jury ne sont pas encor disponible, comme le lieu de passage ou le lien zoom, il est possible de ne pas spécifier ces informations
+
 ```json
+[
+    {
+        //information sur le jury
+        "jury" : { 
+            "nom_session" :"info 3A 2024",
+            "num_jury" : 3
+        },
+        //liste des adresses mails des membreJury faisant partie de ce jury
+        "membresJury" : [
+            "ben3@po.fr"
+        ]
+    },
+    {
+        //information sur le jury
+        "jury" : { 
+            "nom_session" :"info 3A 2024",
+            "num_jury" : 3,
+            "zoom" : "http://...",
+            "batiment":"A",
+            "campus":"Luminy",
+            "salle": "127"
+
+        },
+        //liste des adresses mails des membreJury faisant partie de ce jury
+        "membresJury" : [
+            "ben3@po.fr",
+            "mp@po.fr",
+            "yvesJehanno@po.fr"
+        ]
+    }
+]
 ```
 
 ### Données reçues
 
-```json
-```
+#### non success
+
+- il manque des informations sur le jury ou sur les membres jurys
+- les adresse mail ne correspondent à aucun membreJury
+- le nom de la session ne correspond à aucune session active
+- problème lors de l'enregistrement du serializer (manque d'information ou intégrité des données)
 
 # Search
 
@@ -1959,6 +2050,12 @@ recherche un utilisateur selon son nom, prénom, email ou numéro étudiant (si 
 ```url
 userSearch/
 ```
+
+méthode : POST
+
+### Permissions
+
+Administrateurs
 
 ### Données à envoyer
 
@@ -2156,4 +2253,96 @@ informations de l'utilisateur
         "first_connection": true,
         "profile": "ENS"
     }
+```
+
+# SuperUser
+
+endpoint de gestion pour un super utilisateur
+
+## Gestion Administrateur
+enregister un administrateur ou afficher la liste des adminsitrateur
+
+### CRUD 
+
+```url
+http://127.0.0.1:8000/adminList/
+methode : GET, POST
+
+http://127.0.0.1:8000/adminList/<int:id_administrateur>/
+methode : PUT, DELETE
+```
+
+!! contrairement aux autres vues, le delete est un hard_delete : suppression définitive
+
+### Permissions
+
+superutilisateurs : 'SPR'
+
+### Données Administrateur
+
+```json
+{
+    "email" : "email@po.fr",
+    "first_name" : "fisrt_name",
+    "last_name" :"last_name",
+    "password1" : "Password*",
+    "password2" : "Password*"
+}
+```
+
+## Gestion super utilisateur
+
+gérer les super utilisateur
+
+### CRUD 
+
+```url
+http://127.0.0.1:8000/superUserList/
+methode : GET, POST
+
+http://127.0.0.1:8000/superUserDelete/<int:id_superuser>/
+methode : DELETE
+```
+
+!! contrairement aux autres vues, le delete est un hard_delete : suppression définitive
+
+### Permissions
+
+superutilisateurs : 'SPR'
+
+### Données SuperUser
+
+```json
+{
+    "email" : "email@po.fr",
+    "first_name" : "fisrt_name",
+    "last_name" :"last_name",
+    "password1" : "Password*",
+    "password2" : "Password*"
+}
+```
+
+## SetPassword
+
+définir un password pour un utilisateur
+
+```url
+http://127.0.0.1:8000/setPassword/
+```
+
+methode : POST
+
+!!! pas de vérification de la validité du password
+
+### Permissions
+
+superutilisateurs : 'SPR'
+
+### Données envoyées
+
+```json
+{
+    "email" : "email@po.fr",
+    "password" : "Password*"
+}
 ```

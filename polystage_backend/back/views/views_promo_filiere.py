@@ -47,16 +47,16 @@ class FiliereDetails (APIView):
     
 class SessionDetails (APIView) :
 
-    def get_promo (self, pk):
+    def get_session (self, pk):
         return Session.objects.get(pk = pk)
 
     def get (self, request, pk, format = None ) :
-        promo = self.get_promo(pk)
+        promo = self.get_session(pk)
         serializer = SessionSerializer(promo)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def put (self, request, pk, format = None) :
-        promo = self.get_promo(pk)
+        promo = self.get_session(pk)
         serializer = SessionSerializer(promo, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -64,14 +64,14 @@ class SessionDetails (APIView) :
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def delete (self, request, pk, format = None) :
-        promo = self.get_promo(pk)
-        promo.delete()
+        session :Session = self.get_session(pk)
+        session.delete()
         return Response ({"success" : "promo supprimée avec succès"}, status= status.HTTP_204_NO_CONTENT)
     
 class SessionList (APIView) :
     def get(self, request, format = None):
-        promo = Session.objects.all()
-        serializer = SessionSerializer(promo, many= True)
+        session = Session.objects.all()
+        serializer = SessionSerializer(session, many= True)
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
     
     def post (self, request, format = None) :

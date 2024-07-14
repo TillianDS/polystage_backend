@@ -15,7 +15,7 @@ class FiliereSerializer (activeSerializer) :
 class SessionSerializer (activeSerializer) :
     class Meta :
         model = Session
-        fields = ['id', 'nom', 'filiere']
+        fields = ['id', 'nom', 'filiere', 'is_active']
 
 class SessionFiliereSerializer(activeSerializer):
     sessions = serializers.SerializerMethodField()
@@ -76,7 +76,7 @@ class AdminSerializer (UserSerializer) :
 
     class Meta : 
         model = Admin
-        fields = UserSerializer.Meta.fields
+        fields = UserSerializer.Meta.fields + ['filiere']
 
 class StageSerializer (activeSerializer) :
     date_debut = serializers.DateField(format='%d-%m-%Y', input_formats=['%d-%m-%Y'])
@@ -136,7 +136,10 @@ class StageAllSerializer (activeSerializer) :
         model = Stage
         exclude = ['etudiant']
 
-
+class JuryImportSerializer (activeSerializer) : 
+    class Meta : 
+        model = Jury
+        exclude = ['membreJury']
 # --------------- afficher toutes les informations de l'étudiant -----------------
 
 class JuryEtudiantAllSeralizer(activeSerializer):

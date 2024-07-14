@@ -133,6 +133,11 @@ class Session(ActiveModel):
 
     def __str__(self):
         return self.nom
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['nom', 'filiere'], name='nom_filiere')
+        ]
 
 class Jury(ActiveModel):
     membreJury = models.ManyToManyField(MembreJury)
@@ -142,7 +147,16 @@ class Jury(ActiveModel):
     zoom = models.CharField(max_length=300, null = True )
     #models.models.URLField(_(""), max_length=200)
     num_jury = models.IntegerField()
+    session = models.ForeignKey(Session, on_delete=models.CASCADE, related_name='session')
     leader = models.ForeignKey(MembreJury, on_delete=models.CASCADE, related_name='leader', default=None, null= True)
+    
+    def __str__(self):
+        return self.session.nom + ",    jury : " + str(self.num_jury)
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['num_jury', 'session'], name='num_jury_session')
+        ]
 
 class Etudiant (CustomUser):
     num_etudiant = models.CharField(max_length= 20, unique= True)
@@ -180,5 +194,5 @@ class Soutenance(ActiveModel):
     heure_soutenance = models.TimeField(blank = True, null = True)
     jury =  models.ForeignKey(Jury, on_delete=models.CASCADE, null= True )
     note = models.FloatField(validators=[MaxValueValidator(20.0)], null = True)
-    stage = models.ForeignKey(Stage, on_delete=models.CASCADE )
+    stage = models.ForeignKey(Stage, on_delete=models.CASCADE, related_name = 'soutenance')
     soutenu = models.BooleanField(default=False)

@@ -166,9 +166,10 @@ class UserDetails(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, pk, format = None):
-        user = self.choice_user(pk, 'ETU')
+        customUser = self.get_User(pk)
+        user = self.choice_user(pk, customUser.profile)
 
-        serializer = self.choice_deserializer('ETU', user, request.data, False)
+        serializer = self.choice_deserializer(customUser.profile, user, request.data, False)
         
         if serializer.is_valid() :
             serializer.save()
