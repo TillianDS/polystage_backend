@@ -4,11 +4,13 @@ from django.urls import reverse
 from django.http import HttpResponseRedirect
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 
         
 class AdminPermission(BasePermission):
     def has_permission(self, request, view):
+        #if not request.user.a
         return request.user.profile == 'ADM'
     
 class JuryPermission(BasePermission):

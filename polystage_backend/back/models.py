@@ -130,7 +130,7 @@ class Admin(CustomUser):
 class Session(ActiveModel):
     nom = models.CharField(max_length=100)
     filiere =  models.ForeignKey(Filiere, on_delete= models.CASCADE)
-
+    fini = models.BooleanField(default=False)
     def __str__(self):
         return self.nom
     
@@ -138,7 +138,7 @@ class Session(ActiveModel):
         constraints = [
             models.UniqueConstraint(fields=['nom', 'filiere'], name='nom_filiere')
         ]
-
+    
 class Jury(ActiveModel):
     membreJury = models.ManyToManyField(MembreJury)
     salle = models.CharField(max_length=100, null = True)
@@ -175,7 +175,6 @@ class Stage(ActiveModel):
     tuteur =  models.ForeignKey(Tuteur, on_delete=models.CASCADE)
     nom_entreprise = models.CharField(max_length= 400)
     etudiant = models.ForeignKey(Etudiant, related_name ='stage', on_delete=models.CASCADE )
-    soutenu = models.BooleanField(default=False)
     num_convention = models.IntegerField(unique=True)
     def __str__(self):
         return self.sujet

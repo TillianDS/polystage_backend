@@ -15,7 +15,9 @@ class FiliereSerializer (activeSerializer) :
 class SessionSerializer (activeSerializer) :
     class Meta :
         model = Session
-        fields = ['id', 'nom', 'filiere', 'is_active']
+        fields = "__all__"
+        read_only_fields = ['fini']  
+
 
 class SessionFiliereSerializer(activeSerializer):
     sessions = serializers.SerializerMethodField()
@@ -23,6 +25,7 @@ class SessionFiliereSerializer(activeSerializer):
     class Meta:
         model = Filiere
         fields = ['id', 'nom', 'sessions']
+        
 
     def get_sessions(self, obj):
         sessions = Session.objects.filter(filiere=obj)

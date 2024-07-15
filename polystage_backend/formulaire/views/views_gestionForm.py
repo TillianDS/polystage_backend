@@ -6,8 +6,11 @@ from ..serializers import FormulaireSerializer, ResponseSerializer, ResponseChec
 from rest_framework.response import Response
 from django.db.models import Q
 
+"""
+vérifie c
+"""
 def verifyFormulaire (request, id_stage, id_formulaire):
-
+        #on vérifie que le stage existe bien
         try:
             stage = Stage.objects.get(pk=id_stage)
         except Stage.DoesNotExist:

@@ -41,9 +41,11 @@ class CostumLogin(APIView):
         
         if user :
             if not user.first_connection:
-                login(request, user, backend='django.contrib.auth.backends.ModelBackend') 
+                #login(request, user, backend='django.contrib.auth.backends.ModelBackend') 
+                token, created = Token.objects.get_or_create(user=user)
+
                 serializer = UserSerializer(user)
-                return Response({'user_id' : serializer.data["id"], 'profile' : serializer.data['profile']}, status=status.HTTP_202_ACCEPTED) 
+                return Response({'user_id' : serializer.data["id"], "token" : token.key, 'profile' : serializer.data['profile']}, status=status.HTTP_202_ACCEPTED) 
             return Response({"first_connection" : True})
         return Response({'error' : "password or email are not correct"}, status=status.HTTP_401_UNAUTHORIZED)
 

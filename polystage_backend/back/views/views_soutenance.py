@@ -21,10 +21,8 @@ class setNote(APIView):
     permission_classes = [AdminJuryPermission]
     def post(self, request, format = None):
         id_soutenance = request.data['id_soutenance']
-        id_jury = request.data['id_jury']
-        
         note_str = request.data.get('note')
-
+            
         if note_str is None:
             return Response({"errors": "La note est requise."}, status=400)
 
@@ -35,25 +33,34 @@ class setNote(APIView):
         try:
             note = float(note_str)  # Convertir la chaîne en nombre flottant
         except ValueError:
-            return Response({"errors": "La note doit être un nombre valide."})
-        
+            return Response({"errors": "La note doit être un nombre valide."})   
         
         # Vérifier que la note est comprise entre 0 et 20
         if not (0 <= note <= 20):
             return Response({"errors": "La note doit être comprise entre 0 et 20."}, status=status.HTTP_400_BAD_REQUEST)
  
-        user = CustomUser.objects.get(pk=id_user)
+        try :
+            soutenance = Soutenance.objects.get(pk=id_soutenance)
+        except : 
+            return Response({"error" : f"la soutenance avec l'id {id_soutenance} n'existe pas"})
+        
+        jury = soutenance.jury
 
-        jury = Jury.objects.get(pk = id_jury)
-
-        if jury.leader != user :
-            return Response({'error' :"vous n'êtes pas leader du jury"})
-        elif request.user.profile == 'ADM':
+        if request.user.profile == 'ADM':
             pass
-
-        soutenance = Soutenance.objects.get(pk=id_soutenance)
+        elif jury.leader != request.user :
+            return Response({'error' :"vous n'êtes pas leader du jury"})
+        
         soutenance.note= note
+        soutenance.soutenu = True
         soutenance.save()
+        
+        session = soutenance.jury.session
+        soutenances_nonSoutenu = Soutenance.objects.filter(soutenu = False, jury__session = session)
+        if not soutenances_nonSoutenu :
+            session.fini = True
+            session.save()
+
         return Response({'success' :"la note a bien été enregistré"})
 
 

@@ -62,4 +62,37 @@ class responseFormulaire(APIView):
         }
         serializer = FormulaireResponseSerializer(formulaire, context=serializer_context)
         return Response(serializer.data, status=status.HTTP_200_OK)
-   
+    
+"""
+retourne le formulaire pour l'étudiant ou le tuteur connecté selon le stage spécifié, 
+si le stage a été soutenu, cela renvoie tous les formulaires associés
+"""
+class formUser(APIView):
+    
+    def post (self, request, format = None):
+        id_stage = request.data['id_stage']
+        profile = request.user.profile
+
+        try :
+            stage = Stage.objects.get(pk=id_stage)
+        except Stage.DoesNotExist :
+            return Response({"error" : "le stage n'existe pas"})
+        
+
+        #vérification que les utilisateurs etudiant ou tuteur accède bien à leur stage associé
+        if request.user.verify_stage(id_stage):
+            return Response({"error": "Vous n'avez pas accès à ce stage"}, status=status.HTTP_403_FORBIDDEN)
+        
+        #on récupère la session du stage
+        session = stage.StageSession
+        if not session :
+            return Response("la soutenance ou la session ne sont pas encore définies")
+        
+    
+        if stage.soutenu or (profile == 'ENS') or (profile == 'PRO')  or (profile == 'ADM'):
+            formulaire = Formulaire.objects.filter(session = stage.StageSession)
+        else :
+            formulaire = Formulaire.objects.filter(profile = profile, session = stage.StageSession)
+
+        serializer = FormulaireSerializer(formulaire, many = True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

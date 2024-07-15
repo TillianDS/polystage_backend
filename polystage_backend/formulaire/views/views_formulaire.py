@@ -6,6 +6,7 @@ from back.serializers import SoutenanceSerializer
 from ..serializers import FormulaireSerializer, CheckboxSerializer, FormulaireAllSerializer, QuestionSerializer
 from rest_framework.response import Response
 from django.db.models import Q
+from rest_framework.permissions import IsAuthenticated
 
 from polystage_backend.permissions import *
 
@@ -54,6 +55,40 @@ class CreateFormulaireAll(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ModifyFormulaireAll(APIView):
+    def put (self, request, format = None):
+
+        questions = request.data.pop('question', None)
+
+        if questions == None:
+            return Response({'error' : "il manque le champ questions"}, status=status.HTTP_400_BAD_REQUEST)
+
+        id_formulaire = request.data.get('id')
+        if not id_formulaire :
+            return Response({'error' : "vous devez renseigner l'id du formulaire"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try :
+            formulaire_save = Formulaire.objects.get(pk=id_formulaire)
+        except Formulaire.DoesNotExist:
+            return Response({'error' : f"le formulaire avec l'id {id_formulaire} n'exsite pas"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = FormulaireSerializer(request.data, data = formulaire_save)
+        
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        formulaire_save = serializer.save()
+
+        errors = []
+        for question in questions :
+            id_question = question.get('id')
+            if not id_question :
+                serializer = QuestionSerializer(data = question)
+            if question['type']== 'checkbox' :
+                pass
+        if errors :
+            return Response({'errors' : errors})
+        return Response(FormulaireAllSerializer(formulaire_save).data)
   
 class GetFormulaireAll(APIView):
     permission_classes = [AdminPermission]

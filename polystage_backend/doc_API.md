@@ -1,5 +1,6 @@
 # dernier ajout
-
+- ajout de fini à la session lorsque toutes les soutenances de la session sont finit
+- ajout de soutenu à la soutenance : True lorsque la soutenance a été soutenu (lorsqu'elle a reçu une note)
 - [setPassword](#setpassword): changement d'un password par un superutilisateur
 - [gestion des Administrateur et des Superuser](#superuser):  gestion des admin et superuser
 - [importJury](#import-des-jurys): import massif des jurys
@@ -394,6 +395,7 @@ http://127.0.0.1:8000/userDetails/<int>/
 - id (int): id de la promo
 - nom (string) : nom de la session
 - filiere (int) : id de la filiere à laquelle appartient la promo
+- fini (boolean) : toutes les soutenances de la session ont été soutenu
 
 ```json
 {
@@ -753,6 +755,7 @@ http://127.0.0.1:8000/soutenanceDetails/<int>/
 - date_soutenance: date du déroulement de la soutenance
 - heure_soutenance: heure du déroulement de la soutenance
 - note: note de la soutenance
+- soutenu (boolean) : true si la soutenance a été soutenu, False sinon
 
 ```json
 {
@@ -785,7 +788,6 @@ http://127.0.0.1:8000/setNote/
 ```json
 {
     "id_soutenance" : "soutenance à laquelle on veut définir la note",
-    "id_jury" : "id du jury",
     "note" : "la note à définir"
 }
 ```
