@@ -18,8 +18,13 @@ class getInfoSession(APIView):
         return Response(serializer.data)
     
 class getUserSession(APIView):
-    permission_classes = [AdminJuryPermission]
+    permission_classes = [IsAuthenticated, AdminJuryPermission]
 
     def get(self, request, format = None):
-        return SessionSerializer(request.user.jury_set.session, many = True)
+        profile = request.user.profile
+        if profile == 'ADM' :
+            serializer = SessionSerializer(request.user.filiere.session_set, many = True)
+        else :
+            serializer = SessionSerializer(request.user.jury_set.session, many = True)
+        return Response(serializer.data)
 

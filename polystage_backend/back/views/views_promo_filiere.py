@@ -8,7 +8,6 @@ from polystage_backend.permissions import *
 
 
 class FiliereList(APIView):
-    permission_classes = [AdminPermission]
     def get (self, request, format = None):
         filiere = Filiere.objects.all()
         serializer = FiliereSerializer(filiere, many = True)

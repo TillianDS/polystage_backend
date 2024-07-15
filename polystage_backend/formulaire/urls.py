@@ -19,6 +19,7 @@ urlpatterns = [
 
     path('createFormulaireAll/', views_formulaire.CreateFormulaireAll.as_view()),
     path('getFormulaireAll/<str:pk>/', views_formulaire.GetFormulaireAll.as_view()),
+    path('modifyFormulaireAll/<str:pk>/', views_formulaire.ModifyFormulaireAll.as_view()),
 
     #views_response
     path('responseList/', views_response.ResponseList.as_view()),

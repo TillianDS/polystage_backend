@@ -1,4 +1,5 @@
 # dernier ajout
+- [getUserSession](#getusersession): renvoie les sessions auxquels est affilié l'utilisateur connecté
 - ajout de fini à la session lorsque toutes les soutenances de la session sont finit
 - ajout de soutenu à la soutenance : True lorsque la soutenance a été soutenu (lorsqu'elle a reçu une note)
 - [setPassword](#setpassword): changement d'un password par un superutilisateur
@@ -496,6 +497,69 @@ les informations de la session, les étudiants qui font partie de cette session 
         }
     ]
 }
+```
+
+## getUserSession
+
+renvoie les sessions selon l'utilisateur concerné
+
+permet notamment aux admin de ne voir que les sessions lié à la filier à laquelle ils appartiennent
+### URL
+
+Méthode : GET
+
+```url
+http://127.0.0.1:8000/getUserSession/
+```
+### permissions
+MembreJury : Enseignant, Professionnel, Admin
+
+### informations reçues
+
+#### sucess
+
+```json
+[
+    {
+        "id": 8,
+        "is_active": true,
+        "session": {
+            "id": 2,
+            "nom": "info 3A 2024",
+            "filiere": 5
+        },
+        "salle": "A130",
+        "batiment": "A",
+        "campus": "Luminy",
+        "zoom": "http://",
+        "num_jury": 2,
+        "leader": 49,
+        "membreJury": [
+            49,
+            53,
+            54
+        ]
+    },
+    {
+        "id": 9,
+        "is_active": true,
+        "session": {
+            "id": 2,
+            "nom": "info 3A 2024",
+            "filiere": 5
+        },
+        "salle": "B115",
+        "batiment": "B",
+        "campus": "Luminy",
+        "zoom": "http://",
+        "num_jury": 3,
+        "leader": null,
+        "membreJury": [
+            49,
+            54
+        ]
+    }
+]
 ```
 
 # SessionFiliere
@@ -1093,6 +1157,68 @@ MembreJury : Enseignant, Professionnel
 ]
 ```
 
+
+## getJury
+
+renvoie les jurys et leur sessions, associés au membreJury connecté
+
+### URL
+
+Méthode : GET
+
+```url
+http://127.0.0.1:8000/getJury/
+```
+### permissions
+MembreJury : Enseignant, Professionnel
+
+### informations reçues
+
+#### sucess
+
+```json
+[
+    {
+        "id": 8,
+        "is_active": true,
+        "session": {
+            "id": 2,
+            "nom": "info 3A 2024",
+            "filiere": 5
+        },
+        "salle": "A130",
+        "batiment": "A",
+        "campus": "Luminy",
+        "zoom": "http://",
+        "num_jury": 2,
+        "leader": 49,
+        "membreJury": [
+            49,
+            53,
+            54
+        ]
+    },
+    {
+        "id": 9,
+        "is_active": true,
+        "session": {
+            "id": 2,
+            "nom": "info 3A 2024",
+            "filiere": 5
+        },
+        "salle": "B115",
+        "batiment": "B",
+        "campus": "Luminy",
+        "zoom": "http://",
+        "num_jury": 3,
+        "leader": null,
+        "membreJury": [
+            49,
+            54
+        ]
+    }
+]
+```
 # Authentification
 
 ### login

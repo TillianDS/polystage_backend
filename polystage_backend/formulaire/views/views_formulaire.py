@@ -1,6 +1,6 @@
 from .views_list_details import *
 from ..models import Formulaire, CheckBox, Question
-from back.models import Etudiant, Stage
+from back.models import Session, Stage
 from back.serializers import SoutenanceSerializer
 
 from ..serializers import FormulaireSerializer, CheckboxSerializer, FormulaireAllSerializer, QuestionSerializer
@@ -48,7 +48,21 @@ class CheckboxDetails(Details):
 
 # définition des class pour la création de formulaire, question et checkbox en même temps
 class CreateFormulaireAll(APIView):
+    permission_classes = [IsAuthenticated, AdminPermission]
     def post(self, request, format= None):
+        id_session = request.data.get('session')
+        if not id_session :
+            return Response({'error' : "le formulaire doit être associé à une session"})
+
+        try : 
+            session = Session.objects.get(pk=id_session)
+        except Session.DoesNotExist :
+            return Response({'error' : f"la session avec l'id {id_session} n'existe pas"})
+
+        #on vérifie que l'administratuer à bien accès à la session associé au formulaire
+        if session.filiere != request.user.filiere :
+            return Response({"error" :"vous n'êtes pas autorisé à créer un formulaire pour cette session"})
+        
         serializer = FormulaireAllSerializer(data =request.data)
         if serializer.is_valid():
             serializer.save()
@@ -57,21 +71,27 @@ class CreateFormulaireAll(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ModifyFormulaireAll(APIView):
-    def put (self, request, format = None):
+    permission_classes = [IsAuthenticated, AdminPermission]
 
+    def put (self, request, pk, format = None):
+
+        id_formulaire = pk
         questions = request.data.pop('question', None)
+
+        id_session = request.data.get('session')
+        if not id_session :
+            return Response({'error' : "le formulaire doit être associé à une session"})
 
         if questions == None:
             return Response({'error' : "il manque le champ questions"}, status=status.HTTP_400_BAD_REQUEST)
 
-        id_formulaire = request.data.get('id')
-        if not id_formulaire :
-            return Response({'error' : "vous devez renseigner l'id du formulaire"}, status=status.HTTP_400_BAD_REQUEST)
-        
         try :
             formulaire_save = Formulaire.objects.get(pk=id_formulaire)
         except Formulaire.DoesNotExist:
             return Response({'error' : f"le formulaire avec l'id {id_formulaire} n'exsite pas"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if formulaire_save.session.filire.id !=  id_session :
+            return Response({'error' : "vous ne pouvez pas changer ce formulaire de session"})
         
         serializer = FormulaireSerializer(request.data, data = formulaire_save)
         
@@ -81,17 +101,59 @@ class ModifyFormulaireAll(APIView):
 
         errors = []
         for question in questions :
+            question['formulaire'] = id_formulaire
             id_question = question.get('id')
+
+            checkboxs_data = question.pop('checkbox', None)
+            if checkboxs_data == None :
+                errors.append({'question' : question, 'error' : "la question n'a pas de checkbox : checkbox : []"})
+                continue
+        
             if not id_question :
                 serializer = QuestionSerializer(data = question)
+            else :
+                try :
+                    question_save = Question.objects.get(pk=id_question)
+                except Question.DoesNotExist :
+                    errors.append({'question' : question, 'error' : f"la question avec l'id {id_question} n'existe pas"})
+                    continue
+                
+                serializer = QuestionSerializer(question_save, data = question)
+                if not serializer.is_valid():
+                    errors.append({'question' : question, 'error' : serializer.errors})
+                    continue
+                question_save = serializer.save()
+
+                id_question = question_save.id
+
             if question['type']== 'checkbox' :
-                pass
+                for checkbox in checkboxs_data :
+                    checkbox['question'] = id_question
+                    id_checkbox = checkbox.get('id')
+                    if id_checkbox :
+                        try :
+                            checkbox_save = CheckBox.objects.get(pk = id_checkbox)
+                        except CheckBox.DoesNotExist :
+                            errors.append({'question' : question, 'checkbox' :checkbox, 'error' : f"la checkbox avec l'id {id_checkbox} n'exsite pas"})
+                            continue
+
+                        serializer = CheckboxSerializer(checkbox_save, data = checkbox)
+                    else :
+                        serializer = CheckboxSerializer(data = checkbox)
+                if not serializer.is_valid():
+                    errors.append({'question' : question, 'checkbox' :checkbox, 'error' : serializer.errors})
+                    continue
+                serializer.save()
+                            
         if errors :
             return Response({'errors' : errors})
         return Response(FormulaireAllSerializer(formulaire_save).data)
   
+"""
+retourne toutes les informations d'un formulaire
+"""
 class GetFormulaireAll(APIView):
-    permission_classes = [AdminPermission]
+    permission_classes = [IsAuthenticated, AdminPermission]
     def get(self, request, pk, format= None):
         formulaire = Formulaire.objects.get(pk=pk)
         serializer = FormulaireAllSerializer(formulaire)
