@@ -41,7 +41,6 @@ class CostumLogin(APIView):
         
         if user :
             if not user.first_connection:
-                #login(request, user, backend='django.contrib.auth.backends.ModelBackend') 
                 token, created = Token.objects.get_or_create(user=user)
 
                 serializer = UserSerializer(user)
