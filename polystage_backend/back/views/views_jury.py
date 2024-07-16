@@ -2,9 +2,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from ..models import Jury, CustomUser, MembreJury, Filiere
-from ..serializers import JurySerializer, JuryAffichageSerializer, MembreJurySerializer, JuryAllSerializer, JurysUserSerializer
+from ..serializers import JurySerializer, JuryAffichageSerializer, MembreJurySerializer, JuryAllSerializer, JurysUserSerializer, EnseignantSerializer, EtudiantSerializer
 from rest_framework.authentication import TokenAuthentication
 from polystage_backend.permissions import *
+from django.contrib.auth import get_user_model
+
 
 class JuryList(APIView):
     def get (self, request, format = None):
@@ -125,7 +127,7 @@ class isLeader(APIView):
 retourne les soutenance liées à un jury
 """
 class juryAll(APIView):
-    permission_classes = [AdminJuryPermission]
+    permission_classes = [IsAuthenticated, AdminJuryPermission]
     def get(self,request, pk, format= None):        
         try : 
             jury = Jury.objects.get(pk=pk)
@@ -138,12 +140,13 @@ class juryAll(APIView):
     
 """renvoie les jurys à l'utilisateur (membreJury) connecté"""
 class getJuryMembreJury(APIView):
-    permission_classes = [JuryPermission]
+    #permission_classes = [IsAuthenticated, JuryPermission]
 
     def get (self, request, format = None):
-        return Response(JurysUserSerializer(request.user.jury_set, many = True).data)
+        user = request.user
+        return Response(EtudiantSerializer(user).data)
 
-class getJuryFiliere(APIView):
+class getJury(APIView):
     def get (self, request, format = None):
         filiere = Filiere.objects.get(nom = 'Informatique')
         jurys = Jury.objects.filter(filiere = filiere)

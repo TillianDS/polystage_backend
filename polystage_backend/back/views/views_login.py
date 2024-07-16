@@ -16,6 +16,8 @@ from django.utils.deprecation import MiddlewareMixin
 from polystage_backend.permissions import *
 from django.contrib.auth.models import AnonymousUser
 from rest_framework.exceptions import AuthenticationFailed
+from django.contrib.auth import get_user_model
+import logging
 
 class CostumLogin(APIView):
     """
@@ -51,24 +53,18 @@ class CostumLogin(APIView):
             return Response({"first_connection" : True})
         return Response({'error' : "password or email are not correct"}, status=status.HTTP_401_UNAUTHORIZED)
 
- 
+logger = logging.getLogger(__name__)
+
 class UserProfileMiddleware(MiddlewareMixin):
     def process_request(self, request):
-        user = self.get_user_from_token(request)
-
-        if user and not isinstance(user, AnonymousUser):
-            if user.profile == 'ENS':
-                request.user = Enseignant.objects.get(pk=user.pk)
-            elif user.profile == 'ETU':
-                request.user = Etudiant.objects.get(pk=user.pk)
-            elif user.profile == 'ADM':
-                request.user = Admin.objects.get(pk=user.pk)
-            elif user.profile == 'PRO':
-                request.user = Professionnel.objects.get(pk=user.pk)
-            elif user.profile == 'TUT':
-                request.user = Tuteur.objects.get(pk=user.pk)
-        else:
-            request.user = AnonymousUser()
+        user = request.user
+        if user.is_authenticated:
+            User = get_user_model()
+            for subclass in User.__subclasses__():
+                if subclass.objects.filter(id=user.id).exists():
+                    request.user = subclass.objects.get(id=user.id)
+                    logger.info(f"User replaced with: {request.user}")
+                    break
 
     def get_user_from_token(self, request):
         auth = TokenAuthentication()

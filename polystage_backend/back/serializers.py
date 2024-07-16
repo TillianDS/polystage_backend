@@ -193,7 +193,7 @@ class SessionAllSerializer (activeSerializer):
 
     class Meta :
         model = Session
-        fields = ['id', 'nom', 'etudiants', 'jurys']
+        fields = ['id', 'nom', 'etudiants', 'jurys', 'fini']
 
     def get_etudiants(self, obj):
         soutenances = Soutenance.objects.filter(jury__session=obj)
@@ -202,7 +202,7 @@ class SessionAllSerializer (activeSerializer):
         return serializer.data
     
     def get_jurys (self, obj):
-        return JurySerializer(obj.jury_set, many=True).data
+        return JurySerializer(obj.session, many=True).data
 
 # -------------------- affiche l'étudiant et la soutenance lié à un stage ---------------------
 

@@ -12,7 +12,7 @@ class getInfoSession(APIView):
     def get(self, request, pk, format= None ):
         try :
             session = Session.objects.get(pk=pk)
-        except:
+        except Session.DoesNotExist:
             return Response({"error':f'la session {pk} n'existe pas"})
         serializer = SessionAllSerializer(session)
         return Response(serializer.data)
