@@ -6,18 +6,12 @@ from rest_framework import status
 from ..models import CustomUser, CodePassword
 from ..serializers import *
 from rest_framework.authtoken.models import Token
-from rest_framework.authentication import TokenAuthentication, get_authorization_header
 from django.contrib.auth import login, authenticate
 from django.core.mail import send_mail
 from django.conf import settings
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import logout
-from django.utils.deprecation import MiddlewareMixin
 from polystage_backend.permissions import *
-from django.contrib.auth.models import AnonymousUser
-from rest_framework.exceptions import AuthenticationFailed
-from django.contrib.auth import get_user_model
-import logging
 
 class CostumLogin(APIView):
     """
@@ -42,7 +36,7 @@ class CostumLogin(APIView):
         email = request.data['email']
         password = request.data['password']
         user : CustomUser = authenticate (request, email= email, password = password, backend='django.contrib.auth.backends.ModelBackend',)        
-        
+        user = Etudiant.objects.get(pk = user.pk)
         if user :
             if not user.first_connection:
                 #login(request, user, backend='django.contrib.auth.backends.ModelBackend') 
@@ -53,32 +47,6 @@ class CostumLogin(APIView):
             return Response({"first_connection" : True})
         return Response({'error' : "password or email are not correct"}, status=status.HTTP_401_UNAUTHORIZED)
 
-logger = logging.getLogger(__name__)
-
-class UserProfileMiddleware(MiddlewareMixin):
-    def process_request(self, request):
-        user = request.user
-        if user.is_authenticated:
-            User = get_user_model()
-            for subclass in User.__subclasses__():
-                if subclass.objects.filter(id=user.id).exists():
-                    request.user = subclass.objects.get(id=user.id)
-                    logger.info(f"User replaced with: {request.user}")
-                    break
-
-    def get_user_from_token(self, request):
-        auth = TokenAuthentication()
-        auth_header = get_authorization_header(request).split()
-        if not auth_header or auth_header[0].lower() != b'token':
-            return AnonymousUser()
-
-        try:
-            token = auth_header[1].decode()
-            user, _ = auth.authenticate_credentials(token)
-            return user
-        except (AuthenticationFailed, IndexError, UnicodeError):
-            return AnonymousUser()
-    
 class Logout(APIView):
     def get(self, request):
         logout(request)

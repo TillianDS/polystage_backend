@@ -1,8 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from ..models import Jury, CustomUser, MembreJury, Filiere
-from ..serializers import JurySerializer, JuryAffichageSerializer, MembreJurySerializer, JuryAllSerializer, JurysUserSerializer, EnseignantSerializer, EtudiantSerializer
+from ..models import Jury, CustomUser, MembreJury, Filiere, Enseignant, Admin, Tuteur, Etudiant
+from ..serializers import JurySerializer, JuryAffichageSerializer, MembreJurySerializer, JuryAllSerializer, JurysUserSerializer, EnseignantSerializer, EtudiantSerializer, UserSerializer, AdminSerializer, TuteurSerializer
 from rest_framework.authentication import TokenAuthentication
 from polystage_backend.permissions import *
 from django.contrib.auth import get_user_model
@@ -140,12 +140,23 @@ class juryAll(APIView):
     
 """renvoie les jurys à l'utilisateur (membreJury) connecté"""
 class getJuryMembreJury(APIView):
-    #permission_classes = [IsAuthenticated, JuryPermission]
-
-    def get (self, request, format = None):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, format=None):
         user = request.user
-        return Response(EtudiantSerializer(user).data)
+        # Utilisez le serializer approprié en fonction du profil de l'utilisateur
+        if isinstance(user, Etudiant):
+            serializer = EtudiantSerializer(user)
+        elif isinstance(user, Enseignant):
+            serializer = EnseignantSerializer(user)
+        elif isinstance(user, Admin):
+            serializer = AdminSerializer(user)
+        elif isinstance(user, Tuteur):
+            serializer = TuteurSerializer(user)
+        else:
+            return Response({'error': request.user.profile}, status=400)
 
+        return Response(serializer.data)
+    
 class getJury(APIView):
     def get (self, request, format = None):
         filiere = Filiere.objects.get(nom = 'Informatique')
