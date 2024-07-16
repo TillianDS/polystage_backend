@@ -12,14 +12,13 @@
 - [validateFormulaire](#validateformulaire): valdier les informations d'un formulaire
 - [sauvegardeFormulaire](#sauvegardeformulaire): sauvegarder les réponse à un formulaire
 - [getFormulaireAll](#getformulaireall): permet à l'administrateur de visualiser un formulaire
-- [juryall](#juryall): renvoie les tages et étudiants suivis par le tuteur connecté
 - [formUser](#formuser):  renvoie toutes les informations d'un formulaire avec les réponses enregistré en fonction de l'utilisateur connecté et du stage passé en paramètre
 - changement sur les reponse au formulaire : demande maitenant du stage et non plus de l'étudiant
-- [getJury](#getjury): renvoie les jurys et leur session, lié au membre jury connecté
+- [getJuryMembreJury](#getjurymembrejury): renvoie les jurys et leur session, lié au membre jury connecté
 - [getSessionFiliere](#getsessionfiliere): renvoie les sessions d'une filiere
 - [juryAll](#juryall) : renvoie toutes les informations du jury : ses étudiant, soutenances, stages
 - [entudiantAll](#etudiantall) : obtenir toutes les informations lié a étudiant connecté
-- [getStageTuteur](#getstagetuteur): obtenir les stages suivis par le tuteur
+- [getStageTuteur](#getstagetuteur): renvoie les stages et étudiants suivis par le tuteur connecté
 - [getInfoSession](#getinfosession) : toutes les informations d'un session
 - [responseFormulaire](#responseformulaire): renvoie le formulaire et toutes ses réponses associé à un stage
 - [isLeader](#isleader) : l'utilisateur connecté est il leader du jury
@@ -1095,7 +1094,7 @@ argument requête : l'id du jury
 ```
 
 
-## getJury
+## getJuryMembreJury
 
 renvoie les jurys et leur sessions, associés au membreJury connecté
 
@@ -1104,7 +1103,7 @@ renvoie les jurys et leur sessions, associés au membreJury connecté
 Méthode : GET
 
 ```url
-http://127.0.0.1:8000/getJury/
+http://127.0.0.1:8000/getJuryMembreJury/
 ```
 ### permissions
 MembreJury : Enseignant, Professionnel

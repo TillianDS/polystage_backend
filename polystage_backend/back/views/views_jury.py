@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from ..models import Jury, CustomUser, MembreJury
+from ..models import Jury, CustomUser, MembreJury, Filiere
 from ..serializers import JurySerializer, JuryAffichageSerializer, MembreJurySerializer, JuryAllSerializer, JurysUserSerializer
 from rest_framework.authentication import TokenAuthentication
 from polystage_backend.permissions import *
@@ -137,8 +137,15 @@ class juryAll(APIView):
         return Response(serializer.data)
     
 """renvoie les jurys à l'utilisateur (membreJury) connecté"""
-class getJury(APIView):
+class getJuryMembreJury(APIView):
     permission_classes = [JuryPermission]
 
     def get (self, request, format = None):
         return Response(JurysUserSerializer(request.user.jury_set, many = True).data)
+
+class getJuryFiliere(APIView):
+    def get (self, request, format = None):
+        filiere = Filiere.objects.get(nom = 'Informatique')
+        jurys = Jury.objects.filter(filiere = filiere)
+        serializer = JurySerializer(jurys, many = True)
+        return Response(serializer.data)

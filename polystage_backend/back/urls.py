@@ -63,7 +63,7 @@ urlpatterns = [
     path('becomeLeader/', views_jury.becomeLeader.as_view()),
     path('isLeader/', views_jury.isLeader.as_view()),
     path('juryAll/<int:pk>/', views_jury.juryAll.as_view()),
-    path('getJury/', views_jury.getJury.as_view()),
+    path('getJuryMembreJury/', views_jury.getJuryMembreJury.as_view()),
 
     #views_etudiant
     path('etudiantAll/', views_etudiant.EtudiantAll.as_view()),
