@@ -1,5 +1,6 @@
 # dernier ajout
-- [userSearch](#usersearch): rehcerche des utilsateurs
+- [manageJuryMembreJury](#managejurymembrejury): gérer la relation entre les membreJury et un Jury
+- [userSearch](#usersearch): recherche des utilisateurs
 - [getUserSession](#getusersession): renvoie les sessions auxquels est affilié l'utilisateur connecté
 - ajout de fini à la session lorsque toutes les soutenances de la session sont finit
 - ajout de soutenu à la soutenance : True lorsque la soutenance a été soutenu (lorsqu'elle a reçu une note)
@@ -1219,6 +1220,47 @@ MembreJury : Enseignant, Professionnel
     }
 ]
 ```
+
+
+## manageJuryMembreJury
+
+permet d'ajouter ou de supprimer des membreJury d'un jury, ou un jury d'un membreJury
+
+### URL
+
+Méthode : POST, DELETE
+
+```url
+http://127.0.0.1:8000/manageJuryMembreJury/
+```
+### permissions
+Admin
+
+### Données envoyées
+
+```json
+{
+    "id_membreJury": "id du membreJury concerné",
+    "id_jury" :"id du jury concerné"
+}
+```
+
+### informations reçues
+
+#### sucess
+
+```json
+POST:
+{
+    "success": "le membreJury  49 a été ajouté avec succès au jury 6"
+}
+
+DELETE: 
+{
+    "success": "le membreJury  49 a bien été dissocié du jury 6"
+}
+```
+
 # Authentification
 
 ### login

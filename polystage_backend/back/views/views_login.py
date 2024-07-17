@@ -45,7 +45,7 @@ class CostumLogin(APIView):
                 return Response({'user_id' : serializer.data["id"], "token" : token.key, 'profile' : serializer.data['profile']}, status=status.HTTP_202_ACCEPTED) 
             return Response({"first_connection" : True})
         return Response({'error' : "password or email are not correct"}, status=status.HTTP_401_UNAUTHORIZED)
-
+    
 class Logout(APIView):
     def get(self, request):
         logout(request)

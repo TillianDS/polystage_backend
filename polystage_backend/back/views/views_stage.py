@@ -68,10 +68,10 @@ class StageDetails (APIView):
 retourne les stages et leur étudiants, soutenance, session suivis par tuteur connecté 
 """ 
 class getStageTuteur(APIView):
-    permission_classes = [TuteurPermission]
+    permission_classes = [IsAuthenticated, TuteurPermission]
 
     def get (self, request, format = None):
-        user = Tuteur.objects.get(pk= request.user.pk)
-        serializer = StageTuteurSerializer(user.stage_set, many = True)
+        
+        serializer = StageTuteurSerializer(request.user.instance.stage_set, many = True)
 
         return Response(serializer.data)

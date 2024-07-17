@@ -81,6 +81,23 @@ class CustomUser(AbstractUser):
             return self.stage_set.filter(pk=id_stage).exists()  # Assurez-vous que le related_name est correct pour Tuteur
         return True
     
+    @property
+    def instance(self):
+        if self.profile == 'ETU':
+            return Etudiant.objects.get(id=self.id)
+        elif self.profile == 'ENS':
+            return Enseignant.objects.get(id=self.id)
+        elif self.profile == 'ADM':
+            return Admin.objects.get(id=self.id)
+        elif self.profile == 'PRO':
+            return Professionnel.objects.get(id=self.id)
+        elif self.profile == 'TUT':
+            return Tuteur.objects.get(id=self.id)
+        elif self.profile == 'SPR':
+            return self
+        else:
+            return self
+        
 class ActiveModel(models.Model):
     is_active = models.BooleanField(default=True)
 

@@ -140,26 +140,73 @@ class juryAll(APIView):
     
 """renvoie les jurys à l'utilisateur (membreJury) connecté"""
 class getJuryMembreJury(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, JuryPermission]
     def get(self, request, format=None):
-        user = request.user
-        # Utilisez le serializer approprié en fonction du profil de l'utilisateur
-        if isinstance(user, Etudiant):
-            serializer = EtudiantSerializer(user)
-        elif isinstance(user, Enseignant):
-            serializer = EnseignantSerializer(user)
-        elif isinstance(user, Admin):
-            serializer = AdminSerializer(user)
-        elif isinstance(user, Tuteur):
-            serializer = TuteurSerializer(user)
-        else:
-            return Response({'error': request.user.profile}, status=400)
-
+        serializer = JurySerializer(request.user.instance.jury_set, many = True)
         return Response(serializer.data)
-    
+
+"""
+renvoie les jury relatifs à la filiere de l'administrateur connecté
+"""
 class getJury(APIView):
+    permission_classes = [IsAuthenticated, AdminPermission]
+
     def get (self, request, format = None):
-        filiere = Filiere.objects.get(nom = 'Informatique')
+        filiere = request.user.instance.filiere
         jurys = Jury.objects.filter(filiere = filiere)
         serializer = JurySerializer(jurys, many = True)
         return Response(serializer.data)
+
+"""
+ajouter un membre jury à un jury, ou un jury au membreJury
+"""    
+class manageJuryMembreJury(APIView):
+    permission_classes = [IsAuthenticated, AdminPermission]
+    def post(self, request, format = None):
+        try :
+            id_membreJury = request.data['id_membreJury']
+        except : 
+            return Response({'error' : 'vous devez spécifier un membreJury : id_membreJury'})
+        try :
+            id_jury = request.data['id_jury']
+        except :
+            return Response({'error' : 'vous devez préciser un jury ; id_jury'})
+        
+        try :
+            jury = Jury.objects.get(pk =id_jury)
+        except Jury.DoesNotExist:
+            return Response({'error' : f"le jury avec l'id {id_jury}"})
+        
+        try :
+            membreJury = MembreJury.objects.get(pk=id_membreJury)
+        except MembreJury.DoesNotExist:
+            return Response({'error' : f"le membreJury avec l'id {id_membreJury}"})
+        
+        jury.membreJury.add(membreJury)
+        jury.save()
+        return Response({'success' : f'le membreJury  {id_membreJury} a été ajouté avec succès au jury {id_jury}'})
+    
+    def delete(self, request, format = None):
+        try :
+            id_membreJury = request.data['id_membreJury']
+        except : 
+            return Response({'error' : 'vous devez spécifier un membreJury : id_membreJury'})
+        try :
+            id_jury = request.data['id_jury']
+        except :
+            return Response({'error' : 'vous devez préciser un jury ; id_jury'})
+        
+        try :
+            jury = Jury.objects.get(pk =id_jury)
+        except Jury.DoesNotExist:
+            return Response({'error' : f"le jury avec l'id {id_jury}"})
+        
+        try :
+            membreJury = MembreJury.objects.get(pk=id_membreJury)
+        except MembreJury.DoesNotExist:
+            return Response({'error' : f"le membreJury avec l'id {id_membreJury}"})
+        
+        jury.membreJury.remove(membreJury)
+        jury.save()
+        return Response({'success' : f'le membreJury  {id_membreJury} a bien été dissocié du jury {id_jury}'})
+    
