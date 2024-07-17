@@ -1,4 +1,5 @@
 # dernier ajout
+
 - [manageJuryMembreJury](#managejurymembrejury): gérer la relation entre les membreJury et un Jury
 - [userSearch](#usersearch): recherche des utilisateurs
 - [getUserSession](#getusersession): renvoie les sessions auxquels est affilié l'utilisateur connecté
@@ -1435,7 +1436,6 @@ http://127.0.0.1:8000/responseList/
 http://127.0.0.1:8000/responseDetails/<int>/
 ```
 
-
 ## formUser
 
 tuteur ou étudiant : si le stage est soutenu, renvoie tous les formulaire lié à la session du stage, sinon renvoie juste les formulaires lié à son role
@@ -1584,10 +1584,12 @@ http://127.0.0.1:8000/responseFormulaire/
     ]
 }
 ```
-### non success 
+
+### non success
+
 - le formulaire n'existe pas
 - le stage n'existe pas
-- l'utilisateur (etudiant, tuteur) ne sont pas associés à ce stage 
+- l'utilisateur (etudiant, tuteur) ne sont pas associés à ce stage
 - le formulaire n'est pas encre accessible à l'etudiant ou le tuteur
 
 # Autres endpoints formulaire

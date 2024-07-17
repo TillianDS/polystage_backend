@@ -1,6 +1,6 @@
 from .views_list_details import *
 from ..models import Formulaire, CheckBox, Question
-from back.models import Session, Stage
+from back.models import Session, Stage, Soutenance
 from back.serializers import SoutenanceSerializer
 
 from ..serializers import FormulaireSerializer, CheckboxSerializer, FormulaireAllSerializer, QuestionSerializer
@@ -192,3 +192,13 @@ class formUser(APIView):
 
         serializer = FormulaireSerializer(formulaire, many = True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class getFormulaireSoutenance(APIView):
+    def get(self, request, pk, format = None):
+        try :
+            souten
+        except Soutenance.DoesNotExist:
+            return Response({"error" : f"la soutance avec l'id {pk}"})
+
+        serializer = FormulaireSerializer
+        return Response(serializer)

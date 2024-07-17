@@ -24,7 +24,7 @@ class Formulaire (models.Model):
     
     
     def __str__ (self) :
-        return str(self.title)
+        return str(self.titre)
 
 class Question (models.Model):
     titre = models.TextField()
@@ -38,7 +38,7 @@ class Question (models.Model):
     obligatoire = models.BooleanField(default=True)
     formulaire = models.ForeignKey(Formulaire, related_name = 'question', on_delete=models.CASCADE)
     def __str__ (self) :
-        return str(self.id) + " " +self.title
+        return str(self.id) + " " +self.titre
     
 class ResponseForm (models.Model):
     content = models.TextField()
@@ -52,7 +52,7 @@ class CheckBox (models.Model):
     question = models.ForeignKey(Question, related_name = 'checkbox', on_delete= models.CASCADE )
     content =models.BooleanField(default=False)
     def __str__ (self) :
-        return str(self.question) + " " + str(self.title)
+        return str(self.question) + " " + str(self.titre)
 
 class ResponseCheckbox(models.Model):
     checkbox = models.ForeignKey(CheckBox, on_delete=models.CASCADE)
