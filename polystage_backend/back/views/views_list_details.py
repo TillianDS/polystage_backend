@@ -2,6 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.db import models
+from back.models import *
+from back.serializers import * 
 from rest_framework import serializers
 
 class List(APIView):
@@ -55,4 +57,3 @@ class Details(APIView):
         instance = self.getInstance(pk)
         instance.delete()
         return Response({'success': 'instance de {nom} supprimée avec succès'.format(nom=self.nom)})
-    

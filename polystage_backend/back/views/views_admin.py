@@ -2,14 +2,14 @@ from datetime import datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from ..models import Etudiant, CustomUser, Tuteur, Stage, Soutenance, Jury
+from ..models import Etudiant, CustomUser, Tuteur, Stage, Soutenance, Jury, Professionnel, Enseignant
 from formulaire.models import Question
-from ..serializers import EtudiantSerializer, UserSerializer, StageSerializer, SoutenanceSerializer
+from ..serializers import EtudiantSerializer, UserSerializer, StageSerializer, SoutenanceSerializer, EnseignantSerializer, ProfessionnelSerializer, TuteurSerializer
 from rest_framework.authentication import TokenAuthentication
 from .views_users import UserList
 from django.db.models import Q
 from itertools import chain
-
+from polystage_backend.permissions import *
 
 class userSearchAllChamp (APIView):
 
@@ -60,6 +60,7 @@ class userSearchAllChamp (APIView):
         return Response(UserSerializer(user, many = True).data)
 
 class userSearch (APIView):
+    permission_classes = [IsAuthenticated, AdminJuryPermission]
     """
     permet de rechercher des utilisateurs selon leur nom, prénom, email ou numéro étudiant sur un seul champ
     la méthode recherche dans la base si les champs utilisateurs contiennent la chaine passé en data  
@@ -71,25 +72,65 @@ class userSearch (APIView):
     Response : informations correspondants à un utilisateurs
 
     """
-    def post(self, request, format = None):
-        search = request.data['search']
-
-        etudiants = Etudiant.objects.filter(Q(last_name__icontains = search) |
+    
+    def choose_user (self, profile):
+        if profile == 'ENS' : 
+            return Enseignant
+        elif profile == 'ETU':
+            return Etudiant
+        elif profile == 'PRO':
+            return Professionnel
+        elif profile == 'TUT':
+            return Tuteur
+        
+    def choose_serializer (self, profile) :
+        if profile == 'ENS' : 
+            return EnseignantSerializer
+        elif profile == 'ETU':
+            return EtudiantSerializer
+        elif profile == 'PRO':
+            return ProfessionnelSerializer
+        elif profile == 'TUT':
+            return TuteurSerializer
+        
+    #permet de rechercher selon le profile de l'utilisateur en choissisant le model et le serialzier adapté
+    def search (self, profile, search):
+        model = self.choose_user(profile)
+        if profile == 'ETU' :
+            user = model.objects.filter(Q(last_name__icontains = search) |
                                            Q(first_name__icontains = search) | 
                                            Q(num_etudiant__icontains = search) | 
                                            Q(email__icontains = search))
+        else :
+            user = model.objects.filter(Q(last_name__icontains = search) |
+                                           Q(first_name__icontains = search) | 
+                                           Q(email__icontains = search))
+        serializer_user = self.choose_serializer(profile)
         
-        users = CustomUser.objects.filter(Q(email__icontains = search) | 
-                                         Q(last_name__icontains = search) |
-                                         Q(first_name__icontains = search)
-                                         ).exclude(profile='ETU')
+        serializer = serializer_user(user, many = True)
+        return serializer.data
+    
+    def post(self, request, format = None):
+        try :
+            search = request.data['search']
+        except :
+            return Response({'error' : "vous devez préciser un champ search"})
         
-        etudiants_data = EtudiantSerializer(etudiants, many = True).data
-        users_data = (UserSerializer(users, many = True).data)
+        profile = request.data.get('profile')
 
-        data = list(chain(etudiants_data, users_data))
+        profiles = ['ETU', 'TUT', 'ENS', 'PRO']
 
-        return Response(data)
+        if profile : 
+            if profile not in profiles:
+                return Response({'error' : "le profile n'est pas valide"})
+            users_data = self.search(profile, search)
+
+        else :
+            users_data = []
+            for profile in profiles :
+                users = self.search(profile, search)
+                users_data = list(chain(users_data, users))
+        return Response(users_data)
 
 class stageSearch (APIView):
 

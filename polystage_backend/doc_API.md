@@ -1,4 +1,5 @@
 # dernier ajout
+- [userSearch](#usersearch): rehcerche des utilsateurs
 - [getUserSession](#getusersession): renvoie les sessions auxquels est affilié l'utilisateur connecté
 - ajout de fini à la session lorsque toutes les soutenances de la session sont finit
 - ajout de soutenu à la soutenance : True lorsque la soutenance a été soutenu (lorsqu'elle a reçu une note)
@@ -2172,7 +2173,7 @@ rechercher dans les différentes tables selon un / des critères souhaité
 
 ## userSearch
 
-recherche un utilisateur selon son nom, prénom, email ou numéro étudiant (si étudiant). Le champ n'a pas besoin d'être entier, on regarde dans chaque colonne pour chaque utilisaterur si un champ contient la propriété recherché.
+recherche un utilisateur selon son nom, prénom, email ou numéro étudiant (si étudiant). Le champ n'a pas besoin d'être entier, on regarde dans chaque colonne pour chaque utilisaterur si un champ contient la propriété recherché. Il est possible de rajouter dans requêt un champ profile pour faire la recherche uniquement sur ce profile concerné
 
 ```url
 userSearch/
@@ -2188,7 +2189,8 @@ Administrateurs
 
 ```json
 {
-    "search" :  "champ à chercher"
+    "search" :  "champ à chercher",
+    "profile" : "profile de l'utilsiateur" //option
 }
 ```
 
@@ -2228,6 +2230,44 @@ reçus :
             "first_connection": true,
             "profile": "TUT"
         },
+    ]
+```
+```json
+envoie : 
+{
+    "search" :  "",
+    "profile" : "TUT"
+}
+
+reçus :
+    [
+        {
+        "id": 30,
+        "email": "tuteur2@po.fr",
+        "first_name": "tuteur",
+        "last_name": "tuteur",
+        "first_connection": false,
+        "profile": "TUT",
+        "is_active": true
+        },
+        {
+            "id": 31,
+            "email": "Louise@po.fr",
+            "first_name": "Louise",
+            "last_name": "Runavot",
+            "first_connection": false,
+            "profile": "TUT",
+            "is_active": true
+        },
+        {
+            "id": 35,
+            "email": "test@po.fr",
+            "first_name": "",
+            "last_name": "jean",
+            "first_connection": true,
+            "profile": "TUT",
+            "is_active": true
+        }
     ]
 ```
 
