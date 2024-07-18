@@ -1,5 +1,6 @@
 # dernier ajout
-
+- [getStatutFormulaire](#getstatutformulaire): avoir le status d'un formulaire pour un utilisateur
+- [modifyFormulaireAll](#modifyformulaireall): modifier un formulaire
 - [manageJuryMembreJury](#managejurymembrejury): gérer la relation entre les membreJury et un Jury
 - [userSearch](#usersearch): recherche des utilisateurs
 - [getUserSession](#getusersession): renvoie les sessions auxquels est affilié l'utilisateur connecté
@@ -1702,20 +1703,19 @@ http://127.0.0.1:8000/createFormulaireAll/
 }
 ```
 
-## modifyFormulaire
+## modifyFormulaireAll
 
-tuteur ou étudiant : si le stage est soutenu, renvoie tous les formulaire lié à la session du stage, sinon renvoie juste les formulaires lié à son role
-
-jury: renvoie tous les formulaires lié à la session
+permet de modifier un formulaire en envoyant toutes les informations en même temps
 
 ### URL
 
 ```url
-http://127.0.0.1:8000/modifyFormulaire/
+http://127.0.0.1:8000/modifyFormulaireAll<str:id_formulaire>/
 ```
 
-méthode : POST
+méthode : PUT
 
+donnée url : id du formulaire que l'on souhaite modifier
 ### permissions
 
 Admin
@@ -1724,47 +1724,91 @@ Admin
 
 ```json
 {
-    "id_stage" : "id du stage associé",
+    "id": "id",
+    "question": [
+        {
+            "id": 4,
+            "titre": "qu'avez vous pensé de votre stage ??",
+            "type": "text",
+            "checkbox": [],
+            "obligatoire": true
+        },
+        {
+            "id": 6,
+            "titre": "vous êtes vous ennuyé ?",
+            "type": "checkbox",
+            "checkbox": [
+                {
+                    "id": 1,
+                    "titre": "Oui"
+                },
+                {
+                    "id": 2,
+                    "titre": "Non"
+                }
+            ],
+            "obligatoire": true
+        },
+        {
+            "id": 7,
+            "titre": "qu'avez vous pensé du stagiaire ?",
+            "type": "text",
+            "checkbox": [],
+            "obligatoire": true
+        }
+    ],
+    "titre": "Avis du tuteur",
+    "description": "formulaire pour l'evaluation de Louise",
+    "profile": "ETU",
+    "langue": "FR",
+    "session": 2
 }
 ```
 
 ### Données reçues
 
+retourne le formulaire enregistré
 ```json
-[
-    {
-        "id": "id",
-        "titre": "Avis du tuteur",
-        "description": "formulaire pour l'evaluation de Louise",
-        "profile": "ETU",
-        "langue": "FR",
-        "session": 2
-    },
-    {
-        "id": "formulaire",
-        "titre": "soutenance de stage",
-        "description": "evaluation du jury",
-        "profile": "ETU",
-        "langue": "FR",
-        "session": 2
-    },
-    {
-        "id": "formulaire_checkbox",
-        "titre": "soutenance de stage",
-        "description": "evaluation du jury",
-        "profile": "ETU",
-        "langue": "FR",
-        "session": 2
-    },
-    {
-        "id": "formu",
-        "titre": "soutenance de stage",
-        "description": "evaluation du jury",
-        "profile": "ETU",
-        "langue": "FR",
-        "session": 2
-    }
-]
+{
+    "id": "id",
+    "question": [
+        {
+            "id": 4,
+            "titre": "qu'avez vous pensé de votre stage ??",
+            "type": "text",
+            "checkbox": [],
+            "obligatoire": true
+        },
+        {
+            "id": 6,
+            "titre": "vous êtes vous ennuyé ?",
+            "type": "checkbox",
+            "checkbox": [
+                {
+                    "id": 1,
+                    "titre": "Oui"
+                },
+                {
+                    "id": 2,
+                    "titre": "Non"
+                }
+            ],
+            "obligatoire": true
+        },
+        {
+            "id": 7,
+            "titre": "qu'avez vous pensé du stagiaire ?",
+            "type": "text",
+            "checkbox": [],
+            "obligatoire": true
+        }
+    ],
+    "titre": "Avis du tuteur",
+    "description": "formulaire pour l'evaluation de Louise",
+    "profile": "ETU",
+    "langue": "FR",
+    "session": 2
+}
 ```
 
 ## sauvegardeFormulaire
@@ -1976,6 +2020,38 @@ si le systeme rencontre une erreur, les données réponse qui ne sont pas en err
     ],
     "message": "ces questions ont recontrés des erreurs et n'ont pas été enregistré"
 }
+```
+
+
+## getStatutFormulaire
+
+retourne le statut du questionnaire pour un utilisateur
+
+### URL
+
+methode : POST
+
+```url
+http://127.0.0.1:8000/getStatutFormulaire/
+```
+
+### données envoyées
+
+```json
+{
+    "id_user" :"id de l'utilisateur",
+    "id_formulaire":"id du formulaire"
+}
+```
+
+### données reçues
+
+#### sucess
+
+```json
+    {
+        "status":"rendu"
+    }
 ```
 
 # Import des données

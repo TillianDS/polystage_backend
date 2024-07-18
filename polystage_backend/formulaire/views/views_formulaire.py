@@ -90,10 +90,10 @@ class ModifyFormulaireAll(APIView):
         except Formulaire.DoesNotExist:
             return Response({'error' : f"le formulaire avec l'id {id_formulaire} n'exsite pas"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if formulaire_save.session.filire.id !=  id_session :
+        if formulaire_save.session.id !=  id_session :
             return Response({'error' : "vous ne pouvez pas changer ce formulaire de session"})
         
-        serializer = FormulaireSerializer(request.data, data = formulaire_save)
+        serializer = FormulaireSerializer(formulaire_save, data = request.data)
         
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -104,6 +104,7 @@ class ModifyFormulaireAll(APIView):
             question['formulaire'] = id_formulaire
             id_question = question.get('id')
 
+            #error
             checkboxs_data = question.pop('checkbox', None)
             if checkboxs_data == None :
                 errors.append({'question' : question, 'error' : "la question n'a pas de checkbox : checkbox : []"})

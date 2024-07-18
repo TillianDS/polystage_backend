@@ -37,7 +37,8 @@ urlpatterns = [
     #views_statusFormulaire
     path('statusFormulaireList/', views_statusFormulaire.statutsFormulaireList.as_view()),
     path('statusFormulaireDetails/<int:pk>/', views_statusFormulaire.statusFormulaireDetails.as_view()),
- 
+    path('getStatutFormulaire/', views_statusFormulaire.getStatusFormulaire.as_view()),
+
     ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

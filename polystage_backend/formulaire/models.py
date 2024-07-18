@@ -59,7 +59,7 @@ class ResponseCheckbox(models.Model):
     stage = models.ForeignKey(Stage, on_delete=models.CASCADE)
     valeur = models.BooleanField(default=False)
 
-class statusFormulaire(models.Model):
+class StatusFormulaire(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     stage = models.ForeignKey(Stage, on_delete=models.CASCADE)
     formulaire = models.ForeignKey(Formulaire, on_delete=models.CASCADE)

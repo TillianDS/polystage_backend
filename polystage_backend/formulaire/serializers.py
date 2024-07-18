@@ -32,7 +32,7 @@ class CheckboxSerializer (serializers.ModelSerializer):
 
 class StatusFormulaireSerializer (serializers.ModelSerializer):
     class Meta :
-        model = statusFormulaire
+        model = StatusFormulaire
         fields = "__all__"
 
 

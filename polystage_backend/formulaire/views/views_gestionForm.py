@@ -1,6 +1,6 @@
 from rest_framework import status
 from .views_list_details import *
-from ..models import Formulaire, Question, ResponseForm,  statusFormulaire, ResponseCheckbox
+from ..models import Formulaire, Question, ResponseForm,  StatusFormulaire, ResponseCheckbox
 from back.models import Stage
 from ..serializers import FormulaireSerializer, ResponseSerializer, ResponseCheckboxSerializer
 from rest_framework.response import Response
@@ -31,7 +31,7 @@ def verifyFormulaire (request, id_stage, id_formulaire):
             if formulaire.profile != request.user.profile :
                 return Response({"error": [{'error' : "Vous ne pouvez pas répondre à ce formulaire"}]})
 
-            statusForm = statusFormulaire.objects.get(stage = stage, user = request.user, formulaire = id_formulaire)
+            statusForm = StatusFormulaire.objects.get(stage = stage, user = request.user, formulaire = id_formulaire)
 
             if statusForm.is_rendu:
                 return Response({'error' : [{'error' : "le formulaire a déjà été rendu"}]}, status=status.HTTP_403_FORBIDDEN)
@@ -140,7 +140,7 @@ class saveFormulaire (APIView):
                 else :
                     errors.append({"error" : serializer.errors, 'reponse' : responseForm})
         
-        statusForm = statusFormulaire.objects.get(stage = id_stage, user = request.user, formulaire = id_formulaire)
+        statusForm = StatusFormulaire.objects.get(stage = id_stage, user = request.user, formulaire = id_formulaire)
         
         statusForm.statusForm = 'sauvegarde'
         statusForm.save()
@@ -245,19 +245,13 @@ class validateFormulaire(APIView):
         if errors:
             return Response({"error" : errors, "message" : "ces questions ont recontrés des erreurs et n'ont pas été enregistré"})
 
-        statusForm = statusFormulaire.objects.get(stage = id_stage, user = request.user, formulaire = id_formulaire)
+        statusForm = StatusFormulaire.objects.get(stage = id_stage, user = request.user, formulaire = id_formulaire)
         
         statusForm.statusForm = 'rendu'
         statusForm.save()
         return Response({"sucess" :"le formulaire a été enregistré avec succés"}) 
    
-class getStatusFormulaire(APIView):
-    def post (self, request, format = None):
-        id_user = request.data['id_user']
-        id_formulaire = request.data['id_formulaire']
-        statutForm = statusFormulaire.objects.get(formulaire = id_formulaire, user= id_user)
-        return Response({"status" : statutForm.status})
-    
+
 """
 permet de rechercher un formulaire selon son titre, sa description, le rôle à qui il s'adresse, sa filière
 """  
