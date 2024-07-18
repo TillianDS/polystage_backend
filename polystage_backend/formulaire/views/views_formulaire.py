@@ -60,7 +60,7 @@ class CreateFormulaireAll(APIView):
             return Response({'error' : f"la session avec l'id {id_session} n'existe pas"})
 
         #on vérifie que l'administratuer à bien accès à la session associé au formulaire
-        if session.filiere != request.user.filiere :
+        if session.filiere != request.user.instance.filiere :
             return Response({"error" :"vous n'êtes pas autorisé à créer un formulaire pour cette session"})
         
         serializer = FormulaireAllSerializer(data =request.data)
