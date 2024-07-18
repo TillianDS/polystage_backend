@@ -16,7 +16,10 @@ class getInfoSession(APIView):
             return Response({"error':f'la session {pk} n'existe pas"})
         serializer = SessionAllSerializer(session)
         return Response(serializer.data)
-    
+
+"""
+renvoie les essions lié à l'utilisateur connecté
+"""
 class getUserSession(APIView):
     permission_classes = [IsAuthenticated, AdminJuryPermission]
 
