@@ -1401,6 +1401,7 @@ http://127.0.0.1:8000/exportNote/
 le formulaire est composé de plusieurs tables, Formulaire, Question, Checkbox et Reponse
 
 Un formulaire peut avoir plusieurs questions, si la question est de type checkbox elle peut avoir plusieurs éléments checkbox, les réponses sont associès à chaque question ainsi qu'à un utilisateur
+
 # Formulaire
 
 ## Informations d'un formulaire
@@ -1711,6 +1712,71 @@ http://127.0.0.1:8000/createFormulaireAll/
     "langue": "FR",
     "filiere": 6
 }
+```
+
+## modifyFormulaire
+
+tuteur ou étudiant : si le stage est soutenu, renvoie tous les formulaire lié à la session du stage, sinon renvoie juste les formulaires lié à son role
+
+jury: renvoie tous les formulaires lié à la session
+
+### URL
+
+```url
+http://127.0.0.1:8000/modifyFormulaire/
+```
+
+méthode : POST
+
+### permissions
+
+Admin
+
+### Données envoyées
+
+```json
+{
+    "id_stage" : "id du stage associé",
+}
+```
+
+### Données reçues
+
+```json
+[
+    {
+        "id": "id",
+        "titre": "Avis du tuteur",
+        "description": "formulaire pour l'evaluation de Louise",
+        "profile": "ETU",
+        "langue": "FR",
+        "session": 2
+    },
+    {
+        "id": "formulaire",
+        "titre": "soutenance de stage",
+        "description": "evaluation du jury",
+        "profile": "ETU",
+        "langue": "FR",
+        "session": 2
+    },
+    {
+        "id": "formulaire_checkbox",
+        "titre": "soutenance de stage",
+        "description": "evaluation du jury",
+        "profile": "ETU",
+        "langue": "FR",
+        "session": 2
+    },
+    {
+        "id": "formu",
+        "titre": "soutenance de stage",
+        "description": "evaluation du jury",
+        "profile": "ETU",
+        "langue": "FR",
+        "session": 2
+    }
+]
 ```
 
 ## sauvegardeFormulaire

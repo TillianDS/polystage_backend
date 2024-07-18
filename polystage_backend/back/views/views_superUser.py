@@ -71,6 +71,8 @@ class superUserDelete(APIView):
             user = CustomUser.all_user.get(pk=pk)
         except CustomUser.DoesNotExist :
             return Response({'error' : "l'utilisateur avec l'id : {pk}, n'existe pas"})
+        if user.id == request.user.id :
+            return Response({'error' : "vous ne pouvez pas vous supprimer vous même"})
         user.hard_delete()
         return Response("super utilisateur supprimé avec succès")
     

@@ -23,9 +23,10 @@ class getUserSession(APIView):
     def get(self, request, format = None):
         profile = request.user.profile
         if profile == 'ADM' :
-            filiere = Filiere.objects.get(nom = "Informatique")
+            filiere = request.user.instance.filiere
             serializer = SessionSerializer(filiere.session_set, many = True)
         else :
-            serializer = SessionSerializer(request.user.jury_set.session, many = True)
+            session = Session.objects.filter(jury_set=request.user.instance.jury_set)
+            serializer = SessionSerializer(session, many = True)
         return Response(serializer.data)
 
