@@ -10,6 +10,6 @@ from polystage_backend.permissions import *
 class EtudiantAll(APIView):
     permission_classes = [EtuPermission]
     def get (self, request, format = None):
-        serializer = EtudiantAllSeralizer(request.user)
+        serializer = EtudiantAllSeralizer(request.user.instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
