@@ -15,7 +15,7 @@ urlpatterns = [
     path('checkboxList/', views_formulaire.CheckboxList.as_view()),
     path('checkboxDetails/<int:pk>/', views_formulaire.CheckboxDetails.as_view()),
 
-    path('formUser/', views_formulaire.formUser.as_view()),
+    path('formUser/<int:pk>/', views_formulaire.formUser.as_view()),
 
     path('createFormulaireAll/', views_formulaire.CreateFormulaireAll.as_view()),
     path('getFormulaireAll/<str:pk>/', views_formulaire.GetFormulaireAll.as_view()),
@@ -28,7 +28,6 @@ urlpatterns = [
     path('responseCheckboxList/', views_response.ResponseCheckboxList.as_view()),
     path('responseCheckboxDetails/<int:pk>/', views_response.ResponseCheckboxDetails.as_view()),
     path('responseFormulaire/', views_response.responseFormulaire.as_view()),
-
 
     #views gestionForm
     path('validateFormulaire/', views_gestionForm.validateFormulaire.as_view()),

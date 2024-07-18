@@ -76,9 +76,9 @@ class CustomUser(AbstractUser):
 
     def verify_stage(self, id_stage):
         if self.profile == 'ETU':
-            return self.stage.filter(pk=id_stage).exists()  # Assurez-vous que le related_name est 'stages' pour Etudiant
+            return self.instance.stage.filter(pk=id_stage).exists()  # Assurez-vous que le related_name est 'stages' pour Etudiant
         elif self.profile == 'TUT':
-            return self.stage_set.filter(pk=id_stage).exists()  # Assurez-vous que le related_name est correct pour Tuteur
+            return self.instance.stage_set.filter(pk=id_stage).exists()  # Assurez-vous que le related_name est correct pour Tuteur
         return True
     
     @property
@@ -198,7 +198,7 @@ class Stage(ActiveModel):
     
     @property
     def StageSession(self):
-        soutenances = self.soutenance_set
+        soutenances = self.soutenance
         if not soutenances:
             return None
         soutenance = soutenances.first()

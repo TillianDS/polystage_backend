@@ -15,7 +15,7 @@
 - [validateFormulaire](#validateformulaire): valdier les informations d'un formulaire
 - [sauvegardeFormulaire](#sauvegardeformulaire): sauvegarder les réponse à un formulaire
 - [getFormulaireAll](#getformulaireall): permet à l'administrateur de visualiser un formulaire
-- [formUser](#formuser):  renvoie toutes les informations d'un formulaire avec les réponses enregistré en fonction de l'utilisateur connecté et du stage passé en paramètre
+- [formUser](#formuser):  renvoie toutes les informations d'un formulaire avec les réponses enregistré en fonction de l'utilisateur connecté et du stage passé en url
 - changement sur les reponse au formulaire : demande maitenant du stage et non plus de l'étudiant
 - [getJuryMembreJury](#getjurymembrejury): renvoie les jurys et leur session, lié au membre jury connecté
 - [getSessionFiliere](#getsessionfiliere): renvoie les sessions d'une filiere
@@ -1446,22 +1446,10 @@ jury: renvoie tous les formulaires lié à la session
 ### URL
 
 ```url
-http://127.0.0.1:8000/formUser/
+http://127.0.0.1:8000/formUser/<int:id_stage>
 ```
 
-méthode : POST
-
-### permissions
-
-Tuteurs, Etudiants
-
-### Données envoyées
-
-```json
-{
-    "id_stage" : "id du stage associé",
-}
-```
+méthode : GET
 
 ### Données reçues
 

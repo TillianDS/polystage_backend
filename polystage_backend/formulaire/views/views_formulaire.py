@@ -159,21 +159,21 @@ class GetFormulaireAll(APIView):
         serializer = FormulaireAllSerializer(formulaire)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 """
-retourne le formulaire pour l'étudiant ou le tuteur connecté selon le stage spécifié, 
-si le stage a été soutenu, cela renvoie tous les formulaires associés
+retourne les formulaires associés à une soutenance, 
+si la soutnance n'a pas encore été soutenu, l'étudiant ou le tuteur ne peuvent voir que cexu qui leur sont attribués
 """
 class formUser(APIView):
     
-    def post (self, request, format = None):
-        id_stage = request.data['id_stage']
+    def get (self, request, pk, format = None):
+        id_stage = pk
         profile = request.user.profile
 
         try :
             stage = Stage.objects.get(pk=id_stage)
         except Stage.DoesNotExist :
             return Response({"error" : "le stage n'existe pas"})
-        
 
         #vérification que les utilisateurs etudiant ou tuteur accède bien à leur stage associé
         if not request.user.verify_stage(id_stage):
@@ -184,21 +184,11 @@ class formUser(APIView):
         if not session :
             return Response("la soutenance ou la session ne sont pas encore définies")
         
-    
-        if stage.soutenu or (profile == 'ENS') or (profile == 'PRO')  or (profile == 'ADM'):
-            formulaire = Formulaire.objects.filter(session = stage.StageSession)
+        soutenance = Soutenance.objects.get(stage=stage)
+        if soutenance.soutenu or (profile == 'ENS') or (profile == 'PRO')  or (profile == 'ADM'):
+            formulaire = Formulaire.objects.filter(session = session)
         else :
-            formulaire = Formulaire.objects.filter(profile = profile, session = stage.StageSession)
+            formulaire = Formulaire.objects.filter(profile = profile, session = session)
 
         serializer = FormulaireSerializer(formulaire, many = True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-class getFormulaireSoutenance(APIView):
-    def get(self, request, pk, format = None):
-        try :
-            souten
-        except Soutenance.DoesNotExist:
-            return Response({"error" : f"la soutance avec l'id {pk}"})
-
-        serializer = FormulaireSerializer
-        return Response(serializer)
