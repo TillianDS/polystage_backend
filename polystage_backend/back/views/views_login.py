@@ -13,6 +13,12 @@ from rest_framework.permissions import AllowAny
 from django.contrib.auth import logout
 from polystage_backend.permissions import *
 
+def login_details (user):
+    token, created = Token.objects.get_or_create(user=user)
+    #login(request, user, backend='django.contrib.auth.backends.ModelBackend') 
+    serializer = UserSerializer(user)
+    return Response({'user_id' : serializer.data["id"], "token" : token.key, 'profile' : serializer.data['profile']}, status=status.HTTP_202_ACCEPTED) 
+             
 class CostumLogin(APIView):
     """
     permet d'authentifier l'utilisateur et de la connecter à l'application
@@ -38,11 +44,7 @@ class CostumLogin(APIView):
         user : CustomUser = authenticate (request, email= email, password = password, backend='django.contrib.auth.backends.ModelBackend',)        
         if user :
             if not user.first_connection:
-                #login(request, user, backend='django.contrib.auth.backends.ModelBackend') 
-                token, created = Token.objects.get_or_create(user=user)
-
-                serializer = UserSerializer(user)
-                return Response({'user_id' : serializer.data["id"], "token" : token.key, 'profile' : serializer.data['profile']}, status=status.HTTP_202_ACCEPTED) 
+                return login_details(user)
             return Response({"first_connection" : True})
         return Response({'error' : "password or email are not correct"}, status=status.HTTP_401_UNAUTHORIZED)
     
@@ -51,8 +53,11 @@ class Logout(APIView):
         logout(request)
         return Response({'message': 'Déconnexion réussie'}, status=status.HTTP_200_OK)
 
+"""
+permet au superuser de se derogé à un utilisateur
+"""
 class derogationLogin (APIView):
-    permission_classes = [SuperUserPermission]
+    permission_classes = [IsAuthenticated, SuperUserPermission]
 
     def post (self, request):
         email = request.data['email']
@@ -62,9 +67,7 @@ class derogationLogin (APIView):
             return Response({"error" : "l'adresse spécifié ne correspond à aucun utilisateur"})
         
         if not user.first_connection:
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend') 
-            serializer = UserSerializer(user)
-            return Response({'user_id' : serializer.data["id"], 'profile' : serializer.data['profile']}, status=status.HTTP_202_ACCEPTED) 
+            return login_details(user)
         return Response({"first_connection" : True})
     
 class ChangePassword (APIView) :

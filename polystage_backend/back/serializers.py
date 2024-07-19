@@ -202,7 +202,7 @@ class EtudiantSessionAllSerializer(UserSerializer):
         
         # Recherchez la soutenance de l'étudiant dans cette session
         try:
-            soutenance = obj.stage.soutenance.get(jury__session=session)
+            soutenance = obj.stage.soutenance.filter(jury__session=session)
             return soutenance.jury.num_jury
         except Soutenance.DoesNotExist:
             return None

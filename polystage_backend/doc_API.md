@@ -2118,14 +2118,6 @@ si certaines données n'ont pas pu être importée à cause d'erreurs cela renvo
             "errors": {
                 //erreur rencontré lors de l'enregistrement
             }
-        },
-        {
-            "nomInstance": {
-                //instance
-            },
-            "errors": {
-                //erreur rencontré lors de l'enregistrement
-            }
         }
     ]
 }
@@ -2166,7 +2158,6 @@ données des
         "first_name": "Titi",
         "last_name": "Titi",
         "profile": "ETU",
-        "promo" : 5,
         "num_etudiant" : "d22014217"
     }
 ]
@@ -2178,7 +2169,7 @@ données des
 
 ```json
 {
- "success" : "tous les tulisateurs ont été importé avec succés"
+    "success" : "tous les utilisateurs ont été importé avec succés"
 }
 ```
 
@@ -2265,6 +2256,8 @@ Administrateurs
 
 ## Import des Soutenances
 
+import en masse des soutenances
+
 ```url
 http://127.0.0.1:8000/importSoutenance/
 ```
@@ -2276,14 +2269,37 @@ méthode : POST
 Administrateurs
 
 ### Données à envoyer
+- num_convention : le numéro de convention du stage auquel associé la soutenance
+- nom_session : le nom de la session dans lequel se déroulera cette soutenance
+- num_jury : le numéro du jury au sein de la session 
 
 ```json
+[
+    {
+        "num_convention" : 80808,
+        "nom_session" :"Info 3A 2024",
+        "date_soutenance" :"30-06-2024",
+        "heure_soutenance" : "10:00",
+        "num_jury" : "3"
+    },
+    {
+        "num_convention" : 808081,
+        "nom_session" :"Info 5A 2024",
+        "date_soutenance" :"30-06-2024",
+        "heure_soutenance" : "11:00",
+        "num_jury" : "2"
+    }
+    
+]
 ```
 
 ### Données reçues
 
-```json
-```
+#### non success 
+- problème de format sur les données
+- la session n'existe pas 
+- le stage n'existe pas
+- le jury n'exsite pas
 
 ## Import des Jurys
 
