@@ -247,6 +247,7 @@ class importSession(APIView):
                 continue
 
             try : 
+                Session.objects.get(nom= nom_session)
                 errors.append({"session" : session, "errors" : "la session avec ce nom existe déjà"})
                 continue
             except Session.DoesNotExist : 
