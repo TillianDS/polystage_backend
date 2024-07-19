@@ -134,17 +134,19 @@ class ModifyFormulaireAll(APIView):
                     if id_checkbox :
                         try :
                             checkbox_save = CheckBox.objects.get(pk = id_checkbox)
+
                         except CheckBox.DoesNotExist :
                             errors.append({'question' : question, 'checkbox' :checkbox, 'error' : f"la checkbox avec l'id {id_checkbox} n'exsite pas"})
                             continue
-
                         serializer = CheckboxSerializer(checkbox_save, data = checkbox)
                     else :
                         serializer = CheckboxSerializer(data = checkbox)
-                if not serializer.is_valid():
-                    errors.append({'question' : question, 'checkbox' :checkbox, 'error' : serializer.errors})
-                    continue
-                serializer.save()
+                        
+                    if not serializer.is_valid():
+                        print(id_checkbox)
+                        errors.append({'question' : question, 'checkbox' :checkbox, 'error' : serializer.errors})
+                        continue
+                    serializer.save()
                             
         if errors :
             return Response({'errors' : errors})

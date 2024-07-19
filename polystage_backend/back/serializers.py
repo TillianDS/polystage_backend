@@ -192,7 +192,7 @@ class EtudiantSessionAllSerializer(UserSerializer):
 
     class Meta:
         model = Etudiant
-        fields = UserSerializer.Meta.fields + ['num_etudiant', 'stage', 'num_jury']
+        fields = UserSerializer.Meta.fields + ['num_etudiant', "num_jury"]
 
     def get_num_jury(self, obj):
         # Obtenez la session de contexte
@@ -202,8 +202,8 @@ class EtudiantSessionAllSerializer(UserSerializer):
         
         # Recherchez la soutenance de l'étudiant dans cette session
         try:
-            soutenance = obj.stage.soutenance.filter(jury__session=session)
-            return soutenance.jury.num_jury
+            soutenance = Soutenance.objects.get(stage=obj.stage, jury__session=session)
+            return 3  
         except Soutenance.DoesNotExist:
             return None
     
@@ -219,11 +219,12 @@ class SessionAllSerializer(serializers.ModelSerializer):
         soutenances = Soutenance.objects.filter(jury__session=obj)
         etudiants = Etudiant.objects.filter(stage__soutenance__in=soutenances)
         # Passez la session dans le contexte pour l'utiliser dans le sérialiseur d'étudiant
-        serializer = EtudiantSessionAllSerializer(etudiants, many=True, context={'session': obj})
+        serializer = EtudiantSessionAllSerializer(etudiants, many = True,  context={'session': obj})
         return serializer.data
 
+    #on recherche les jurys asociés à la session
     def get_jurys(self, obj):
-        return JurySerializer(obj.session_set, many=True).data
+        return JurySerializer(obj.session, many=True).data
 
 # -------------------- affiche l'étudiant et la soutenance lié à un stage ---------------------
 
