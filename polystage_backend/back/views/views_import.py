@@ -7,7 +7,7 @@ from ..serializers import UserSerializer, EnseignantSerializer, TuteurSerializer
 from polystage_backend.permissions import *
 
 class importUser (APIView):
-    permission_classes = [AdminPermission]
+    permission_classes = [IsAuthenticated, AdminPermission]
     def choose_deserializer (self, profile, user) :
         if profile == 'ENS' : 
             return EnseignantSerializer(data =user)
@@ -114,7 +114,7 @@ class importPromoFiliere(APIView) :
 import en masse de stage, pour les tuteur on précisera seulement leur adresse mai let les étudiants leur numéro étudiant
 """
 class importStage (APIView):
-    permission_classes = [AdminPermission]
+    permission_classes = [IsAuthenticated, AdminPermission]
     def post(self, request, format = None):
         stages_data = request.data
         errors = []
@@ -171,7 +171,7 @@ class importStage (APIView):
         return Response({"success" : "tous les utilisateurs ont été crées avec succès"}, status= status.HTTP_201_CREATED)
 
 class importSoutenance(APIView):
-    permission_classes = [AdminPermission]
+    permission_classes = [IsAuthenticated, AdminPermission]
     def post (self, request, format = None):
         soutenances_data = request.data
         errors = []
@@ -232,7 +232,7 @@ class importSoutenance(APIView):
         return Response({"success" : "toutes les soutenances ont été créees avec succès"}, status= status.HTTP_201_CREATED)
 
 class importSession(APIView):
-    permission_classes = [AdminPermission]
+    permission_classes = [IsAuthenticated, AdminPermission]
     def post(self, request, format = None):
         filiere = request.user.instance.filiere
 
@@ -265,7 +265,7 @@ class importSession(APIView):
         return Response({"success" : "toutes les sessions ont été créees avec succès"}, status= status.HTTP_201_CREATED)
 
 class importJury(APIView):
-    permission_classes = [AdminPermission]
+    permission_classes = [IsAuthenticated, AdminPermission]
 
     def post (self, request, format = None):
         jurys_data = request.data
