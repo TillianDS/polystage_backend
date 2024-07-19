@@ -176,7 +176,7 @@ class importSoutenance(APIView):
         soutenances_data = request.data
         errors = []
 
-        filiere = request.user.filiere
+        filiere = request.user.instance.filiere
         for soutenance in soutenances_data :
 
             num_convention = soutenance.get('num_convention')
