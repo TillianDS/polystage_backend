@@ -2,7 +2,7 @@ from datetime import datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from ..models import Etudiant, CustomUser, Tuteur, Stage, Soutenance, Jury, Professionnel, Enseignant
+from ..models import Etudiant, CustomUser, Tuteur, Stage, Soutenance, Jury, Professionnel, Enseignant, Session
 from formulaire.models import Question
 from ..serializers import EtudiantSerializer, UserSerializer, StageSerializer, SoutenanceSerializer, EnseignantSerializer, ProfessionnelSerializer, TuteurSerializer
 from rest_framework.authentication import TokenAuthentication
@@ -157,7 +157,6 @@ class stageSearch (APIView):
 
         return Response(serializer.data)
 
-
 class soutenanceSearch (APIView):
     """
     permet de rechercher des utilisateurs selon leur nom, prénom, email ou numéro étudiant sur un seul champ
@@ -182,7 +181,6 @@ class soutenanceSearch (APIView):
 
         return Response(serializer.data)
     
-
 class SetAllInactive(APIView):
     #rend inactive toutes les données active d'un model
     def modelInactive(self, models):
@@ -199,3 +197,15 @@ class SetAllInactive(APIView):
         self.modelInactive(Question)
         
         return Response ({"success" : "les données de Etudiants, Stage, Soutenances, Tuteur, Jury ont été rendus inactives" }, status=status.HTTP_200_OK)
+    
+class begginSession(APIView):
+
+    def post (self, request, pk, format = None):
+        try :
+            session = Session.objects.get(pk=pk)
+        except Session.DoesNotExist :
+            return Response({'error' : f"la session avec l'id {pk} n'existe pas"})
+        
+        etudiants = Etudiant.objects.filter(stage__soutenance__jury__session = session).distinct()
+        serializer = EtudiantSerializer(etudiants, many = True)
+        return Response(serializer.data)

@@ -45,7 +45,12 @@ class ResponseForm (models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     stage = models.ForeignKey(Stage, on_delete=models.CASCADE, related_name = "stage")
     def __str__ (self) :
-        return str(self.user) + " : " + str(self.content)
+        return str(self.stage.id) + " - " + str(self.question) + " - " + str(self.content)
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['question', 'stage'], name='question_stage')
+        ]
 
 class CheckBox (models.Model):
     titre = models.CharField(max_length=200)
@@ -58,6 +63,10 @@ class ResponseCheckbox(models.Model):
     checkbox = models.ForeignKey(CheckBox, on_delete=models.CASCADE)
     stage = models.ForeignKey(Stage, on_delete=models.CASCADE)
     valeur = models.BooleanField(default=False)
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['checkbox', 'stage'], name='checkbox_stage')
+        ]
 
 class StatusFormulaire(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

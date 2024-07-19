@@ -22,7 +22,7 @@ def verifyFormulaire (request, id_stage, id_formulaire):
         try:
             formulaire = Formulaire.objects.get(pk=id_formulaire)
         except Formulaire.DoesNotExist:
-            return Response({"error": [{'erro': "le formulaire n'existe pas"}]}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": [{'error': "le formulaire n'existe pas"}]}, status=status.HTTP_400_BAD_REQUEST)
         
         if formulaire.profile == 'JURY' :
             if((request.profile != 'PRO') or (request.profile != 'ENS')):
@@ -45,7 +45,11 @@ def verifyQuestion (request, questions, id_formulaire) :
     questionSearchs = []
 
     for question in questions :
-        questionSearch = Question.objects.get(pk =question['id'])
+        try :
+            questionSearch = Question.objects.get(pk =question['id'], formulaire = id_formulaire)
+        except Question.DoesNotExist :
+            return Response({'error' : [{'error' : f"la question avec l'id {question["id"]} n'existe pas dans le formulaire {id_formulaire} "}]})
+
         questionSearchs.append(questionSearch)
     
     for question in questionForm :
@@ -61,14 +65,13 @@ class saveFormulaire (APIView):
         id_formulaire = request.data['formulaire']['id']
 
         errors = []
-
-        verifyQ =  verifyQuestion(request, questions_data, id_formulaire)
-        if verifyQ != True :
-            return verifyQ
-
         verify = verifyFormulaire(request, id_stage=id_stage, id_formulaire=id_formulaire)
         if verify != True :
             return verify
+        
+        verifyQ =  verifyQuestion(request, questions_data, id_formulaire)
+        if verifyQ != True :
+            return verifyQ
         
         #pour chaque question on va traiter sa réponse ...
         for question in questions_data:
@@ -81,7 +84,7 @@ class saveFormulaire (APIView):
                     id_checkbox = checkbox['id']
 
                     try :
-                        responseCheckbox = checkbox['response'][0]
+                        responseCheckbox = checkbox['response']
                     except :
                         continue
 
@@ -90,16 +93,11 @@ class saveFormulaire (APIView):
                     #on ajoute l'id du stage dans la réponse
                     responseCheckbox['stage'] = id_stage
 
-                    id_checkboxRes = responseCheckbox.get('id')
-                    if id_checkboxRes :
-                        try :
-                            # on vérifie que la ResponseCheckbox correponsd à une réponse enregsitré avec cet id et ce stage
-                            responseSave = ResponseCheckbox.objects.get(pk=id_checkboxRes, stage = id_stage)
-                        except ResponseCheckbox.DoesNotExist:
-                            errors.append({"question" : question, 'checkbox' : checkbox,  "error" : "la reponse checkbox ayant cet id et ce stage n'existe pas"})
-                            continue
+                    try :
+                        responseSave = ResponseCheckbox.objects.get(checkbox = id_checkbox, stage = id_stage)
                         serializer = ResponseCheckboxSerializer(responseSave, data = responseCheckbox)
-                    else :
+                    
+                    except ResponseCheckbox.DoesNotExist:
                         serializer = ResponseCheckboxSerializer(data = responseCheckbox)
 
                     if serializer.is_valid():
@@ -114,7 +112,7 @@ class saveFormulaire (APIView):
 
                 #on cheche la réponse à la question
                 try :
-                    responseForm = question['responses'][0]
+                    responseForm = question['response']
                 except :
                     # si elle n'exsite pas on passe à la question d'aprés
                     continue
@@ -124,15 +122,10 @@ class saveFormulaire (APIView):
                 #on ajoute l'id du stage dans la réponse
                 responseForm['stage'] = id_stage
 
-                id_response = responseForm.get('id')
-                if id_response :
-                    try :
-                        responseSave = ResponseForm.objects.get(pk=id_response, stage = id_stage)
-                    except ResponseForm.DoesNotExist:
-                        errors.append({"question" : question, "error" : "la reponse ayant cet id et ce stage n'existe pas"})
-                        continue
+                try :
+                    responseSave = ResponseForm.objects.get(question = id_question, stage = id_stage)
                     serializer = ResponseSerializer(responseSave, data = responseForm)
-                else :
+                except ResponseForm.DoesNotExist:
                     serializer = ResponseSerializer(data = responseForm)
 
                 if serializer.is_valid():
@@ -183,7 +176,7 @@ class validateFormulaire(APIView):
 
                     question_save = Question.objects.get(pk = id_question)
                     try :
-                        responseCheckbox = checkbox['response'][0]
+                        responseCheckbox = checkbox['response']
                     except :
                         if question_save.obligatoire :
                             errors.append({"question" : question, "error" : "la question n'a pas de réponse"})
@@ -193,15 +186,11 @@ class validateFormulaire(APIView):
                     responseCheckbox['checkbox'] = id_checkbox
                     responseCheckbox['stage']=id_stage
 
-                    id_checkboxRes = responseCheckbox.get('id')
-                    if id_checkboxRes :
-                        try :
-                            responseSave = ResponseCheckbox.objects.get(pk=id_checkboxRes, stage = id_stage)
-                        except ResponseCheckbox.DoesNotExist:
-                            errors.append({"question" : question, 'checkbox' : checkbox,  "error" : "la reponse checkbox ayant cet id et ce stage n'existe pas"})
-                            continue
+                    try :
+                        responseSave = ResponseCheckbox.objects.get(checkbox = id_checkbox, stage = id_stage)
                         serializer = ResponseCheckboxSerializer(responseSave, data = responseCheckbox)
-                    else :
+                    
+                    except ResponseCheckbox.DoesNotExist:
                         serializer = ResponseCheckboxSerializer(data = responseCheckbox)
 
                     if serializer.is_valid():
@@ -226,15 +215,10 @@ class validateFormulaire(APIView):
                 responseForm['question']=id_question
                 responseForm['stage']=id_stage
 
-                id_response = responseForm.get('id')
-                if id_response :
-                    try :
-                        responseSave = ResponseForm.objects.get(pk=id_response, stage = id_stage)
-                    except ResponseForm.DoesNotExist:
-                        errors.append({"question" : question, "error" : "la reponse ayant cet id et ce stage n'existe pas"})
-                        continue
+                try :
+                    responseSave = ResponseForm.objects.get(question = id_question, stage = id_stage)
                     serializer = ResponseSerializer(responseSave, data = responseForm)
-                else :
+                except ResponseForm.DoesNotExist:
                     serializer = ResponseSerializer(data = responseForm)
 
                 if serializer.is_valid():
