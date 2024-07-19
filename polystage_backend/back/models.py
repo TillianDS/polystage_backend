@@ -201,7 +201,7 @@ class Stage(ActiveModel):
         soutenances = self.soutenance
         if not soutenances:
             return None
-        soutenance = soutenances.first()
+        soutenance = soutenances
         session = soutenance.jury.session if soutenance.jury else None
         return session
 
