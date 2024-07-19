@@ -234,7 +234,7 @@ class importSoutenance(APIView):
 class importSession(APIView):
     permission_classes = [AdminPermission]
     def post(self, request, format = None):
-        filiere = request.user.filiere
+        filiere = request.user.instance.filiere
 
         sessions_data = request.data
 
@@ -269,7 +269,7 @@ class importJury(APIView):
 
     def post (self, request, format = None):
         jurys_data = request.data
-        filiere = request.user.filiere
+        filiere = request.user.instance.filiere
 
         errors = []
         for jury_all in jurys_data :
