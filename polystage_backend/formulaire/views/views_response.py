@@ -54,7 +54,7 @@ class responseFormulaire(APIView):
 
         if (request.user.profile == 'ETU') or (request.user.profile == 'TUT'):        
             
-            if not stage.soutenu and (request.user.profile != formulaire.profile): 
+            if not stage.soutenance.soutenu and (request.user.profile != formulaire.profile): 
                 return Response({'error' : "ce formulaire n'est pas encore accessible"})
             
         serializer_context = {

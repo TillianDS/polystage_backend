@@ -210,5 +210,9 @@ class Soutenance(ActiveModel):
     heure_soutenance = models.TimeField(blank = True, null = True)
     jury =  models.ForeignKey(Jury, on_delete=models.CASCADE, null= True )
     note = models.FloatField(validators=[MaxValueValidator(20.0)], null = True)
-    stage = models.ForeignKey(Stage, on_delete=models.CASCADE, related_name = 'soutenance')
+    stage = models.OneToOneField(Stage, on_delete=models.CASCADE, related_name = 'soutenance')
     soutenu = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.stage.sujet + " " + self.stage.etudiant.num_etudiant
+    
