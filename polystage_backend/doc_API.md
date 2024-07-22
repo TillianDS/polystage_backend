@@ -1830,7 +1830,7 @@ http://127.0.0.1:8000/sauvegardeFormulaire/
 
 - l'id du stage pour lequel sont enregistrés les reponses au formulaire (sera inclu automatiquement dans les nouvelles réponses)
 
-- si une réponse existe déjà : inclure l'id de la réponse
+- si une réponse existe déjà, la réponse sera cherché et modifié, vous n'avez pas besoin d'inclure l'id de la réponse
 
 ```json
 {
