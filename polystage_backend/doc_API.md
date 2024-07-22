@@ -1833,9 +1833,7 @@ http://127.0.0.1:8000/saveFormulaire/
 - si une réponse existe déjà, la réponse sera cherché et modifié, vous n'avez pas besoin d'inclure l'id de la réponse
 
 ```json
-{ 
-    "formulaire": 
-    {
+{
     "id": "id",
     "titre": "Avis du tuteur",
     "description": "formulaire pour l'evaluation de Louise",
@@ -1845,38 +1843,40 @@ http://127.0.0.1:8000/saveFormulaire/
     "question": [
         {
             "id": 4,
-            "titre": "qu'avez vous pensé de votre stage ?",
+            "titre": "qu'avez vous pensé de votre stage ??",
             "type": "text",
-            "response":
-                {
-                    "content": "le stage s'est très bien passé"
-                },
+            "obligatoire": true,
+            "response": {
+                "id": 4,
+                "stage": 6,
+                "content": "le stage s'est très bien passé"
+            },
             "checkbox": []
         },
         {
             "id": 6,
             "titre": "vous êtes vous ennuyé ?",
             "type": "checkbox",
-            "response": [],
+            "obligatoire": true,
+            "response": null,
             "checkbox": [
                 {
                     "id": 1,
                     "titre": "Oui",
-                    "response": 
-                        {
-                            "id": 2,
-                            "stage": 6,
-                            "valeur": false
-                        }
-                    
+                    "response": {
+                        "id": 2,
+                        "stage": 6,
+                        "valeur": false
+                    }
                 },
                 {
                     "id": 2,
-                    "titre": "non",
-                    "response":
-                        {
-                            "valeur": false
-                        }
+                    "titre": "Non",
+                    "response": {
+                        "id": 5,
+                        "stage": 6,
+                        "valeur": false
+                    }
                 }
             ]
         },
@@ -1884,14 +1884,15 @@ http://127.0.0.1:8000/saveFormulaire/
             "id": 7,
             "titre": "qu'avez vous pensé du stagiaire ?",
             "type": "text",
+            "obligatoire": true,
             "response": {
-                "content" : "il a été très entreprenant et tres pro"
+                "id": 8,
+                "stage": 6,
+                "content": "i a été tres entreprenant"
             },
             "checkbox": []
         }
     ]
-},
-    "id_stage" : 6
 }
 ```
 
@@ -1916,9 +1917,7 @@ http://127.0.0.1:8000/validateFormulaire/
 - si une réponse existe déjà : inclure l'id de la réponse
 
 ```json
-{ 
-    "formulaire": 
-    {
+{
     "id": "id",
     "titre": "Avis du tuteur",
     "description": "formulaire pour l'evaluation de Louise",
@@ -1928,38 +1927,40 @@ http://127.0.0.1:8000/validateFormulaire/
     "question": [
         {
             "id": 4,
-            "titre": "qu'avez vous pensé de votre stage ?",
+            "titre": "qu'avez vous pensé de votre stage ??",
             "type": "text",
-            "response":
-                {
-                    "content": "le stage s'est très bien passé"
-                },
+            "obligatoire": true,
+            "response": {
+                "id": 4,
+                "stage": 6,
+                "content": "le stage s'est très bien passé"
+            },
             "checkbox": []
         },
         {
             "id": 6,
             "titre": "vous êtes vous ennuyé ?",
             "type": "checkbox",
-            "response": [],
+            "obligatoire": true,
+            "response": null,
             "checkbox": [
                 {
                     "id": 1,
                     "titre": "Oui",
-                    "response": 
-                        {
-                            "id": 2,
-                            "stage": 6,
-                            "valeur": false
-                        }
-                    
+                    "response": {
+                        "id": 2,
+                        "stage": 6,
+                        "valeur": false
+                    }
                 },
                 {
                     "id": 2,
-                    "titre": "non",
-                    "response":
-                        {
-                            "valeur": false
-                        }
+                    "titre": "Non",
+                    "response": {
+                        "id": 5,
+                        "stage": 6,
+                        "valeur": false
+                    }
                 }
             ]
         },
@@ -1967,14 +1968,15 @@ http://127.0.0.1:8000/validateFormulaire/
             "id": 7,
             "titre": "qu'avez vous pensé du stagiaire ?",
             "type": "text",
+            "obligatoire": true,
             "response": {
-                "content" : "il a été très entreprenant et tres pro"
+                "id": 8,
+                "stage": 6,
+                "content": "i a été tres entreprenant"
             },
             "checkbox": []
         }
     ]
-},
-    "id_stage" : 6
 }
 ```
 
@@ -1984,7 +1986,7 @@ http://127.0.0.1:8000/validateFormulaire/
 
 ```json
 {
-    "sucess": "le formulaire a été validé avec succés"
+    "sucess": "tout a été enregistré avec succès"
 }
 ```
 

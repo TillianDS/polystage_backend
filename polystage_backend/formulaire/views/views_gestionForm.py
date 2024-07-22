@@ -5,7 +5,6 @@ from back.models import Stage
 from ..serializers import FormulaireSerializer, ResponseSerializer, ResponseCheckboxSerializer
 from rest_framework.response import Response
 from django.db.models import Q
-from mail.views import *
 
 """
 vérifie c
@@ -19,14 +18,14 @@ def verifyFormulaire (request, id_stage, id_formulaire):
         
         if not request.user.verify_stage(id_stage) :
             return Response({"error": [{'error' :"Vous n'avez pas accès à ce stage"}]}, status=status.HTTP_403_FORBIDDEN)
-
+        
         try:
             formulaire = Formulaire.objects.get(pk=id_formulaire)
         except Formulaire.DoesNotExist:
             return Response({"error": [{'error': "le formulaire n'existe pas"}]}, status=status.HTTP_400_BAD_REQUEST)
         
         if formulaire.profile == 'JURY' :
-            if((request.user.profile != 'PRO') or (request.user.profile != 'ENS')):
+            if((request.profile != 'PRO') or (request.profile != 'ENS')):
                 return Response({"error": [{'error' : "Vous ne pouvez pas répondre à ce formulaire"}]})
         else:
             if formulaire.profile != request.user.profile :
@@ -37,7 +36,7 @@ def verifyFormulaire (request, id_stage, id_formulaire):
             if statusForm.is_rendu:
                 return Response({'error' : [{'error' : "le formulaire a déjà été rendu"}]}, status=status.HTTP_403_FORBIDDEN)
         
-        return formulaire.titre
+        return True
 """
 vérifie que toutes les questions du formulaire sont bien renseigné
 """
@@ -66,9 +65,9 @@ class saveFormulaire (APIView):
         id_formulaire = request.data['formulaire']['id']
 
         errors = []
-        titre_form = verifyFormulaire(request, id_stage=id_stage, id_formulaire=id_formulaire)
-        if isinstance(titre_form, Response) :
-            return titre_form
+        verify = verifyFormulaire(request, id_stage=id_stage, id_formulaire=id_formulaire)
+        if verify != True :
+            return verify
         
         verifyQ =  verifyQuestion(request, questions_data, id_formulaire)
         if verifyQ != True :
@@ -142,11 +141,6 @@ class saveFormulaire (APIView):
         if errors:
             return Response({"error" : errors, "message" : "ces questions ont recontrés des erreurs et n'ont pas été enregistré"})
         
-        #si probème lors de l'envoie, on passe l'erreur
-        try :
-            MailSauvegardeForm("tillian.dhume@laposte.net", titre_form)
-        except :
-            pass
         return Response({"sucess" :"tout a été enregistré avec succès"}) 
  
 class validateFormulaire(APIView):
@@ -158,10 +152,10 @@ class validateFormulaire(APIView):
         id_formulaire = request.data['formulaire']['id']
 
         errors = []
-        titre_form = verifyFormulaire(request, id_stage=id_stage, id_formulaire=id_formulaire)
-        if isinstance(titre_form, Response) :
-            return titre_form
-        
+
+        verifyQ =  verifyQuestion(request, questions_data, id_formulaire)
+        if verifyQ != True :
+            return verifyQ
 
         verify = verifyFormulaire(request, id_stage=id_stage, id_formulaire=id_formulaire)
         if verify != True :
@@ -211,7 +205,7 @@ class validateFormulaire(APIView):
                 question_save = Question.objects.get(pk = id_question)
 
                 try :
-                    responseForm = question['response']
+                    responseForm = question['responses'][0]
                 except :
                     if question_save.obligatoire :
                         errors.append({"question" : question, "error" : "la question n'a pas de réponse"})
@@ -239,11 +233,7 @@ class validateFormulaire(APIView):
         
         statusForm.statusForm = 'rendu'
         statusForm.save()
-        try :
-            MailConfirmationForm(request.user.email, titre_form)
-        except:
-            pass
-        return Response({"sucess" :"le formulaire a été validé avec succés"}) 
+        return Response({"sucess" :"le formulaire a été enregistré avec succés"}) 
    
 
 """
