@@ -5,6 +5,7 @@ from back.models import Stage
 from ..serializers import FormulaireSerializer, ResponseSerializer, ResponseCheckboxSerializer
 from rest_framework.response import Response
 from django.db.models import Q
+from mail.views import *
 
 """
 vérifie c
@@ -25,7 +26,7 @@ def verifyFormulaire (request, id_stage, id_formulaire):
             return Response({"error": [{'error': "le formulaire n'existe pas"}]}, status=status.HTTP_400_BAD_REQUEST)
         
         if formulaire.profile == 'JURY' :
-            if((request.profile != 'PRO') or (request.profile != 'ENS')):
+            if((request.user.profile != 'PRO') or (request.user.profile != 'ENS')):
                 return Response({"error": [{'error' : "Vous ne pouvez pas répondre à ce formulaire"}]})
         else:
             if formulaire.profile != request.user.profile :
@@ -205,7 +206,7 @@ class validateFormulaire(APIView):
                 question_save = Question.objects.get(pk = id_question)
 
                 try :
-                    responseForm = question['responses'][0]
+                    responseForm = question['response']
                 except :
                     if question_save.obligatoire :
                         errors.append({"question" : question, "error" : "la question n'a pas de réponse"})
