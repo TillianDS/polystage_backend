@@ -5,8 +5,11 @@ from rest_framework.authentication import TokenAuthentication
 from django.core.mail import send_mail
 from django.conf import settings
 from back.models import CustomUser, Etudiant, Tuteur, Session
+from back.serializers import TuteurSerializer
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from back.views.password import *
+from polystage_backend.permissions import *
 
 
 def getPromoFilireMail(promo, filiere):
@@ -16,15 +19,14 @@ def getPromoFilireMail(promo, filiere):
 class ChangeMail(APIView):
     def post(self, request, format = None):
         promo = request.data['sujet']
-        
+class OpenSession(APIView) :
+    permission_classes = [IsAuthenticated, AdminPermission]
 
-
-class BegginSession(APIView) :
-
-    def mailEtudiant (self, request, email_send, prenom, password):
+    def mailEtudiant (self, email_send, prenom, password, nom):
         subject = 'Ouverture de Polystage'
         context = {
             'prenom' : prenom ,
+            'nom' : nom,
             'email' : email_send,
             'password' : password
         }
@@ -34,10 +36,14 @@ class BegginSession(APIView) :
         from_email = settings.EMAIL_HOST_USER
         send_mail(subject, plain_message, from_email, [email_send])
 
-    def mailTuteur(self,request, email):
+    def mailTuteur(self, email, nom, prenom, lien):
         subject = 'Ouverture de Polystage'
-        
-        html_message = render_to_string('email/openPolystageTuteur.html')
+        context = {
+            'prenom' : prenom ,
+            'nom' : nom,
+            'lien' : lien ,
+        }
+        html_message = render_to_string('email/openPolystageTuteur.html', context)
 
         plain_message = strip_tags(html_message)
 
@@ -46,21 +52,27 @@ class BegginSession(APIView) :
 
     # envoie un mail pour l'ouverture de la plateforme PolyStage
     def post (self, request, pk, format = None) :
-        data = request.data
-
         try : 
             session = Session.objects.get(pk=pk)
         except Session.DoesNotExist:
             return Response({"error" : "la session n'existe pas"})
         
-        if session.filiere != request.user.filiere :
+        if session.filiere != request.user.instance.filiere :
             return Response({"error" : "vous ne pouvez pas démarrer cette session"})
         
-        for jury in session.jury_set :
-            for soutenance in jury.soutenance_set :
-                email_etudiant = soutenance.stage.etudiant.email
+        etudiants = Etudiant.objects.filter(stage__soutenance__jury__session = session).distinct()
+        tuteur = Tuteur.objects.filter(stage__soutenance__jury__session = session).distinct()
+        for etudiant in etudiants :
+            if etudiant.first_connection:
+                password = generate_password()
+                self.mailEtudiant(email_send= etudiant.email, nom=etudiant.last_name, prenom=etudiant.last_name, password=password )
+                etudiant.set_password(password)
+                etudiant.save()
+            else :
+                pass
+            
 
-        #return Response({'success': 'email envoyé avec succès', "mail": email_send}, status=status.HTTP_200_OK)
+        return Response({'success': "les mails ont été envoyés avec succès"}, status=status.HTTP_200_OK)
 
 def mailConfirmationForm (email_send, titre_form) :
 
@@ -87,3 +99,4 @@ def mailSauvegardeForm (email_send, titre_form) :
     from_email = settings.EMAIL_HOST_USER
     send_mail(subject, plain_message, from_email, [email_send])
     return Response({'success': 'email envoyé avec succès'})
+

@@ -10,7 +10,6 @@ from .views_users import UserList
 from django.db.models import Q
 from itertools import chain
 from polystage_backend.permissions import *
-
 class userSearchAllChamp (APIView):
 
     def get_string_data (self, request, data_name) :
@@ -198,14 +197,3 @@ class SetAllInactive(APIView):
         
         return Response ({"success" : "les données de Etudiants, Stage, Soutenances, Tuteur, Jury ont été rendus inactives" }, status=status.HTTP_200_OK)
     
-class begginSession(APIView):
-
-    def post (self, request, pk, format = None):
-        try :
-            session = Session.objects.get(pk=pk)
-        except Session.DoesNotExist :
-            return Response({'error' : f"la session avec l'id {pk} n'existe pas"})
-        
-        etudiants = Etudiant.objects.filter(stage__soutenance__jury__session = session).distinct()
-        serializer = EtudiantSerializer(etudiants, many = True)
-        return Response(serializer.data)

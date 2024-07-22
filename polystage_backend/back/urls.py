@@ -29,7 +29,6 @@ urlpatterns = [
     path('userSearch/', views_admin.userSearch.as_view()),
     path('stageSearch/', views_admin.stageSearch.as_view()),
     path('soutenanceSearch/', views_admin.soutenanceSearch.as_view()),
-    path('begginSession/<int:pk>/', views_admin.begginSession.as_view()),
 
     path('setAllInactive/', views_admin.SetAllInactive.as_view()),
 
