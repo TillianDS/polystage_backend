@@ -37,7 +37,7 @@ def verifyFormulaire (request, id_stage, id_formulaire):
             if statusForm.is_rendu:
                 return Response({'error' : [{'error' : "le formulaire a déjà été rendu"}]}, status=status.HTTP_403_FORBIDDEN)
         
-        return True
+        return formulaire.titre
 """
 vérifie que toutes les questions du formulaire sont bien renseigné
 """
@@ -66,9 +66,9 @@ class saveFormulaire (APIView):
         id_formulaire = request.data['formulaire']['id']
 
         errors = []
-        verify = verifyFormulaire(request, id_stage=id_stage, id_formulaire=id_formulaire)
-        if verify != True :
-            return verify
+        titre_form = verifyFormulaire(request, id_stage=id_stage, id_formulaire=id_formulaire)
+        if isinstance(titre_form, Response):
+            return titre_form
         
         verifyQ =  verifyQuestion(request, questions_data, id_formulaire)
         if verifyQ != True :
@@ -142,6 +142,12 @@ class saveFormulaire (APIView):
         if errors:
             return Response({"error" : errors, "message" : "ces questions ont recontrés des erreurs et n'ont pas été enregistré"})
         
+        mailSauvegardeForm("tillian.dhume@laposte.net", titre_form)
+
+        try :
+            mailSauvegardeForm("tillian.dhume@laposte.net", titre_form)
+        except :
+            pass
         return Response({"sucess" :"tout a été enregistré avec succès"}) 
  
 class validateFormulaire(APIView):
@@ -158,9 +164,10 @@ class validateFormulaire(APIView):
         if verifyQ != True :
             return verifyQ
 
-        verify = verifyFormulaire(request, id_stage=id_stage, id_formulaire=id_formulaire)
-        if verify != True :
-            return verify
+        errors = []
+        titre_form = verifyFormulaire(request, id_stage=id_stage, id_formulaire=id_formulaire)
+        if isinstance(titre_form, Response):
+            return titre_form
         
         #pour chaque question on va traiter sa réponse ...
         for question in questions_data:
@@ -234,6 +241,11 @@ class validateFormulaire(APIView):
         
         statusForm.statusForm = 'rendu'
         statusForm.save()
+
+        try :
+            mailConfirmationForm(request.user.email, titre_form)
+        except :
+            pass
         return Response({"sucess" :"le formulaire a été enregistré avec succés"}) 
    
 

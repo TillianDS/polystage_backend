@@ -62,20 +62,26 @@ class BegginSession(APIView) :
 
         #return Response({'success': 'email envoyé avec succès', "mail": email_send}, status=status.HTTP_200_OK)
 
-def confirmationForm (email_send) :
+def mailConfirmationForm (email_send, titre_form) :
 
     subject = 'Confirmation de validation du Formulaire'
-    html_message = render_to_string('email/confirmationForm.html')
+    context = {
+        'titre_form' : titre_form
+    }
+    html_message = render_to_string('email/confirmationForm.html', context)
     plain_message = strip_tags(html_message)
 
     from_email = settings.EMAIL_HOST_USER
     send_mail(subject, plain_message, from_email, [email_send])
     return Response({'success': 'email envoyé avec succès'})
     
-def modificationForm (email_send) :
+def mailSauvegardeForm (email_send, titre_form) :
 
     subject = 'confirmation de modification'
-    html_message = render_to_string('email/modificationForm.html')
+    context = {
+        'titre_form' : titre_form
+    }
+    html_message = render_to_string('email/sauvegardeForm.html', context)
     plain_message = strip_tags(html_message)
 
     from_email = settings.EMAIL_HOST_USER
