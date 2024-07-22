@@ -9,7 +9,7 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
 
-def getPromoFilireMail(promo, filiere):
+def getPromoFiliereMail(promo, filiere):
     mail = Etudiant.objects.select_related("promo__filiere").filter(promo__filiere__nom = filiere, promo__annee = promo).values_list("email", flat=True)
     return mail
 
@@ -62,22 +62,25 @@ class BegginSession(APIView) :
 
         #return Response({'success': 'email envoyé avec succès', "mail": email_send}, status=status.HTTP_200_OK)
 
-def confirmationForm (email_send) :
-
+def MailConfirmationForm (email_send, titre_form) :
     subject = 'Confirmation de validation du Formulaire'
-    html_message = render_to_string('email/confirmationForm.html')
+    context = {
+        'titre_form': titre_form
+    }
+    html_message = render_to_string('email/confirmationForm.html', context)
     plain_message = strip_tags(html_message)
 
     from_email = settings.EMAIL_HOST_USER
     send_mail(subject, plain_message, from_email, [email_send])
-    return Response({'success': 'email envoyé avec succès'})
-    
-def modificationForm (email_send) :
 
-    subject = 'confirmation de modification'
-    html_message = render_to_string('email/modificationForm.html')
+
+def MailSauvegardeForm (email_send, titre_form) :
+    subject = 'Sauvegarde Formulaire'
+    context = {
+        'titre_form': titre_form
+    }
+    html_message = render_to_string('email/sauvegardeForm.html', context)
     plain_message = strip_tags(html_message)
 
     from_email = settings.EMAIL_HOST_USER
     send_mail(subject, plain_message, from_email, [email_send])
-    return Response({'success': 'email envoyé avec succès'})
