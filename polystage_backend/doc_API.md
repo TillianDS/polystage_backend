@@ -14,7 +14,7 @@
 - [importSession](#import-des-sessions): import massif des sessions
 - [importUser](#import-des-utilisateurs): import massif des utilisateurs
 - [validateFormulaire](#validateformulaire): valdier les informations d'un formulaire
-- [sauvegardeFormulaire](#sauvegardeformulaire): sauvegarder les réponse à un formulaire
+- [saveFormulaire](#saveformulaire): sauvegarder les réponse à un formulaire
 - [getFormulaireAll](#getformulaireall): permet à l'administrateur de visualiser un formulaire
 - [formUser](#formuser):  renvoie toutes les informations d'un formulaire avec les réponses enregistré en fonction de l'utilisateur connecté et du stage passé en url
 - changement sur les reponse au formulaire : demande maitenant du stage et non plus de l'étudiant
@@ -1812,7 +1812,7 @@ retourne le formulaire enregistré
 }
 ```
 
-## sauvegardeFormulaire
+## saveFormulaire
 
 sauvegarder un formulaire en enregistrant toutes les réponse apssé en paramètre et en passant la statut du stage lié à ce formulaire en "sauvegarde"
 
@@ -1821,7 +1821,7 @@ sauvegarder un formulaire en enregistrant toutes les réponse apssé en paramèt
 methode : POST
 
 ```url
-http://127.0.0.1:8000/sauvegardeFormulaire/
+http://127.0.0.1:8000/saveFormulaire/
 ```
 
 ### données envoyées
@@ -1830,7 +1830,7 @@ http://127.0.0.1:8000/sauvegardeFormulaire/
 
 - l'id du stage pour lequel sont enregistrés les reponses au formulaire (sera inclu automatiquement dans les nouvelles réponses)
 
-- si une réponse existe déjà : inclure l'id de la réponse
+- si une réponse existe déjà, la réponse sera cherché et modifié, vous n'avez pas besoin d'inclure l'id de la réponse
 
 ```json
 {
