@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.12
+FROM python:3.12.4
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -21,7 +21,7 @@ RUN pip install gunicorn
 COPY polystage_backend/ /code/
 
 # Expose the port server will listen on
-EXPOSE 8000
+EXPOSE $PORT
 
 # Command to run the app. Replace "myproject" with your project name
-CMD ["gunicorn", "--bind", ":8000", "polystage_backend.wsgi:application"]
+CMD ["gunicorn", "--bind", ":${PORT}", "polystage_backend.wsgi:application"]
