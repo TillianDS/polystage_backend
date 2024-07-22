@@ -142,8 +142,6 @@ class saveFormulaire (APIView):
         if errors:
             return Response({"error" : errors, "message" : "ces questions ont recontrés des erreurs et n'ont pas été enregistré"})
         
-        mailSauvegardeForm("tillian.dhume@laposte.net", titre_form)
-
         try :
             mailSauvegardeForm("tillian.dhume@laposte.net", titre_form)
         except :
