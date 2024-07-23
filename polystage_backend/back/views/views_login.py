@@ -128,7 +128,7 @@ class ChangePassword (APIView) :
 class gestionCode(APIView):
 
     def generate_code(self, user: CustomUser): 
-        codePassword = CodePassword.objects.filter(user=user)
+        codePassword = CodePassword.objects.get(user=user)
         code = random.randint(100000, 999999)
 
         if codePassword :

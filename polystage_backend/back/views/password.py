@@ -30,5 +30,19 @@ def generate_password(length=9):
     # Convert list to string and return
     return ''.join(password)
 
-# Example usage
-print(generate_password())
+def verify_passsword (self, password1, password2, request) :
+        
+        password_length = 7
+
+        if password1 != password2:
+            return {"error": "Les mots de passe ne correspondent pas"}
+        if len(password1) < password_length:
+            return {"error": f"Le mot de passe doit contenir au moins {password_length} caractères"}
+        if not any(char.islower() for char in password1):
+            return {"error": "Le mot de passe doit contenir au moins une lettre minuscule"}
+        if not any(char.isupper() for char in password1):
+            return {"error": "Le mot de passe doit contenir au moins une lettre majuscule"}
+        if not any(char in special_characters for char in password1):
+            return {"error": "Le mot de passe doit contenir au moins un caractère spécial"}
+        
+        return True

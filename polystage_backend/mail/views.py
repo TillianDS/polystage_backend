@@ -22,7 +22,20 @@ class ChangeMail(APIView):
 class OpenSession(APIView) :
     permission_classes = [IsAuthenticated, AdminPermission]
 
-    def mailEtudiant (self, email_send, prenom, password, nom):
+    def mailEtudiant (self, email_send, prenom, nom):
+        subject = 'Ouverture de Polystage'
+        context = {
+            'prenom' : prenom ,
+            'nom' : nom,
+            'email' : email_send,
+        }
+        html_message = render_to_string('email/openPolystageEtudiant.html', context= context)
+        plain_message = strip_tags(html_message)
+
+        from_email = settings.EMAIL_HOST_USER
+        send_mail(subject, plain_message, from_email, [email_send])
+
+    def mailEtudiantFirstCo (self, email_send, prenom, password, nom):
         subject = 'Ouverture de Polystage'
         context = {
             'prenom' : prenom ,
@@ -30,7 +43,7 @@ class OpenSession(APIView) :
             'email' : email_send,
             'password' : password
         }
-        html_message = render_to_string('email/openPolystageEtudiant.html', context= context)
+        html_message = render_to_string('email/openPolystageEtudiantFirstCo.html', context= context)
         plain_message = strip_tags(html_message)
 
         from_email = settings.EMAIL_HOST_USER
@@ -61,16 +74,26 @@ class OpenSession(APIView) :
             return Response({"error" : "vous ne pouvez pas démarrer cette session"})
         
         etudiants = Etudiant.objects.filter(stage__soutenance__jury__session = session).distinct()
-        tuteur = Tuteur.objects.filter(stage__soutenance__jury__session = session).distinct()
+        tuteurs = Tuteur.objects.filter(stage__soutenance__jury__session = session).distinct()
+        errors = []
         for etudiant in etudiants :
             if etudiant.first_connection:
                 password = generate_password()
-                self.mailEtudiant(email_send= etudiant.email, nom=etudiant.last_name, prenom=etudiant.last_name, password=password )
+                try :
+                    self.mailEtudiantFirstCo(email_send= etudiant.email, nom=etudiant.last_name, prenom=etudiant.first_name, password=password )
+                except :
+                    errors.append({"etudiant" :etudiant})
                 etudiant.set_password(password)
                 etudiant.save()
             else :
-                pass
-            
+                try :
+                    self.mailEtudiant(email_send=etudiant.email, nom=etudiant.last_name, prenom=etudiant.first_name)
+                except :
+                    errors.append({"etudiant": etudiant})
+
+        for tuteur in tuteurs :
+            lien = ""
+            self.mailTuteur(email=tuteur.email, nom=tuteur.last_name, prenom=tuteur.first_name, lien=lien)
 
         return Response({'success': "les mails ont été envoyés avec succès"}, status=status.HTTP_200_OK)
 

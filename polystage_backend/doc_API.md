@@ -443,19 +443,6 @@ les informations de la session, les étudiants qui font partie de cette session 
     "nom": "info 3A 2024",
     "etudiants": [
         {
-            "id": 50,
-            "email": "etu1@po.fr",
-            "first_name": "etu1",
-            "last_name": "etu1",
-            "first_connection": false,
-            "profile": "ETU",
-            "is_active": true,
-            "num_etudiant": "d000001",
-            "sessions": [
-                2
-            ]
-        },
-        {
             "id": 51,
             "email": "etu2@po.fr",
             "first_name": "etu2",
@@ -464,25 +451,48 @@ les informations de la session, les étudiants qui font partie de cette session 
             "profile": "ETU",
             "is_active": true,
             "num_etudiant": "d000002",
-            "sessions": [
-                2
-            ]
+            "num_jury": 9
         },
         {
-            "id": 52,
-            "email": "etu3@po.fr",
-            "first_name": "etu3",
-            "last_name": "etu3",
+            "id": 50,
+            "email": "etu1@po.fr",
+            "first_name": "etu1",
+            "last_name": "etu1",
             "first_connection": false,
             "profile": "ETU",
             "is_active": true,
-            "num_etudiant": "d000003",
-            "sessions": [
-                2
-            ]
+            "num_etudiant": "d000001",
+            "num_jury": 3
+        },
+        {
+            "id": 50,
+            "email": "etu1@po.fr",
+            "first_name": "etu1",
+            "last_name": "etu1",
+            "first_connection": false,
+            "profile": "ETU",
+            "is_active": true,
+            "num_etudiant": "d000001",
+            "num_jury": 3
         }
     ],
     "jurys": [
+        {
+            "id": 1,
+            "is_active": true,
+            "salle": "A120",
+            "batiment": "A",
+            "campus": "Luminy",
+            "zoom": "gtĝkrĝr\"",
+            "num_jury": 9,
+            "session": 2,
+            "leader": 49,
+            "membreJury": [
+                18,
+                19,
+                20
+            ]
+        },
         {
             "id": 8,
             "is_active": true,
@@ -491,14 +501,30 @@ les informations de la session, les étudiants qui font partie de cette session 
             "campus": "Luminy",
             "zoom": "http://",
             "num_jury": 2,
+            "session": 2,
             "leader": 49,
             "membreJury": [
                 49,
                 53,
                 54
             ]
+        },
+        {
+            "id": 9,
+            "is_active": true,
+            "salle": "B115",
+            "batiment": "B",
+            "campus": "Luminy",
+            "zoom": "http://",
+            "num_jury": 3,
+            "session": 2,
+            "leader": null,
+            "membreJury": [
+                49
+            ]
         }
-    ]
+    ],
+    "fini": false
 }
 ```
 
