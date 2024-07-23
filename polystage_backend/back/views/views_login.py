@@ -70,48 +70,9 @@ class derogationLogin (APIView):
         if not user.first_connection:
             return login_details(user)
         return Response({"first_connection" : True})
-    
-class ChangePassword (APIView) :
-    permission_classes = [AllowAny]
 
-    def get_user (self, pk):
-        return CustomUser.objects.get(pk = pk)
-
-    """
-    permet de changer le mot de passe dans le cadre d'un mot de passe oublié ou définition d'un nouveau mot de passe 
-
-    type de requete : POST
-    
-    arguments requete :
-    "password1" : nouveau mot de passe
-    "password2" : vérification du mot de passe
-
-    argument url : clé primaire de l'utilisateur concerné
-
-    Response : l'utilisateur qui a été modifié
-
-    """
-    def post (self, request, pk, format = None) :
-        user = self.get_user(pk)
-        try : 
-            password1 = request.data["password1"]
-            password2 = request.data["password2"]
-        except :
-            return Response({'error':'vous de vez précisez password1 et password2'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        verify = verify_passsword(password1, password2)
-
-        if isinstance(verify, Response):
-            return verify
-
-        user.set_password(request.data['password1'])
-        if user.first_connection :
-            user.first_connection = False
-            
-        user.save()
-
-        return Response(UserSerializer(user).data, status= status.HTTP_202_ACCEPTED)
 class SendCodeEmail (APIView) :
+    permission_classes = [AllowAny]
 
     def generate_code(self, user): 
         code = random.randint(100000, 999999)
@@ -127,12 +88,6 @@ class SendCodeEmail (APIView) :
             return Response({'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
         return code
-    
-    """
-    créer un nombre de manière aléatoire à 6 chiffre, permet de généré la code reset du mdp
-    """
-    def generate_code(self): 
-        return random.randint(100000, 999999)
     
     """
     envoie un mail à l'utilisateur avec son code de réinitilisation, s'il existe
@@ -155,25 +110,88 @@ class SendCodeEmail (APIView) :
         try :   
             user = CustomUser.objects.get(email = email)
         except CustomUser.DoesNotExist :  
-            pass        
+            return Response({'success': "mail envoyé avec succès si l'utilisateur existe et n'est pas un tuteur"}, status=status.HTTP_200_OK)
+        
+        if (user.profile == 'TUT') or (user.profile =='PRO') :
+            return Response({'success': "mail envoyé avec succès si l'utilisateur existe et n'est pas un tuteur"}, status=status.HTTP_200_OK)
+
         code = self.generate_code()
 
         if isinstance(code, Response):
             return
         sendVerificationCode(send_mail = user.email, code=code) 
-        return Response({'success': 'email envoyé avec succès'}, status=status.HTTP_200_OK)
+        return Response({'success': "mail envoyé avec succès si l'utilisateur existe et n'est pas un tuteur"}, status=status.HTTP_200_OK)
     
-class CheckCode (APIView) :
+class verifyCode (APIView) :
+    permission_classes = [AllowAny]
+
     def post (self, request, format = None) :
-        email = request.data['email']
-        code = request.data['code']
-
-        codePassword : CodePassword = CodePassword.objects.get(email = email)
-        codeBase = codePassword.code
-
-        if (code != codePassword) :
-            return Response({"success" : True})
-        return Response({"success" : True})
+        try : 
+            email = request.data['email']
+            code = request.data['code']
+        except :
+            return Response({'error': "vous devez préciser un code et un email"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try :
+            codePassword = CodePassword.objects.get(email = email, code = code, )
+        except CodePassword.DoesNotExist: 
+            return Response({'error': "il n'existe pas de codePassword pour l'email spécifié"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not codePassword.is_valid():
+            return Response({'error': "le code n'est plus valide"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(True)
     
+    
+class ChangePassword (APIView) :
+    permission_classes = [AllowAny]
 
+    """
+    permet de changer le mot de passe dans le cadre d'un mot de passe oublié ou définition d'un nouveau mot de passe 
+
+    type de requete : POST
+    
+    arguments requete :
+    "password1" : nouveau mot de passe
+    "password2" : vérification du mot de passe
+
+    argument url : clé primaire de l'utilisateur concerné
+
+    Response : l'utilisateur qui a été modifié
+
+    """
+    def post (self, request, format = None) :
+        try : 
+            password1 = request.data["password1"]
+            password2 = request.data["password2"]
+        except :
+            return Response({'error':'vous devez précisez password1 et password2'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try :
+            email = request.data['email']
+            code = request.data['code']
+        except :
+            return Response({'error':'vous devez précisez email et code'}, status=status.HTTP_400_BAD_REQUEST)
+
+        verify = verify_passsword(password1, password2)
+
+        if isinstance(verify, Response):
+            return verify
+        
+        
+        try :
+            user = CustomUser.objects.get(email = email)
+            codePassword = CodePassword.objects.get(email = user.email, code = code, )
+        except : 
+            return Response({'error': "il n'existe pas de codePassword pour l'email spécifié"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not codePassword.is_valid():
+            return Response({'error': "le code n'est plus valide"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user.set_password(request.data['password1'])
+        if user.first_connection :
+            user.first_connection = False
+            
+        user.save()
+
+        return Response(UserSerializer(user).data, status= status.HTTP_202_ACCEPTED)
 
