@@ -7,11 +7,14 @@ class activeSerializer (serializers.ModelSerializer):
     class Meta :
         read_only_fields = ['is_active'] 
 
+class CodePasswordSerializer (serializers.Serializer) :
+    class Meta :
+        model = CodePassword
+        fields = "__all__"
 class FiliereSerializer (activeSerializer) :
     class Meta :
         model = Filiere
         fields = ['id', 'nom']
-
 class SessionSerializer (activeSerializer) :
     class Meta :
         model = Session

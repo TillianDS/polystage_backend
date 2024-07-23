@@ -21,7 +21,6 @@ urlpatterns = [
     path('changePassword/', views_login.ChangePassword.as_view()),
     path('login/', views_login.CostumLogin.as_view(), name = 'login'),
     path('codeReset/', views_login.SendCodeEmail.as_view()),
-    path('code/', views_login.gestionCode.as_view()),
     path('logout/', views_login.Logout.as_view(), name='custom_logout'),
 
     #views_admin

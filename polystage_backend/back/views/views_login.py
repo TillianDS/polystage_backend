@@ -7,11 +7,12 @@ from ..models import CustomUser, CodePassword
 from ..serializers import *
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import login, authenticate
-from django.core.mail import send_mail
-from django.conf import settings
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import logout
 from polystage_backend.permissions import *
+from back.views.password import *
+from mail.views import *
+from datetime import datetime
 
 def login_details (user):
     token, created = Token.objects.get_or_create(user=user)
@@ -41,7 +42,7 @@ class CostumLogin(APIView):
     def post(self, request, format=None):
         email = request.data['email']
         password = request.data['password']
-        user : CustomUser = authenticate (request, email= email, password = password, backend='django.contrib.auth.backends.ModelBackend',)        
+        user = authenticate (request, email= email, password = password, backend='django.contrib.auth.backends.ModelBackend',)        
         if user :
             if not user.first_connection:
                 return login_details(user)
@@ -75,25 +76,7 @@ class ChangePassword (APIView) :
 
     def get_user (self, pk):
         return CustomUser.objects.get(pk = pk)
-    """
-    vérifie la validité du mdp
-    """
-    def verify_passsword (self, password1, password2, request) :
-        
-        password_length = 7
 
-        if password1 != password2:
-            return {"error": "Les mots de passe ne correspondent pas"}
-        if len(password1) < password_length:
-            return {"error": f"Le mot de passe doit contenir au moins {password_length} caractères"}
-        if not any(char.islower() for char in password1):
-            return {"error": "Le mot de passe doit contenir au moins une lettre minuscule"}
-        if not any(char.isupper() for char in password1):
-            return {"error": "Le mot de passe doit contenir au moins une lettre majuscule"}
-        if not any(char in r'[()[\]{}|\\`~!@#$%^&*_\-+=;:\'",<>./?]' for char in password1):
-            return {"error": "Le mot de passe doit contenir au moins un caractère spécial"}
-        
-        return False
     """
     permet de changer le mot de passe dans le cadre d'un mot de passe oublié ou définition d'un nouveau mot de passe 
 
@@ -110,12 +93,16 @@ class ChangePassword (APIView) :
     """
     def post (self, request, pk, format = None) :
         user = self.get_user(pk)
-        password1 = request.data["password1"]
-        password2 = request.data["password2"]
-        error = self.verify_passsword(password1, password2, request)
+        try : 
+            password1 = request.data["password1"]
+            password2 = request.data["password2"]
+        except :
+            return Response({'error':'vous de vez précisez password1 et password2'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        verify = verify_passsword(password1, password2)
 
-        if not (error == False) :
-            return Response(error, status=status.HTTP_400_BAD_REQUEST)
+        if isinstance(verify, Response):
+            return verify
 
         user.set_password(request.data['password1'])
         if user.first_connection :
@@ -124,27 +111,23 @@ class ChangePassword (APIView) :
         user.save()
 
         return Response(UserSerializer(user).data, status= status.HTTP_202_ACCEPTED)
+class SendCodeEmail (APIView) :
 
-class gestionCode(APIView):
-
-    def generate_code(self, user: CustomUser): 
-        codePassword = CodePassword.objects.get(user=user)
+    def generate_code(self, user): 
         code = random.randint(100000, 999999)
 
-        if codePassword :
-            codePassword = CodePassword.objects.get(user=user)
-            codePassword.code = code
-        else :
-            codePassword = CodePassword.objects.create(user = user, code = code)
-        codePassword.save()
+        code_data = {'code' : code, 'user' : user}
+        try :
+            codePassword_save = CodePassword.objects.get(user=user)
+            serializer = CodePasswordSerializer(codePassword_save, data = code_data)
+        except :
+            serializer = CodePasswordSerializer(data = code_data)
+        
+        if not serializer.is_valid():
+            return Response({'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save()
         return code
- 
     
-    def post(self, request) :
-        user = CustomUser.objects.get(email = 'tdhume@laposte.net')
-        return Response({'code': self.generate_code(user)})
-    
-class SendCodeEmail (APIView) :
     """
     créer un nombre de manière aléatoire à 6 chiffre, permet de généré la code reset du mdp
     """
@@ -163,22 +146,22 @@ class SendCodeEmail (APIView) :
     Response : 'success': 'email envoyé avec succès'
 
     """
-    def post (self, request, format = None) :
-        data = request.data
-        if 'email' in data :
-            to_email = data['email']
+    def post (self, request, format = None) :        
+        try :
+            email = request.data['email']
+        except :
+            return Response({'error': "vous devez préciser l'email de l'utilisateur"}, status=status.HTTP_400_BAD_REQUEST)
 
-            user = CustomUser.objects.filter(email = to_email)
-            
-            if user :
-                code = gestionCode.generate_code(user=user)
-                subject = 'Réinitialiser votre mot de passe'
-                message = 'Votre code de réinitialisation est le suivant %d'%(code)
-                from_email = settings.EMAIL_HOST_USER
-                send_mail(subject, message, from_email, [to_email])
+        try :   
+            user = CustomUser.objects.get(email = email)
+        except CustomUser.DoesNotExist :  
+            pass        
+        code = self.generate_code()
 
-            return Response({'success': 'email envoyé avec succès'}, status=status.HTTP_200_OK)
-        return Response({'error': 'error'}, status=status.HTTP_400_BAD_REQUEST)
+        if isinstance(code, Response):
+            return
+        sendVerificationCode(send_mail = user.email, code=code) 
+        return Response({'success': 'email envoyé avec succès'}, status=status.HTTP_200_OK)
     
 class CheckCode (APIView) :
     def post (self, request, format = None) :

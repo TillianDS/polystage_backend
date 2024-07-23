@@ -12,10 +12,6 @@ from back.views.password import *
 from polystage_backend.permissions import *
 
 
-def getPromoFilireMail(promo, filiere):
-    mail = Etudiant.objects.select_related("promo__filiere").filter(promo__filiere__nom = filiere, promo__annee = promo).values_list("email", flat=True)
-    return mail
-
 class ChangeMail(APIView):
     def post(self, request, format = None):
         promo = request.data['sujet']
@@ -123,3 +119,13 @@ def mailSauvegardeForm (email_send, titre_form) :
     send_mail(subject, plain_message, from_email, [email_send])
     return Response({'success': 'email envoyé avec succès'})
 
+def sendVerificationCode(email_send, code):
+    subject = 'Réinitialiser votre mot de passe'
+    context = {
+        'code' : code
+    }
+    html_message = render_to_string('email/confirmationForm.html', context)
+    plain_message = strip_tags(html_message)
+    
+    from_email = settings.EMAIL_HOST_USER
+    send_mail(subject, plain_message, from_email, [email_send])

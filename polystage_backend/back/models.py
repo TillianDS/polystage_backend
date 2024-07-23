@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.core.validators import MaxValueValidator
+from datetime import datetime
 
 class CustomUserManager(BaseUserManager):
     
@@ -115,8 +116,9 @@ class ActiveModel(models.Model):
         super(ActiveModel, self).delete(*args, **kwargs)
 
 class CodePassword(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, unique=True)
     code = models.IntegerField()
+    creation_date = models.DateTimeField(default=datetime.now)
 
 class Tuteur(CustomUser):
     class Meta : 

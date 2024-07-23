@@ -1,5 +1,6 @@
 import random
 import string
+from rest_framework.response import Response
 
 special_characters = r"[()[\]{}|\\`~!@#$%^&*_\-+=;:\"',<>./?]"
 
@@ -30,19 +31,17 @@ def generate_password(length=9):
     # Convert list to string and return
     return ''.join(password)
 
-def verify_passsword (self, password1, password2, request) :
+def verify_passsword (password1, password2) :
         
-        password_length = 7
+    password_length = 7
 
-        if password1 != password2:
-            return {"error": "Les mots de passe ne correspondent pas"}
-        if len(password1) < password_length:
-            return {"error": f"Le mot de passe doit contenir au moins {password_length} caractères"}
-        if not any(char.islower() for char in password1):
-            return {"error": "Le mot de passe doit contenir au moins une lettre minuscule"}
-        if not any(char.isupper() for char in password1):
-            return {"error": "Le mot de passe doit contenir au moins une lettre majuscule"}
-        if not any(char in special_characters for char in password1):
-            return {"error": "Le mot de passe doit contenir au moins un caractère spécial"}
-        
-        return True
+    if password1 != password2:
+        return Response({"error": "Les mots de passe ne correspondent pas"})
+    if len(password1) < password_length:
+        return Response({"error": f"Le mot de passe doit contenir au moins {password_length} caractères"})
+    if not any(char.islower() for char in password1):
+        return Response({"error": "Le mot de passe doit contenir au moins une lettre minuscule"})
+    if not any(char.isupper() for char in password1):
+        return Response( {"error": "Le mot de passe doit contenir au moins une lettre majuscule"})
+    if not any(char in special_characters for char in password1):
+        return Response({"error": "Le mot de passe doit contenir au moins un caractère spécial"})
