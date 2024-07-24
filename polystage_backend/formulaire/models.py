@@ -3,12 +3,13 @@ from django.db import models
 from back.models import Etudiant, Session, CustomUser, Stage
 
 #gestion droits lectur ecriture
-class Formulaire (models.Model):
-    #id_createur
+class Formulaire (models.Model):    
     id = models.CharField(max_length=200, primary_key=True)
     titre = models.TextField()
     description = models.CharField(max_length=400, blank= True, null= True)
     session =  models.ForeignKey(Session, on_delete=models.CASCADE)
+    date_limite = models.DateTimeField(null = True)
+    
     PROFILE_CHOICES = [
         ('TUT', 'Tuteur'),
         ('ETU', 'Etudiant'),
@@ -25,7 +26,7 @@ class Formulaire (models.Model):
     
     def __str__ (self) :
         return str(self.titre)
-
+    
 class Question (models.Model):
     titre = models.TextField()
     TYPE_CHOICES = [

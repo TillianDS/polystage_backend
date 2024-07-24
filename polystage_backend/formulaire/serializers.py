@@ -2,6 +2,7 @@ from rest_framework import serializers
 from formulaire.models import *
 
 class FormulaireSerializer (serializers.ModelSerializer):
+    date_limite = serializers.DateTimeField(format='%d-%m-%Y %H:%M:%S', input_formats=['%d-%m-%Y %H:%M:%S'])
     class Meta :
         model = Formulaire
         fields = "__all__"
@@ -52,7 +53,7 @@ class QuestionAllSerializer (serializers.ModelSerializer):
 
 class FormulaireAllSerializer (serializers.ModelSerializer):
     question = QuestionAllSerializer(many = True)
-
+    date_limite = serializers.DateTimeField(format='%d-%m-%Y %H:%M:%S', input_formats=['%d-%m-%Y %H:%M:%S'])
     class Meta :
         model = Formulaire
         fields = "__all__"
@@ -108,7 +109,8 @@ class QuestionResponseSerializer(serializers.ModelSerializer):
 
 class FormulaireResponseSerializer(serializers.ModelSerializer):
     question = QuestionResponseSerializer(many=True, read_only=True)
+    date_limite = serializers.DateTimeField(format='%d-%m-%Y %H:%M:%S', input_formats=['%d-%m-%Y %H:%M:%S'])
 
     class Meta:
         model = Formulaire
-        fields = ['id', 'titre', 'description', 'session', 'profile', 'langue', 'question']   
+        fields = ['id', 'titre', 'description', 'session', 'profile', 'langue', 'question', 'date_limite']   

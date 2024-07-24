@@ -1,4 +1,5 @@
 # dernier ajout
+- ajout de date limite au formulaire
 - [getStatutFormulaire](#getstatutformulaire): avoir le status d'un formulaire pour un utilisateur
 - [modifyFormulaireAll](#modifyformulaireall): modifier un formulaire
 - [manageJuryMembreJury](#managejurymembrejury): gérer la relation entre les membreJury et un Jury
@@ -1432,18 +1433,29 @@ Un formulaire peut avoir plusieurs questions, si la question est de type checkbo
 # Formulaire
 
 ## Informations d'un formulaire
-
+- id : id du formulaire
+- titre (string) : titre du formulaire 
+- description (string)
+- session (int) : session à laquelle est rattaché le formulaire 
+- date_limite (date, format : 23-11-2025 09:50:37): date limite de réponse au formulaire 
+- profile (profile): profile de l'utilisateur a qui est déstiné ce formulaire (TUT, ETU, JUR)
+- langue (string) : la lanque dans laquelle est le formulaire (FR, AN)
+    
 ## CRUD
 
+```url
+http://127.0.0.1:8000/formulaireList/
+http://127.0.0.1:8000/formulaireDetails/<int>/
+```
 
-# Response
+# ResponseForm
 
 ### Informations d'un réponse
 
 - id (string) : id de la response
 - content (string): contenu de la response
 - question (int) : id de la question associée
-- user (int) : id de l'utilisateur
+- stage (int) : id du stage auquel est lié la réponse
 
 ```json
 
@@ -1700,33 +1712,46 @@ http://127.0.0.1:8000/createFormulaireAll/
 
 ```json
 {
-    "id": "materiau",
+    "id": "id",
+    "date_limite": "23-11-2025 09:50:37",
+
     "question": [
         {
-            "id": 10,
-            "titre": "qu'avez vous fati durantvotre stage",
-            "type": "checkbox",
-            "checkbox": []
+            "id": 4,
+            "titre": "qu'avez vous pensé de votre stage ??",
+            "type": "text",
+            "checkbox": [],
+            "obligatoire": true
         },
         {
-            "id": 11,
-            "titre": "le stage vous a t'il plue?",
+            "id": 6,
+            "titre": "vous êtes vous ennuyé ?",
             "type": "checkbox",
-            "checkbox": [{
-                        "id": 1,
-                        "title": "Oui"
-                    },
-                    {
-                        "id": 2,
-                        "title": "non"
-                    }]
+            "checkbox": [
+                {
+                    "id": 1,
+                    "titre": "Oui"
+                },
+                {
+                    "id": 2,
+                    "titre": "Non"
+                }
+            ],
+            "obligatoire": true
+        },
+        {
+            "id": 7,
+            "titre": "qu'avez vous pensé du stagiaire ?",
+            "type": "text",
+            "checkbox": [],
+            "obligatoire": true
         }
     ],
-    "titre": "avis sur le stage",
-    "description": "avis de l'étudiant sur le déroulement de son stage",
+    "titre": "Avis du tuteur",
+    "description": "formulaire pour l'evaluation de Louise",
     "profile": "ETU",
     "langue": "FR",
-    "filiere": 6
+    "session": 2
 }
 ```
 
@@ -1784,6 +1809,7 @@ Admin
             "obligatoire": true
         }
     ],
+    "date_limite": "23-11-2025 09:50:37",
     "titre": "Avis du tuteur",
     "description": "formulaire pour l'evaluation de Louise",
     "profile": "ETU",
@@ -1830,12 +1856,13 @@ retourne le formulaire enregistré
             "obligatoire": true
         }
     ],
+    "date_limite": "23-11-2025 09:50:37",
     "titre": "Avis du tuteur",
     "description": "formulaire pour l'evaluation de Louise",
     "profile": "ETU",
     "langue": "FR",
     "session": 2
-}
+}-
 ```
 
 ## saveFormulaire
@@ -2027,6 +2054,8 @@ si le systeme rencontre une erreur, les données réponse qui ne sont pas en err
 - s'il y'a un probleme lors de l'enregistrement du serialiseur
 
 - si le formulaire a déjà été rendu
+
+- la date limite est dépassé
 
 ```json
 {
