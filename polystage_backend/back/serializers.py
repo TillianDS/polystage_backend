@@ -208,7 +208,7 @@ class SessionAllSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Session
-        fields = ['id', 'nom', 'etudiants', 'jurys', 'fini']
+        fields = ['id', 'nom', 'etudiants', 'jurys', 'fini', 'status']
 
     def get_etudiants(self, obj):
         soutenances = Soutenance.objects.filter(jury__session=obj)

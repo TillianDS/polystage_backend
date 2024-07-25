@@ -18,7 +18,7 @@ class getInfoSession(APIView):
         return Response(serializer.data)
 
 """
-renvoie les essions lié à l'utilisateur connecté
+renvoie les sessions lié à l'utilisateur connecté
 """
 class getUserSession(APIView):
     permission_classes = [IsAuthenticated, AdminJuryPermission]
@@ -29,7 +29,7 @@ class getUserSession(APIView):
             filiere = request.user.instance.filiere
             serializer = SessionSerializer(filiere.session_set, many = True)
         else :
-            session = Session.objects.filter(jury_set=request.user.instance.jury_set)
+            session = Session.objects.filter(jury_set=request.user.instance.jury_set, status_in = [2, 3])
             serializer = SessionSerializer(session, many = True)
         return Response(serializer.data)
 

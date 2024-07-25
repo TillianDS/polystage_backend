@@ -153,7 +153,15 @@ class Admin(CustomUser):
 class Session(ActiveModel):
     nom = models.CharField(max_length=100)
     filiere =  models.ForeignKey(Filiere, on_delete= models.CASCADE)
+    
+    STATUS_CHOICES = [
+        (1, 'cachée'),
+        (2, 'ouverte'),
+        (3, 'terminée')
+    ]
+    status = models.IntegerField(choices=STATUS_CHOICES, default=1)
     fini = models.BooleanField(default=False)
+    
     def __str__(self):
         return self.nom
     
