@@ -25,7 +25,7 @@ class Formulaire (models.Model):
     
     
     def __str__ (self) :
-        return str(self.titre)
+        return self.id
     
 class Question (models.Model):
     titre = models.TextField()
@@ -56,7 +56,6 @@ class ResponseForm (models.Model):
 class CheckBox (models.Model):
     titre = models.CharField(max_length=200)
     question = models.ForeignKey(Question, related_name = 'checkbox', on_delete= models.CASCADE )
-    content =models.BooleanField(default=False)
     def __str__ (self) :
         return str(self.question) + " " + str(self.titre)
 
@@ -82,7 +81,10 @@ class StatusFormulaire(models.Model):
 
     class Meta:
         # Spécifie que la combinaison de 'nom' et 'filiere' doit être unique
-        unique_together = ['formulaire', 'user']
+        unique_together = ['formulaire', 'user', 'stage']
+    
+    def __str__ (self) :
+        return "user : " + str(self.user.pk) + ", stage : " + str(self.stage) + ", " + str(self.formulaire)
 
     @property
     def is_rendu(self):

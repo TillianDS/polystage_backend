@@ -38,8 +38,8 @@ def verifyFormulaire (request, id_stage, id_formulaire):
 
         if date_limite_aware < now_aware:
             return Response({"error": [{'error' :"La date de modification du formulaire est dépassé"}]}, status=status.HTTP_403_FORBIDDEN)
-        if formulaire.profile == 'JURY' :
-            if((request.user.profile != 'PRO') or (request.user.profile != 'ENS')):
+        if formulaire.profile == 'JUR' :
+            if not request.user.is_jury :
                 return Response({"error": [{'error' : "Vous ne pouvez pas répondre à ce formulaire"}]})
         else:
             if formulaire.profile != request.user.profile :
@@ -123,7 +123,7 @@ def saveResponseFormulaire (questions_data, id_stage, action):
 
                     if question_save.obligatoire :
                         errors.append({"question" : question, "error" : "la question n'a pas de réponse"})
-                continue
+                    continue
 
             #on ajoute l'id de la question dans la réponse
             responseForm['question']=id_question
@@ -157,17 +157,17 @@ class saveFormulaire (APIView):
 
         errors =  saveResponseFormulaire(questions_data, id_stage, 'sauvegarde')
 
-        statusForm = StatusFormulaire.objects.get(stage = id_stage, user = request.user, formulaire = id_formulaire)
-        statusForm.statusForm = 'sauvegarde'
-        statusForm.save()
+        if not request.user.is_jury :
+            statusForm = StatusFormulaire.objects.get(stage = id_stage, user = request.user, formulaire = id_formulaire)
+            statusForm.statusForm = 'sauvegarde'
+            statusForm.save()
+            try :
+                mailSauvegardeForm("tillian.dhume@laposte.net", titre_form)
+            except :
+                pass
 
         if errors:
-            return Response({"error" : errors, "message" : "ces questions ont recontrés des erreurs et n'ont pas été enregistré"})
-        
-        try :
-            mailSauvegardeForm("tillian.dhume@laposte.net", titre_form)
-        except :
-            pass
+            return Response({"error" : errors, "message" : "ces questions ont recontrés des erreurs et n'ont pas été enregistré"})        
         return Response({"sucess" :"les réponses ont été enregistrées avec succès"}) 
  
 class validateFormulaire(APIView):
@@ -190,20 +190,25 @@ class validateFormulaire(APIView):
         
         errors = saveResponseFormulaire(questions_data, id_stage, 'validate')
         
-        statusForm = StatusFormulaire.objects.get(stage = id_stage, user = request.user, formulaire = id_formulaire)
+        if not request.user.is_jury :
 
-        if errors:
-            statusForm.statusForm = 'sauvegarde'
+            statusForm = StatusFormulaire.objects.get(stage = id_stage, user = request.user, formulaire = id_formulaire)
+
+            if errors:
+                statusForm.statusForm = 'sauvegarde'
+                statusForm.save()
+            
+            statusForm.statusForm = 'rendu'
             statusForm.save()
-            return Response({"error" : errors, "message" : "ces questions ont recontrés des erreurs et n'ont pas été enregistré"})
-        
-        statusForm.statusForm = 'rendu'
-        statusForm.save()
 
-        try :
-            mailConfirmationForm(request.user.email, titre_form)
-        except :
-            pass
+            try :
+                mailConfirmationForm(request.user.email, titre_form)
+            except :
+                pass
+
+        if errors :
+            return Response({"error" : errors, "message" : "ces questions ont recontrés des erreurs et n'ont pas été enregistré"})
+
         return Response({"sucess" :"le formulaire a été enregistré avec succés"}) 
    
 

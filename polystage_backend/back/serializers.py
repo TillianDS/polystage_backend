@@ -19,7 +19,7 @@ class SessionSerializer (activeSerializer) :
     class Meta :
         model = Session
         fields = "__all__"
-        read_only_fields = ['fini']  
+        #read_only_fields = ['status']  
 
 
 class SessionFiliereSerializer(activeSerializer):
@@ -43,12 +43,13 @@ class UserSerializer(serializers.ModelSerializer):
         ('TUT', 'Tuteur'),
         ('SPR', 'Super User')
     ]
-    is_active = serializers.BooleanField(default = True)
 
+    is_active = serializers.BooleanField(default = True)
+    first_connection = serializers.BooleanField(default = True)
     class Meta:
         model = CustomUser
         fields = ['id', 'email', 'first_name', 'last_name', 'first_connection', 'profile', 'is_active']
-        read_only_fields = ['is_active']  
+        read_only_fields = ['is_active', 'first_connection']  
 
 class EtudiantSerializer(UserSerializer):
     profile = serializers.ChoiceField(choices=UserSerializer.PROFILE_CHOICES, default='ETU')

@@ -73,7 +73,7 @@ class CustomUser(AbstractUser):
         super(CustomUser, self).delete(*args, **kwargs)
 
     def __str__(self):
-        return self.email
+        return str(self.id) + " " + self.email
 
     def verify_stage(self, id_stage):
         if self.profile == 'ETU':
@@ -81,7 +81,11 @@ class CustomUser(AbstractUser):
         elif self.profile == 'TUT':
             return self.instance.stage_set.filter(pk=id_stage).exists()  # Assurez-vous que le related_name est correct pour Tuteur
         return True
-    
+    @property
+    def is_jury (self):
+        if self.profile == 'ENS' or self.profile == 'PRO' :
+            return True
+        return False
     @property
     def instance(self):
         if self.profile == 'ETU':
@@ -160,7 +164,6 @@ class Session(ActiveModel):
         (3, 'terminée')
     ]
     status = models.IntegerField(choices=STATUS_CHOICES, default=1)
-    fini = models.BooleanField(default=False)
     
     def __str__(self):
         return self.nom
@@ -208,7 +211,7 @@ class Stage(ActiveModel):
     etudiant = models.ForeignKey(Etudiant, related_name ='stage', on_delete=models.CASCADE )
     num_convention = models.IntegerField(unique=True)
     def __str__(self):
-        return self.sujet
+        return str(self.id) + " " + self.sujet
     
     @property
     def StageSession(self):

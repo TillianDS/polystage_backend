@@ -88,12 +88,15 @@ class CheckboxReSerializer(serializers.ModelSerializer):
     
     def get_response (self, obj) :
         id_stage = self.context.get('id_stage')
-        reponses = ResponseCheckbox.objects.get(stage=id_stage, checkbox=obj)
-        return ResponseCheckboxAllSerializer(reponses).data
+        try :
+            response = ResponseCheckbox.objects.get(stage=id_stage, checkbox=obj)
+        except ResponseCheckbox.DoesNotExist:
+            return None
+        return ResponseCheckboxAllSerializer(response).data
 
 class QuestionResponseSerializer(serializers.ModelSerializer):
     response = serializers.SerializerMethodField()
-    checkbox = CheckboxReSerializer(many=True, read_only=True)
+    checkbox = serializers.SerializerMethodField()
     class Meta:
         model = Question
         fields = ['id', 'titre', 'type', 'obligatoire', 'response', 'checkbox']
@@ -103,9 +106,14 @@ class QuestionResponseSerializer(serializers.ModelSerializer):
         try :
             reponse = ResponseForm.objects.get(stage=id_stage, question=obj)
             return ResSerializer(reponse).data
-
         except :
             return None
+        
+    def get_checkbox (self, obj):
+        if obj.type == 'checkbox':
+            checkBox = CheckBox.objects.filter(question = obj)
+            return CheckboxReSerializer(checkBox, many=True, read_only=True).data
+        return None
 
 class FormulaireResponseSerializer(serializers.ModelSerializer):
     question = QuestionResponseSerializer(many=True, read_only=True)
