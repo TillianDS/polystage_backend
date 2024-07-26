@@ -7,14 +7,20 @@ from django.db.models import F
  
 class exportNote (APIView):
 
-    #promo : année de la promo
+    #session : id de la session
     #filiere : nom de la filiere
     #on exporte les données d'une filière passé en paramètres
     def post (self, request, format= None) :
-
-        nom_filiere = request.data['filiere']
-        annee_promo = request.data['promo']
-
-        etudiants = Etudiant.objects.select_related("promo__filiere").select_related("soutenance").annotate(filiere=F("promo__filiere__nom"), note_soutenance = F("soutenance__note"), promo_annee = F("promo__annee")).filter(filiere = nom_filiere, promo__annee = annee_promo).values("num_etudiant", "first_name", "last_name", "promo_annee", "filiere", "note_soutenance")
-        return Response(etudiants)
+        try:
+            nom_filiere = request.data['filiere']
+            id_session = request.data['session']
+        except :
+            return Response({'error' : "vous devez pr²éciser le nom de la filiere et l'id de la session : nom_filiere, id_session"})
+        
+    
+        soutenances_notes = Soutenance.objects.filter(jury__session__filiere__nom = nom_filiere, jury__session__id = id_session
+            ).annotate(nom = F("stage__etudiant__last_name"), prenom = F("stage__etudiant__first_name"), num_etudiant = F("stage__etudiant__num_etudiant"), num_convention = F("stage__num_convention")
+            ).values("num_etudiant", "nom", "prenom", "num_convention", "note")
+        
+        return Response(soutenances_notes)
     

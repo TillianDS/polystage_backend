@@ -5,6 +5,7 @@ from rest_framework.authentication import TokenAuthentication
 from django.core.mail import send_mail
 from django.conf import settings
 from back.models import CustomUser, Etudiant, Tuteur, Session
+from formulaire.models import Formulaire, StatusFormulaire
 from back.serializers import TuteurSerializer
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -73,6 +74,7 @@ class OpenSession(APIView) :
         tuteurs = Tuteur.objects.filter(stage__soutenance__jury__session = session).distinct()
         errors = []
         for etudiant in etudiants :
+            formulaires_etudiants = Formulaire.objects.filter(session=session, profile = 'ETU')
             if etudiant.first_connection:
                 password = generate_password()
                 try :
@@ -86,6 +88,8 @@ class OpenSession(APIView) :
                     self.mailEtudiant(email_send=etudiant.email, nom=etudiant.last_name, prenom=etudiant.first_name)
                 except :
                     errors.append({"etudiant": etudiant})
+            for formulaire in formulaires_etudiants :
+                pass
 
         for tuteur in tuteurs :
             lien = ""

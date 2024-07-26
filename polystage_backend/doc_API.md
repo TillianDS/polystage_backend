@@ -1,4 +1,5 @@
 # dernier ajout
+- [exportNote](#exportnote): modification export des notes
 - ajout de date limite au formulaire
 - [sendCodeMail](#sendcodemail): envoyer le code de réinitilisation à l'utilisateur
 - [verifyCode](#verifycode): vérifier la validité du code
@@ -1443,43 +1444,25 @@ http://127.0.0.1:8000/exportNote/
 ### envoie
 
 - filiere (string) : nom de la filiere
-- annee (int) : année de la promo
+- session (int) : id session
 
 ### retourne
 
 ```json
 [
     {
-        "num_etudiant": "d22014217",
-        "first_name": "Tillian",
-        "last_name": "Dhume",
-        "promo_annee": 2027,
-        "filiere": "Genie Biologique",
-        "note_soutenance": null
+        "note": 20.0,
+        "num_etudiant": "d000002",
+        "nom": "etu2",
+        "prenom": "etu2",
+        "num_convention": 1811
     },
     {
-        "num_etudiant": "d2201421",
-        "first_name": "tillian",
-        "last_name": "dhume",
-        "promo_annee": 2027,
-        "filiere": "Genie Biologique",
-        "note_soutenance": 15.0
-    },
-    {
-        "num_etudiant": "d2201421",
-        "first_name": "tillian",
-        "last_name": "dhume",
-        "promo_annee": 2027,
-        "filiere": "Genie Biologique",
-        "note_soutenance": 15.0
-    },
-    {
-        "num_etudiant": "d22014217",
-        "first_name": "tillian",
-        "last_name": "dhume",
-        "promo_annee": 2027,
-        "filiere": "Genie Biologique",
-        "note_soutenance": null
+        "note": 20.0,
+        "num_etudiant": "d000001",
+        "nom": "etu1",
+        "prenom": "etu1",
+        "num_convention": 1813
     }
 ]
 ```
