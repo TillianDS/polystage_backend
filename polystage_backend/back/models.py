@@ -81,6 +81,7 @@ class CustomUser(AbstractUser):
         elif self.profile == 'TUT':
             return self.instance.stage_set.filter(pk=id_stage).exists()  # Assurez-vous que le related_name est correct pour Tuteur
         return True
+    
     @property
     def is_jury (self):
         if self.profile == 'ENS' or self.profile == 'PRO' :

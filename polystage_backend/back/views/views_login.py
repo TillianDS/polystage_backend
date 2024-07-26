@@ -177,7 +177,6 @@ class ChangePassword (APIView) :
         if isinstance(verify, Response):
             return verify
         
-        
         try :
             user = CustomUser.objects.get(email = email)
             codePassword = CodePassword.objects.get(email = user.email, code = code, )

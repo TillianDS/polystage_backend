@@ -1,5 +1,8 @@
 # dernier ajout
 - ajout de date limite au formulaire
+- [sendCodeMail](#sendcodemail): envoyer le code de réinitilisation à l'utilisateur
+- [verifyCode](#verifycode): vérifier la validité du code
+- [changePassword](#change-password): changer le mot de passe une fois le code validé
 - [getStatutFormulaire](#getstatutformulaire): avoir le status d'un formulaire pour un utilisateur
 - [modifyFormulaireAll](#modifyformulaireall): modifier un formulaire
 - [manageJuryMembreJury](#managejurymembrejury): gérer la relation entre les membreJury et un Jury
@@ -1292,22 +1295,27 @@ DELETE:
 
 # Authentification
 
-### login
+## login
 
-permet d'authentifier l'utilisateur et de la connecter à l'application
+permet d'authentifier l'utilisateur et de le connecter à l'application
 
 ```url
 http://127.0.0.1:8000/login/
 ```
 
-#### POST
+méthode : POST
 
-##### arguments requete
+### Données envoyées
 
-- "email" : email de l'utilisateur
-- "password" : mot de passe
+```json
+{
+    "email" : "email de l'utilisateur",
+    "password" : "mot de passe"
+}
+```
 
-##### response
+
+### Données reçues
 
 si les identifiants sont correctes:
 
@@ -1323,24 +1331,20 @@ si les identifiants sont correctes:
 }
 ```
 
-##### response
+## sendCodeMail
 
-- success : message de succès
-
-## derogationLogin
-
-permet à un superutilisateur de s'authentifier en se dérogeant à un autre utilisateur
+envoie un mail à l'utilisateur avec son code de réinitilisation du mot de pass, s'il existe.
+si l'utilisateur n'existe pas, on a le même message de succès mais aucun mail n'est envoyé
 
 ```url
-http://127.0.0.1:8000/derogationLogin/
+http://127.0.0.1:8000/sendCodeMail/
 ```
 
-methode :  POST
+methode : POST
 
 ### Données envoyées
 
-l'email de l'utlisateur auquel on veut se déroger
-
+l'email de l'utilisateur qui 
 ```json
 {
     "email" : "email de l'utilisateur"
@@ -1349,25 +1353,81 @@ l'email de l'utlisateur auquel on veut se déroger
 
 ### Données reçues
 
-#### success
-si le mail est correct:
-
-- "id" : identifiants utilisateurs
-- "type utilisateur" : type de l'utilisateur qui se connecte
-
 ```json
 {
-    "user_id": 14,
-    "profile": "ADM"
+    "success": "email envoyé avec succès"
 }
 ```
 
-### non successs
+
+## verifyCode
+
+```url
+http://127.0.0.1:8000/verifyCode/
+```
+
+methode : POST
+
+### Données envoyées
+
 
 ```json
 {
-    "error" : "l'adresse spécifié ne correspond à aucun utilisateur"
+    "email" : "email de l'utilisateur",
+    "code" : "le code a vérifie"
 }
+```
+
+### Données reçues
+
+#### success
+```json
+    true
+```
+
+#### non success
+```json
+{
+    "error" :"le code n'est pas valide"
+}
+```
+
+## change password
+
+permet de changer modifier le mot de passe d'un utilisateur
+
+```url
+http://127.0.0.1:8000/password/
+```
+
+méthode : POST
+
+### Données reçues
+
+```json
+{
+    "email" : "email de l'utilisateur",
+    "code" : "le code a vérifie",
+    "password1" : "mdp de l'utilisateur",
+    "password2" : "mdp de l'utilisateur"
+
+}
+```
+les password doivent contenir une majuscule, une minuscule, un caractère spécial parmis [()[\]{}|\\`~!@#$%^&*_\-+=;:\'",<>./?] et doivent avoir uen longueur d'au moins 7 caractères
+
+### Données reçues
+
+informations de l'utilisateur
+
+```json
+    {
+        "id": 21,
+        "email": "enseignant14@po.fr",
+        "first_name": "Benoit",
+        "last_name": "Favre",
+        "first_connection": false,
+        "profile": "ENS"
+    }
 ```
 
 # export
@@ -2601,65 +2661,6 @@ reçus :
 
 ```
 
-# Autres
-
-### codeReset
-
-envoie un mail à l'utilisateur avec son code de réinitilisation, s'il existe
-si l'utilisateur n'existe pas, on a le même message de succès mais aucun mail n'est envoyé
-
-```url
-http://127.0.0.1:8000/codeReset/
-```
-
-#### POST
-
-##### arguments requete
-
-- "email" : email de l'utilisateur
-
-##### response
-
-```json
-{
-    "success": "email envoyé avec succès"
-}
-```
-
-### change password
-
-permet de changer modifier le mot de passe d'un utilisateur
-le mot de passe doit contenir une majuscule, une minuscule, un caractère spécial et doit avoir une taille minimum de 7 caractères
-
-```url
-http://127.0.0.1:8000/password/
-```
-
-#### POST
-
-##### arguments requete
-
-- "email" : email de l'utilisateur dont on souhaite modifier le mdp
-- password1 (string) : mdp de l'utilisateur
-- password2 (string) : confirmation du mdp de l'utilisateur
-
-les mdp doivent contenir une majuscule, une minuscule, un caractère spécial parmis [()[\]{}|\\`~!@#$%^&*_\-+=;:\'",<>./?] et doivent avoir uen longueur d'au moins 7 caractères
-
-##### response
-
-informations de l'utilisateur
-
-```json
-    {
-        "id": 21,
-        "email": "enseignant14@po.fr",
-        "first_name": "Benoit",
-        "last_name": "Favre",
-        "first_connection": true,
-        "profile": "ENS"
-    }
-```
-
 # SuperUser
 
 endpoint de gestion pour un super utilisateur
@@ -2751,3 +2752,48 @@ superutilisateurs : 'SPR'
     "password" : "Password*"
 }
 ```
+
+
+## derogationLogin
+
+permet à un superutilisateur de s'authentifier en se dérogeant à un autre utilisateur
+
+```url
+http://127.0.0.1:8000/derogationLogin/
+```
+
+methode :  POST
+
+### Données envoyées
+
+l'email de l'utlisateur auquel on veut se déroger
+
+```json
+{
+    "email" : "email de l'utilisateur"
+}
+```
+
+### Données reçues
+
+#### success
+si le mail est correct:
+
+- "id" : identifiants utilisateurs
+- "type utilisateur" : type de l'utilisateur qui se connecte
+
+```json
+{
+    "user_id": 14,
+    "profile": "ADM"
+}
+```
+
+### non successs
+
+```json
+{
+    "error" : "l'adresse spécifié ne correspond à aucun utilisateur"
+}
+```
+
