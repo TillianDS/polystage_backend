@@ -2558,6 +2558,8 @@ recherche un stage
 
 la recherche se fait sur le sujet, le nom de l'entreprise, le numéro étudiant
 
+les stages sont recherché dans la filiere de l'administrateur ou dans la session passé en paramètre
+
 ```url
 stageSearch/
 ```
@@ -2566,7 +2568,9 @@ stageSearch/
 
 ```json
 {
-    "search" :  "champ à chercher"
+    "search" :  "champ à chercher",
+    //si utlisateur connecté est enseignant ou professionnel
+    "id_session": "id de la session"
 }
 ```
 
@@ -2575,27 +2579,120 @@ stageSearch/
 les stages correspondants
 
 ```json
+envoyé :
+
+{
+    "search" :  "etu1",
+}
+
+reçues : //un étudiant dans le prénom est étu1 à 2 stages 
+[
+    {
+        "id": 9,
+        "is_active": true,
+        "date_debut": "10-01-2024",
+        "date_fin": "18-08-2024",
+        "sujet": "Securité",
+        "confidentiel": false,
+        "nom_entreprise": "Atos",
+        "num_convention": 1813,
+        "tuteur": 3,
+        "etudiant": 50
+    },
+    {
+        "id": 6,
+        "is_active": true,
+        "date_debut": "10-01-2024",
+        "date_fin": "18-08-2024",
+        "sujet": "Gestion du Run",
+        "confidentiel": false,
+        "nom_entreprise": "April",
+        "num_convention": 1810,
+        "tuteur": 30,
+        "etudiant": 50
+    }
+]
+
+envoyé :
+
+{
+    "search" :  "Atos",
+}
+
+reçues : //les stages qui se déroule à Atos
+[
+    {
+        "id": 9,
+        "is_active": true,
+        "date_debut": "10-01-2024",
+        "date_fin": "18-08-2024",
+        "sujet": "Securité",
+        "confidentiel": false,
+        "nom_entreprise": "Atos",
+        "num_convention": 1813,
+        "tuteur": 3,
+        "etudiant": 50
+    }
+]
 ```
 
 ## soutenanceSearch
 
-recherche un stage
+recherche une soutenance selon les informations de l'étudiant
+
+les soutenances sont recherché dans la filiere de l'administrateur ou dans la session passé en paramètre
 
 ```url
 soutenanceSearch/
 ```
 
+### Permissions
+
+Admin, Jury
+
 ### Données à envoyer
 
 ```json
 {
-    "search" :  "champ à chercher"
+    "search" :  "champ à chercher",
+    //si utlisateur connecté est enseignant ou professionnel
+    "id_session": "id de la session"
 }
 ```
 
 ### Données reçues
 
 ```json
+
+envoyé :
+
+{
+    "search" :  "etu1", //les soutenances qui ont un étudiant qui s'apelle etu1
+}
+
+reçues : 
+[
+    {
+        "id": 6,
+        "is_active": true,
+        "date_soutenance": "30-06-2024",
+        "heure_soutenance": "13:00",
+        "note": 20.0,
+        "soutenu": true,
+        "jury": 9,
+        "stage": 9
+    },
+    {
+        "id": 7,
+        "is_active": true,
+        "date_soutenance": "30-06-2024",
+        "heure_soutenance": "10:00",
+        "note": 15.0,
+        "soutenu": false,
+        "jury": 9,
+        "stage": 6
+    }
+]
 ```
 
 ## formulaireSearch
@@ -2605,6 +2702,10 @@ permet de rechercher un formulaire selon son titre, sa description, le rôle à 
 ```url
 http://127.0.0.1:8000/formulaireSearch/
 ```
+
+### Permissions
+
+Admin, Jury
 
 ### Données à envoyer
 

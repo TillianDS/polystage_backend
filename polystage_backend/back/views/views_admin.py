@@ -10,8 +10,9 @@ from .views_users import UserList
 from django.db.models import Q
 from itertools import chain
 from polystage_backend.permissions import *
-class userSearchAllChamp (APIView):
 
+class userSearchAllChamp (APIView):
+    permission_classes = [IsAuthenticated, AdminPermission]
     def get_string_data (self, request, data_name) :
         if data_name in request.data :
             data = request.data[data_name]
@@ -95,15 +96,16 @@ class userSearch (APIView):
     #permet de rechercher selon le profile de l'utilisateur en choissisant le model et le serialzier adapté
     def search (self, profile, search):
         model = self.choose_user(profile)
+
+        assertion = (Q(last_name__icontains = search) |
+                    Q(first_name__icontains = search) | 
+                    Q(email__icontains = search))
+        
         if profile == 'ETU' :
-            user = model.objects.filter(Q(last_name__icontains = search) |
-                                           Q(first_name__icontains = search) | 
-                                           Q(num_etudiant__icontains = search) | 
-                                           Q(email__icontains = search))
-        else :
-            user = model.objects.filter(Q(last_name__icontains = search) |
-                                           Q(first_name__icontains = search) | 
-                                           Q(email__icontains = search))
+            assertion = assertion | Q(num_etudiant__icontains = search)
+        
+        user = model.objects.filter(assertion)
+            
         serializer_user = self.choose_serializer(profile)
         
         serializer = serializer_user(user, many = True)
@@ -121,7 +123,7 @@ class userSearch (APIView):
 
         if profile : 
             if profile not in profiles:
-                return Response({'error' : "le profile n'est pas valide"})
+                return Response({'error' : f"le profile n'est pas valide, profiles valides : {profiles}"})
             users_data = self.search(profile, search)
 
         else :
@@ -133,6 +135,7 @@ class userSearch (APIView):
 
 class stageSearch (APIView):
 
+    permission_classes = [IsAuthenticated, AdminJuryPermission]
     """
     permet de rechercher des utilisateurs selon leur nom, prénom, email ou numéro étudiant sur un seul champ
     la méthode recherche dans la base si les champs utilisateurs contiennent la chaine passé en data  
@@ -146,17 +149,31 @@ class stageSearch (APIView):
     """
     def post(self, request, format = None):
         search = request.data['search']
-
-        stages = Stage.objects.filter(Q(sujet__icontains = search) | #recherche selon le sujet
+        
+        if request.user.profile == 'ADM' :
+            filiere = request.user.instance.filiere
+        else :
+            try : 
+                id_session = request.data['id_session']
+                session = Session.objects.get(pk=id_session)
+            except Session.DoesNotExist :
+                return Response({'error' : f"la session avec l'id : {id_session} n'existe pas"})
+            except :
+                return Response({'error' : "vous devez préciser l'id de la session"})
+            filiere = session.filiere
+              
+        stages = Stage.objects.filter((Q(sujet__icontains = search) | #recherche selon le sujet
                                       Q(nom_entreprise__icontains =search) | #recherche selon le nom de l'entreprise
                                       Q(etudiant__num_etudiant__icontains = search) |#recherche selon le numéro étudiant
-                                      Q(etudiant__email__icontains = search) #recherche selon le numéro étudiant
-                                      ) 
+                                      Q(etudiant__email__icontains = search)) & #recherche selon le numéro étudiant
+                                      Q(soutenance__jury__session__filiere = filiere))
         serializer = StageSerializer(stages, many = True)
 
         return Response(serializer.data)
 
 class soutenanceSearch (APIView):
+
+    permission_classes = [IsAuthenticated, AdminJuryPermission]
     """
     permet de rechercher des utilisateurs selon leur nom, prénom, email ou numéro étudiant sur un seul champ
     la méthode recherche dans la base si les champs utilisateurs contiennent la chaine passé en data  
@@ -169,18 +186,35 @@ class soutenanceSearch (APIView):
 
     """
     def post(self, request, format = None):
-        search = request.data['search']
+        try :
+            search = request.data['search']
+        except : 
+            return Response({'error' : 'vous devez préciser un champ search'})
+        
+        if request.user.profile == 'ADM' :
+            filiere = request.user.instance.filiere
+        else :
+            try : 
+                id_session = request.data['id_session']
+                session = Session.objects.get(pk=id_session)
+            except Session.DoesNotExist :
+                return Response({'error' : f"la session avec l'id : {id_session} n'existe pas"})
+            except :
+                return Response({'error' : "vous devez préciser l'id de la session"})
+            filiere = session.filiere
 
-        soutenances = Soutenance.objects.filter( Q(etudiant__num_etudiant__icontains = search) |#recherche selon le numéro étudiant
-                                      Q(etudiant__email__icontains = search) |#recherche selon le numéro étudiant
-                                      Q(etudiant__first_name__icontains = search) |
-                                      Q(etudiant__last_name__icontains = search)
+        soutenances = Soutenance.objects.filter( (Q(stage__etudiant__num_etudiant__icontains = search) |#recherche selon le numéro étudiant
+                                      Q(stage__etudiant__email__icontains = search) |#recherche selon le numéro étudiant
+                                      Q(stage__etudiant__first_name__icontains = search) |
+                                      Q(stage__etudiant__last_name__icontains = search)) & 
+                                      Q(jury__session__filiere = filiere)
                                       ) 
         serializer = SoutenanceSerializer(soutenances, many = True)
 
         return Response(serializer.data)
     
 class SetAllInactive(APIView):
+    permission_classes = [IsAuthenticated, AdminPermission]
     #rend inactive toutes les données active d'un model
     def modelInactive(self, models):
         models = models.objects.all()
