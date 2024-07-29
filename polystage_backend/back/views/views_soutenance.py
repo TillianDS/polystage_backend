@@ -56,9 +56,9 @@ class setNote(APIView):
         soutenance.save()
         
         session = soutenance.jury.session
-        soutenances_nonSoutenu = Soutenance.objects.filter(soutenu = False, jury__session = session)
-        if not soutenances_nonSoutenu :
-            session.fini = True
+        soutenances_nonSoutenues = Soutenance.objects.filter(soutenu = False, jury__session = session)
+        if not soutenances_nonSoutenues :
+            session.statusSession = 3
             session.save()
 
         return Response({'success' :"la note a bien été enregistré"})

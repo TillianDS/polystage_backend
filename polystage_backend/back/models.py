@@ -164,10 +164,10 @@ class Session(ActiveModel):
         (2, 'ouverte'),
         (3, 'terminée')
     ]
-    status = models.IntegerField(choices=STATUS_CHOICES, default=1)
+    statusSession = models.IntegerField(choices=STATUS_CHOICES, default=1)
     
     def __str__(self):
-        return self.nom
+        return str(self.id) + " " + self.nom
     
     class Meta:
         constraints = [
