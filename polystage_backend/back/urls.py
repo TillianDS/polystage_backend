@@ -2,13 +2,9 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import views_login, views_users, views_admin, views_promo_filiere, views_stage, views_soutenance, views_jury, views_import, views_etudiant, views_export, cas, test_cas, views_test, views_session, views_superUser
+from .views import views_login, views_users, views_admin, views_promo_filiere, views_stage, views_soutenance, views_jury, views_import, views_etudiant, views_export, cas, test_cas, views_session, views_superUser
 
 urlpatterns = [
-    #views_test
-    path('test/', views_test.test.as_view()),
-    path('get-token/', views_test.get_csrf_token, name='get_csrf_token'),
-
     #views_Users
     path('userDetails/<int:pk>/', views_users.UserDetails.as_view()),
     path('userList/', views_users.UserList.as_view(), name = 'userList'),

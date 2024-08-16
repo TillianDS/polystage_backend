@@ -7,6 +7,8 @@ from . import views
 urlpatterns = [
      #views_Users
     path('openSession/<int:pk>/', views.OpenSession.as_view()),
+    path('testSend/', views.testSend.as_view()),
+
     ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

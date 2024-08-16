@@ -6,16 +6,13 @@ from django.core.mail import send_mail
 from django.conf import settings
 from back.models import CustomUser, Etudiant, Tuteur, Session, Stage
 from formulaire.models import Formulaire, StatusFormulaire
-from back.serializers import TuteurSerializer
+from back.serializers import TuteurSerializer, StageSerializer
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from back.views.password import *
 from polystage_backend.permissions import *
 import requests
 
-class ChangeMail(APIView):
-    def post(self, request, format = None):
-        promo = request.data['sujet']
 class OpenSession(APIView) :
     permission_classes = [IsAuthenticated, AdminPermission]
 
@@ -46,11 +43,13 @@ class OpenSession(APIView) :
         from_email = settings.EMAIL_HOST_USER
         send_mail(subject, plain_message, from_email, [email_send])
 
-    def mailTuteur(self, email, nom, prenom, lien):
+    def mailTuteur(self, email, nom, prenom, nom_etudiant, prenom_etudiant, lien):
         subject = 'Ouverture de Polystage'
         context = {
             'prenom' : prenom ,
             'nom' : nom,
+            'nom_etudiant' : nom_etudiant,
+            'prenom_etudiant' : prenom_etudiant,
             'lien' : lien ,
         }
         html_message = render_to_string('email/openPolystageTuteur.html', context)
@@ -106,10 +105,9 @@ class OpenSession(APIView) :
         try :
             for tuteur in tuteurs :
                 lien = ""
-                self.mailTuteur(email=tuteur.email, nom=tuteur.last_name, prenom=tuteur.first_name, lien=lien)
                 
-                formulaires_tuteur = Formulaire.objects.filter(session=session, profile = 'ETU')
-                stages = Stage.objects.filter(soutenance__jury__session = session, tuteur = tuteur)
+                formulaires_tuteur = Formulaire.objects.filter(session=session, profile = 'TUT')
+                stages = tuteur.stage_set
                 
                 for formulaire in formulaires_tuteur :
                     for stage in stages :
@@ -119,12 +117,24 @@ class OpenSession(APIView) :
                             formulaire=formulaire,
                             statusForm='envoie'
                         )
+
+                for stage in stages :
+                    self.mailTuteur(email=tuteur.email, nom=tuteur.last_name, prenom=tuteur.first_name, lien=lien, prenom_etudiant=stage.etudiant)
+
         except requests.exceptions.Timeout:
             return Response({"error": "Le délai d'attente a été dépassé (tuteur)"})
         
         session.statusSession = 2
         session.save()
         return Response({'success': "les mails ont été envoyés avec succès"}, status=status.HTTP_200_OK)
+
+class testSend(APIView):
+    def get(self, request):
+        tuteur = Tuteur.objects.get(pk=77)
+        stages = tuteur.stage_set
+        for stage in stages:
+            return Response(stage.etudiant.first_name)
+
 
 def mailConfirmationForm (email_send, titre_form) :
 

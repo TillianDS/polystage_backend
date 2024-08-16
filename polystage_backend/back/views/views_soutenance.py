@@ -18,7 +18,7 @@ class SoutenanceDetails(Details):
         self.set_attribute(Soutenance, SoutenanceSerializer, "Soutenance")
 
 class setNote(APIView):
-    permission_classes = [AdminJuryPermission]
+    permission_classes = [IsAuthenticated, AdminJuryPermission]
     def post(self, request, format = None):
         id_soutenance = request.data['id_soutenance']
         note_str = request.data.get('note')
