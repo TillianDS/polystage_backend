@@ -11,16 +11,16 @@ class CodePasswordSerializer (serializers.Serializer) :
     class Meta :
         model = CodePassword
         fields = "__all__"
+
 class FiliereSerializer (activeSerializer) :
     class Meta :
         model = Filiere
         fields = ['id', 'nom']
+
 class SessionSerializer (activeSerializer) :
     class Meta :
         model = Session
         fields = "__all__"
-        #read_only_fields = ['status']  
-
 
 class SessionFiliereSerializer(activeSerializer):
     sessions = serializers.SerializerMethodField()
@@ -29,7 +29,6 @@ class SessionFiliereSerializer(activeSerializer):
         model = Filiere
         fields = ['id', 'nom', 'sessions']
         
-
     def get_sessions(self, obj):
         sessions = Session.objects.filter(filiere=obj)
         return SessionSerializer(sessions, many=True).data
@@ -209,7 +208,7 @@ class SessionAllSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Session
-        fields = ['id', 'nom', 'etudiants', 'jurys', 'fini', 'status']
+        fields = ['id', 'nom', 'etudiants', 'statusSession', 'jurys', 'statusSession']
 
     def get_etudiants(self, obj):
         soutenances = Soutenance.objects.filter(jury__session=obj)

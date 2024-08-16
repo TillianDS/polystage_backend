@@ -20,8 +20,18 @@ class StageList(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post (self, request, format = None):
-        date_fin = self.getDate(request, request.data['date_fin'])
-        date_debut = self.getDate(request, request.data['date_debut'])
+        try : 
+            date_debut_str = request.data['date_debut']
+        except : 
+            return Response({'error' : "vous devez préciser une date de début de stage, format : DD-MM-YYYY"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try : 
+            date_fin_str = request.data['date_fin']
+        except : 
+            return Response({'error' : "vous devez préciser une date de fin de stage format : DD-MM-YYYY"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        date_fin = self.getDate(request, date_debut_str)
+        date_debut = self.getDate(request, date_fin_str)
 
         data = request.data.copy()
         data['date_debut'] = date_debut

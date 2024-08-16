@@ -49,7 +49,7 @@ class JuryDetails (APIView):
 permet de savoir si un utilisateur fait partie d'un jury ou non
 """
 class isJury(APIView):
-    permission_classes = [IsAuthenticated, JuryPermission]
+    permission_classes = [IsAuthenticated, JuryPermission, TuteurPermission]
     def post (self, request, format = None):
         try:
             id_user = request.data['id_user']

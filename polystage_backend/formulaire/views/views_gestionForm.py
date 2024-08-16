@@ -7,7 +7,6 @@ from rest_framework.response import Response
 from django.db.models import Q
 from mail.views import *
 from datetime import datetime
-import pytz
 
 """
 vérifie c
@@ -62,7 +61,7 @@ def verifyQuestion (request, questions, id_formulaire) :
         try :
             questionSearch = Question.objects.get(pk =question['id'], formulaire = id_formulaire)
         except Question.DoesNotExist :
-            return Response({'error' : [{'error' : f"la question avec l'id {question["id"]} n'existe pas dans le formulaire {id_formulaire} "}]})
+            return Response({'error' : [{'error' : f"la question avec l'id {question['id']} n'existe pas dans le formulaire {id_formulaire} "}]})
 
         questionSearchs.append(questionSearch)
     

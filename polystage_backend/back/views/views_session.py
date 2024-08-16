@@ -7,7 +7,7 @@ from rest_framework.authentication import TokenAuthentication
 from polystage_backend.permissions import *
 
 class getInfoSession(APIView):
-    permission_classes = [AdminJuryPermission]
+    permission_classes = [IsAuthenticated, AdminJuryPermission]
 
     def get(self, request, pk, format= None ):
         try :

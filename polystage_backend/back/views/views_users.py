@@ -82,7 +82,7 @@ class UserList(APIView):
         serializer = self.choice_deserializer(profile, data, False)
         
         password_length = 7
-        
+        """
         if serializer.is_valid(): 
             
             password1 = request.data["password1"]
@@ -102,6 +102,10 @@ class UserList(APIView):
             user = serializer.save()
             user.set_password(password1)
             user.save()
+        """
+        if serializer.is_valid(): 
+
+            user = serializer.save()
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
                             

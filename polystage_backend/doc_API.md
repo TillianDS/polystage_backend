@@ -1,4 +1,12 @@
+# Réparation
+
+- [maj doc user](#utilisateurs)
+- [maj doc stage](#stage)
+- [getInfoSesison](#getinfosession)
+- [maj doc Jury](#jury)
+
 # dernier ajout
+
 - [exportNote](#exportnote): modification export des notes
 - ajout de date limite au formulaire
 - [sendCodeMail](#sendcodemail): envoyer le code de réinitilisation à l'utilisateur
@@ -147,7 +155,7 @@ http://127.0.0.1:8000/userDetails/<int>/
 
 ### les informations de l'utilisateur
 
-- id (int) : identfifiant de l'utilisateur
+- id (int) : identifiant de l'utilisateur
 - email (email) : email de l'utilisateur
 - first_name (string) : prenom
 - last_name (string) : prenom
@@ -161,38 +169,11 @@ http://127.0.0.1:8000/userDetails/<int>/
 - ETU : etudiant
 - TUT : tuteur
 - PRO : professionnel
+- SPR : super utilisateur
 
 ### pour les etudiants on trouve en plus
 
 - num_etudiant (int) : numéro de l'etudiant
-
-##### Données à envoyer
-
-- email (email) : email du user
-- first_name (string) : prenom
-- last_name (string) : prenom
-- profile (profile) : profile de l'utilisateur
-
-pour les etudiants on trouve en plus :
-
-- idFiliere :
-- num_etudiant (int) : numéro de l'etudiant
-
-##### Données reçues
-
-informations de l'utilisateur crée
-
-```json
-http://127.0.0.1:8000/userList/ENS/
-{
-        "id": 12,
-        "email": "enseignant5@po.fr",
-        "first_name": "Benoit",
-        "last_name": "Favre",
-        "first_connection": True,
-        "profile": "ENS"
-    }
-```
 
 ## etudiantAll
 
@@ -308,7 +289,6 @@ Etudiants
 }
 ```
 
-
 ## stageTuteur
 
 renvoie les stages et étudiants encadré par le tuteur connecté
@@ -401,14 +381,15 @@ http://127.0.0.1:8000/userDetails/<int>/
 
 ## Informations d'une session
 
-- id (int): id de la promo
+- id (int): id de la session
 - nom (string) : nom de la session
 - filiere (int) : id de la filiere à laquelle appartient la promo
-- fini (boolean) : toutes les soutenances de la session ont été soutenu
+- statusSession (int) : status de la session
+
+Données à envoyer
 
 ```json
 {
-    "id": 4,
     "nom": "info 3A 2024",
     "filiere": 2
 }
@@ -725,9 +706,11 @@ toutes les étud assocudiants de la session
     "id": 2,
     "confidentiel": true,
     "sujet": "Gestion des cellules",
-    "date_debut": "2024-01-18",
-    "date_fin": "2024-08-18",
+    "date_debut": "18-01-2024",
+    "date_fin": "18-06-2024",
     "nom_entreprise": "Biomérieux",
+    "num_convetion" : 501560,
+    "etudiant": 51,
     "tuteur": 3
 }
 ```
@@ -914,15 +897,19 @@ http://127.0.0.1:8000/setNote/
 }
 ```
 
-
-
-
 # Jury
 
 ## Informations d'un Jury
 
-```json
-```
+- id : id du jury
+- salle (string) : la salle du jury
+- batiment (string) : le batiment du jury
+- campus (string): le campus du jury
+- zoom (string): le lien zoom de la soutenance
+- num_jury (int): le numéro du jury au sein de la session
+- session (int): id de la session à laquelle est lié le jury
+- leader : le leader du jury
+- membreJury : les membreJury lié au jury
 
 ## CRUD
 
@@ -932,6 +919,58 @@ http://127.0.0.1:8000/setNote/
 http://127.0.0.1:8000/juryList/
 
 http://127.0.0.1:8000/juryDetails/<int>/
+
+```
+
+- Lors de la création ou de la modification d'un jury pour le champ membreJury on a une liste d'id des membreJury associé à ce jury
+- lors de l'affichage d'un jury avec un get, les membresjurys sont affiché avec toutes leurs informations
+
+
+```json
+POST/ PUT
+{
+        "salle": "A120",
+        "batiment": "A",
+        "campus": "Luminy",
+        "zoom": "http://",
+        "num_jury": 7,
+        "session": 2,
+        "leader": 49,
+        "membreJury": [6, 15
+        ]
+}
+
+GET : 
+{
+    "id": 4,
+    "membreJury": [
+        {
+            "id": 6,
+            "email": "enseignant@po.fr",
+            "first_name": "jean",
+            "last_name": "jean",
+            "first_connection": false,
+            "profile": "profile",
+            "is_active": true
+        },
+        {
+            "id": 15,
+            "email": "enseignant6@po.fr",
+            "first_name": "Benoit",
+            "last_name": "Favre",
+            "first_connection": false,
+            "profile": "profile",
+            "is_active": true
+        }
+    ],
+    "salle": "A120",
+    "batiment": "A",
+    "campus": "Luminy",
+    "zoom": "http://",
+    "num_jury": 7,
+    "session": 2,
+    "leader": 49
+}
 ```
 
 ## isJury
