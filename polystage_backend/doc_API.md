@@ -7,6 +7,7 @@
 
 # dernier ajout
 
+- [openSession](#opensession): ouverture de la session polystage
 - [exportNote](#exportnote): modification export des notes
 - ajout de date limite au formulaire
 - [sendCodeMail](#sendcodemail): envoyer le code de réinitilisation à l'utilisateur
@@ -575,6 +576,30 @@ MembreJury : Enseignant, Professionnel, Admin
         ]
     }
 ]
+```
+
+## openSession
+
+ouvre la session de polystage en envoyant un mail à tous les tuteurs et étudiants pour leur notifier de l'ouverture de la plateforme
+
+### URL
+
+méthode : GET
+
+```url
+http://127.0.0.1:8000/openSession/<int>/
+```
+
+données url : l'id de la session
+
+### Données reçues
+
+message de succès
+
+```json
+{
+    "success":"les mails ont été envoyés avec succès"
+}
 ```
 
 # SessionFiliere

@@ -157,7 +157,10 @@ CAS_LOGOUT_URL_NAME = 'https://ident.univ-amu.fr/cas/logout/'
 #LOGOUT_URL = '/accounts/logout/'
 #LOGIN_REDIRECT_URL = '/filiereList/'
 
+FRONT_DEV_URL = "http://127.0.0.1:5050/"
+FRONT_PROD_URL = ""
 
+FRONT_URL = FRONT_DEV_URL
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [

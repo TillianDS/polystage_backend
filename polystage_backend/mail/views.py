@@ -1,7 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.authentication import TokenAuthentication
 from django.core.mail import send_mail
 from django.conf import settings
 from back.models import CustomUser, Etudiant, Tuteur, Session, Stage
@@ -12,6 +11,8 @@ from django.utils.html import strip_tags
 from back.views.password import *
 from polystage_backend.permissions import *
 import requests
+from rest_framework.authtoken.models import Token
+
 
 class OpenSession(APIView) :
     permission_classes = [IsAuthenticated, AdminPermission]
@@ -35,7 +36,9 @@ class OpenSession(APIView) :
             'prenom' : prenom ,
             'nom' : nom,
             'email' : email_send,
-            'password' : password
+            'password' : password,
+            'lien' : settings.FRONT_URL + "login"
+
         }
         html_message = render_to_string('email/openPolystageEtudiantFirstCo.html', context= context)
         plain_message = strip_tags(html_message)
@@ -50,17 +53,17 @@ class OpenSession(APIView) :
             'nom' : nom,
             'nom_etudiant' : nom_etudiant,
             'prenom_etudiant' : prenom_etudiant,
-            'lien' : lien ,
         }
         html_message = render_to_string('email/openPolystageTuteur.html', context)
 
-        plain_message = strip_tags(html_message)
+        plain_message = strip_tags(html_message) + lien
 
         from_email = settings.EMAIL_HOST_USER
         send_mail(subject, plain_message, from_email, [email])
 
     # envoie un mail pour l'ouverture de la plateforme PolyStage
     def post (self, request, pk, format = None) :
+        
         try : 
             session = Session.objects.get(pk=pk)
         except Session.DoesNotExist:
@@ -71,6 +74,7 @@ class OpenSession(APIView) :
         
         etudiants = Etudiant.objects.filter(stage__soutenance__jury__session = session).distinct()
         tuteurs = Tuteur.objects.filter(stage__soutenance__jury__session = session).distinct()
+
         errors = []
         try :
             for etudiant in etudiants :
@@ -93,33 +97,51 @@ class OpenSession(APIView) :
                 
                 for formulaire in formulaires_etudiants :
                     for stage in stages :
-                        StatusFormulaire.objects.create(
-                            user=etudiant,
-                            stage=stage,
-                            formulaire=formulaire,
-                            statusForm='envoie'
-                        )
+                        try : 
+                            StatusFormulaire.objects.get(
+                                user=etudiant,
+                                stage=stage,
+                                formulaire=formulaire)
+                            continue
+                        except StatusFormulaire.DoesNotExist :
+                            StatusFormulaire.objects.create(
+                                user=etudiant,
+                                stage=stage,
+                                formulaire=formulaire,
+                                statusForm='envoie'
+                            )
+
         except requests.exceptions.Timeout:
-            
             return Response({"error": "Le délai d'attente a été dépassé (etudiant)"})
+        
         try :
             for tuteur in tuteurs :
-                lien = ""
+                token, created = Token.objects.get_or_create(user=tuteur)
+                tuteur_id = tuteur.id
+                profile = tuteur.profile
+                lien = settings.FRONT_URL + "tuteur" + "?token=" + str(token) +"&user_id=" +str(tuteur_id) +"&profile=" + profile
                 
                 formulaires_tuteur = Formulaire.objects.filter(session=session, profile = 'TUT')
-                stages = tuteur.stage_set
-                
+                stages = Stage.objects.filter(tuteur=tuteur, soutenance__jury__session = session)
+
                 for formulaire in formulaires_tuteur :
                     for stage in stages :
-                        StatusFormulaire.objects.create(
-                            user=tuteur,
-                            stage=stage,
-                            formulaire=formulaire,
-                            statusForm='envoie'
-                        )
+                        try : 
+                            StatusFormulaire.objects.get(
+                                user=tuteur,
+                                stage=stage,
+                                formulaire=formulaire)
+                            continue
+                        except StatusFormulaire.DoesNotExist :
+                            StatusFormulaire.objects.create(
+                                user=tuteur,
+                                stage=stage,
+                                formulaire=formulaire,
+                                statusForm='envoie'
+                            )
 
                 for stage in stages :
-                    self.mailTuteur(email=tuteur.email, nom=tuteur.last_name, prenom=tuteur.first_name, lien=lien, prenom_etudiant=stage.etudiant)
+                    self.mailTuteur(email=tuteur.email, nom=tuteur.last_name, prenom=tuteur.first_name, lien=lien, prenom_etudiant=stage.etudiant.first_name, nom_etudiant=stage.etudiant.last_name)
 
         except requests.exceptions.Timeout:
             return Response({"error": "Le délai d'attente a été dépassé (tuteur)"})
@@ -130,10 +152,14 @@ class OpenSession(APIView) :
 
 class testSend(APIView):
     def get(self, request):
+
         tuteur = Tuteur.objects.get(pk=77)
-        stages = tuteur.stage_set
-        for stage in stages:
-            return Response(stage.etudiant.first_name)
+        token, created = Token.objects.get_or_create(user=tuteur)
+        tuteur_id = tuteur.id
+        profile = tuteur.profile
+        lien = settings.FRONT_DEV_URL + "tuteur" + "?token=" + str(token) +"&user_id=" +str(tuteur_id) +"&profile=" + profile
+        #for stage in stages:
+        return Response(lien)
 
 
 def mailConfirmationForm (email_send, titre_form) :
