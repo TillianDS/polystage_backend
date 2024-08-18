@@ -4,9 +4,10 @@ from rest_framework import status
 from ..serializers import EtudiantSerializer, SoutenanceSerializer
 from ..models import Etudiant, Soutenance
 from django.db.models import F
- 
-class exportNote (APIView):
+from polystage_backend.permissions import *
 
+class exportNote (APIView):
+    permission_classes = [IsAuthenticated, AdminPermission]
     #session : id de la session
     #filiere : nom de la filiere
     #on exporte les données d'une filière passé en paramètres

@@ -8,7 +8,7 @@ from .views_list_details import List, Details
 from polystage_backend.permissions import *
 
 class EtudiantAll(APIView):
-    permission_classes = [EtuPermission]
+    permission_classes = [IsAuthenticated, EtuPermission]
     def get (self, request, format = None):
         serializer = EtudiantAllSeralizer(request.user.instance)
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import views_login, views_users, views_admin, views_promo_filiere, views_stage, views_soutenance, views_jury, views_import, views_etudiant, views_export, cas, test_cas, views_session, views_superUser
+from .views import views_login, views_users, views_admin, views_promo_filiere, views_stage, views_soutenance, views_jury, views_import, views_etudiant, views_export, test_cas, views_session, views_superUser
 
 urlpatterns = [
     #views_Users
@@ -11,7 +11,7 @@ urlpatterns = [
     path('stageTuteur/', views_users.stageTuteur.as_view(), name = 'stageTuteur'),
 
     #test_cas
-    path('profile/', test_cas.user_profile, name='user_profile'),
+    #path('profile/', test_cas.user_profile, name='user_profile'),
 
     #views_login
     path('changePassword/', views_login.ChangePassword.as_view()),
@@ -76,8 +76,6 @@ urlpatterns = [
     #views_export
     path("exportNote/", views_export.exportNote.as_view()),
     
-    path('', cas.user_cas.as_view()),
-
     #views_superUser
     path('superUserList/', views_superUser.superUserList.as_view()),
     path('deleteSuperuser/<int:pk>/', views_superUser.superUserDelete.as_view()),

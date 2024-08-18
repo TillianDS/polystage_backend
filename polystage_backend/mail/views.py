@@ -149,18 +149,7 @@ class OpenSession(APIView) :
         session.statusSession = 2
         session.save()
         return Response({'success': "les mails ont été envoyés avec succès"}, status=status.HTTP_200_OK)
-
-class testSend(APIView):
-    def get(self, request):
-
-        tuteur = Tuteur.objects.get(pk=77)
-        token, created = Token.objects.get_or_create(user=tuteur)
-        tuteur_id = tuteur.id
-        profile = tuteur.profile
-        lien = settings.FRONT_DEV_URL + "tuteur" + "?token=" + str(token) +"&user_id=" +str(tuteur_id) +"&profile=" + profile
-        #for stage in stages:
-        return Response(lien)
-
+    
 
 def mailConfirmationForm (email_send, titre_form) :
 
